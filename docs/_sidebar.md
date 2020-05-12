@@ -19,10 +19,16 @@
 
 - 数据库
 
-    - [数据库系统原理](database/database.md)
-
-    - [SQL优化](database/sql.md)
+    - [MySQL](database/mysql.md)
 
 - 框架
 
     - [Spring](frame/spring.md)
+
+    - [MyBatis](frame/mybatis.md)
+
+    - [Redis](frame/redis.md)
+
+    - [Kafka](frame/kafka.md)
+
+    - [Zookeeper](frame/zookeeper.md)
