@@ -6,3 +6,4 @@
 ## 4、ConcurrentHashMap 的实现原理以及它是如何保证线程安全的？
 ## 5、LinkedHashMap 的实现原理以及如何用它来实现 LRU 缓存？
 ## 6、Tomcat 中的 ConcurrentCache 底层是用什么实现的？
+## 7、优先级队列的底层原理是什么？

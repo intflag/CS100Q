@@ -13,10 +13,6 @@
 
     - [设计模式](programming/designPattern.md)
 
-- Linux
-
-    - [工作常用命令](linux/commands.md)
-
 - 数据库
 
     - [MySQL](database/mysql.md)
@@ -32,3 +28,11 @@
     - [Kafka](frame/kafka.md)
 
     - [Zookeeper](frame/zookeeper.md)
+
+    - [Netty](frame/netty.md)
+
+- 计算机网络
+
+- Linux
+
+    - [工作常用命令](linux/commands.md)
