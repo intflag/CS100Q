@@ -103,3 +103,6 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
     - 当调用 put() 方法时，如果 eden 的大小超过了 size，那么就将 eden 中的所有对象都放入 longterm 中，利用虚拟机回收掉一部分不经常使用的对象。
 
 ## 8、优先级队列的底层原理是什么？
+**参考回答：**
+- 在 Java 中，优先级队列 `priorityQueue` 底层是用`堆`实现的，需要先[了解堆这种数据结构](algorithm/classical?id=_1、如何理解堆，它的应用场景有哪些？)。
+- priorityQueue 是在 JDK 1.5 引入的，无参构造默认自然排序，有参构造需要传入一个 Comparator 比较器，它不允许空值，也不支持不可比较的对象，往队列中添加的对象要么实现 `Comparable` 接口，重写
