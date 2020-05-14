@@ -79,11 +79,27 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 - HashTable 也是哈希表的一种实现，也是一个 Entry 类型的数组存储键值对，比 HashMap 的出现要早，在 JDK1.0 就已经有了，所以最初没有实现 Map 接口（JDK1.2），而是继承了 Dictionary 字典类；
 - HashTable 默认容量是 11，然后每次扩容是：(oldCapacity << 1) + 1；
 - HashTable 是线程安全的，因为它的 put、get、remove 等方法都用 synchronized 进行同步，但这种方式效率比较低，当一个线程使用 put 方法添加元素的时候，不但不能使用 put 方法，连 get 方法也不能使用，也就是说会竞争同一把锁，竞争越激烈效率越低，所以现在不推荐使用了；
+- HashTable 不支持存储 null 键值对。
 
 ## 5、ConcurrentHashMap 的实现原理以及它是如何保证线程安全的？
 **参考回答：**
 - 在并发环境下应该使用 ConcurrentHashMap，它与 HashMap 的实现类似，但是与 HashTable 在并发下竞争同一把锁不同的是，ConcurrentHashMap 采用了分段锁（Segment），每个分段锁维护着几个桶（HashEntry），多个线程可以同时访问不同分段锁上的桶，从而使其并发度更高（并发度就是 Segment 的个数），默认的并发级别是 16，也就是默认会创建 16 个 Segment；
-- 
+- 在插入和获取元素的时候，先通过哈希算法定位到 Segment，然后会用变种算法进行一次再哈希，大大减少了哈希冲突发生的概率；
+- get 方法高效的原因是因为它所有要使用的共享变量都用 volatile 修饰了，我们都知道，被 volatile 修饰的变量能够在线程之间保持可见性，能够被多线程同时读，并且保证不会读到过期的值，但是只能被单线程写（有一种情况可以被多线程写，就是写入的值不依赖于原值）；
+- 它在执行 size 方法计算所有元素个数的时候，会遍历所有 Segment 然后把每个 Segment 中的 count 累加起来，如果连续两次不加锁操作得到的结果一致，那么可以认为这个结果是正确的，否则会对所有 Segment 都加锁；
+- JDK8 使用了 CAS 操作来支持更高的并发度，在 CAS 操作失败时使用内置锁 synchronized，并且 JDK8 在链表过长时也会转换为红黑树。
+
 ## 6、LinkedHashMap 的实现原理以及如何用它来实现 LRU 缓存？
-## 7、Tomcat 中的 ConcurrentCache 底层是用什么实现的？
+- LinkedHashMap 继承自 HashMap，所以具有和 HashMap 一样的快速查找特性，在内部维护了一个双向链表，用来实现元素的插入顺序或者 LRU 顺序；
+- 它内部有一个变量 accessOrder，默认为 false，维护的是插入顺序，当 accessOrder 为 true 的时候维护 LRU 顺序，每次访问一个节点时，会将这个节点移到链表尾部，保证链表尾部是最近访问的节点，那链表首部就是最近最久未使用的节点。
+
+## 7、你知道 Tomcat 中的 ConcurrentCache 底层是用什么实现的吗？
+**参考回答：**
+- Tomcat 中的 ConcurrentCache 使用了 WeakHashMap 来实现缓存功能，WeakHashMap 的 Entry 继承自 WeakReference，被 WeakReference 关联的对象在下一次垃圾回收时会被回收；
+- ConcurrentCache 采取的是分代缓存思想：
+    - 经常使用的对象放入 eden 中，eden 使用 ConcurrentHashMap 实现，不用担心会被回收（伊甸园）；
+    - 不常用的对象放入 longterm，longterm 使用 WeakHashMap 实现，这些老对象会被垃圾收集器回收；
+    - 当调用 get() 方法时，会先从 eden 区获取，如果没有找到的话再到 longterm 获取，当从 longterm 获取到就把对象放入 eden 中，从而保证经常被访问的节点不容易被回收；
+    - 当调用 put() 方法时，如果 eden 的大小超过了 size，那么就将 eden 中的所有对象都放入 longterm 中，利用虚拟机回收掉一部分不经常使用的对象。
+
 ## 8、优先级队列的底层原理是什么？

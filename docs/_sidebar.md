@@ -1,13 +1,15 @@
 - Java
 
     - [Java 基础](java/basics.md)
-    - [Java 容器](java/comtainer.md)
+    - [Java 容器](java/container.md)
     - [Java 并发](java/concurrent.md)
     - [Java 虚拟机](java/jvm.md)
 
 - 数据结构与算法
 
     - [LeetCode必刷清单](algorithm/leetCodeList.md)
+
+    - [经典算法](algorithm/classical.md)
 
 - 程序设计
 
