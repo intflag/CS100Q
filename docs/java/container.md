@@ -1,5 +1,5 @@
 # Java 容器
-## 0、Java 的容器技术总结
+## 0、容器技术总结
 ### 1）Collection
 ![](http://images.intflag.com/container01.png)
 
@@ -33,7 +33,8 @@
 
 - LinkedHashMap：使用双向链表来维护元素的顺序，顺序为插入顺序或者最近最少使用（LRU）顺序。
 
-## 1、ArrayList 和 Vector 的原理和区别是什么？
+## 1、ArrayList 和 Vector
+?> **面试题：** ArrayList 和 Vector 的原理和区别是什么？
 ### 1）ArrayList
 <!-- tabs:start -->
 
@@ -66,21 +67,10 @@
 
 <!-- tabs:end -->
 
-## 2、LinkedList 的实现原理以及和 ArrayList 相比优缺点是什么？
-<!-- tabs:start -->
+## 2、线程安全的 ArrayList
 
-#### **参考回答**
+?> **面试题：** 在不使用 Vector 的情况下如何实现线程安全的 ArrayList？
 
-- LinkedList 底层是基于双向链表实现的，有一个静态内部类 Node，里面有前驱指针和后继指针，而且每个链表存储了 first 和 last 指针，在查找的时候会判断 index < (size >> 1) ，也就是如果索引靠左，就从 first 指针往后搜索，否则从 last 指针往前搜索；
-- 和 ArrayList 相比的话，LinkedList 不支持随机访问，但插入和删除只需要先遍历一遍找到插入或删除的节点，然后改变指针的指向就可以了。
-
-#### **源码详解**
-
-
-
-<!-- tabs:end -->
-
-## 3、在不使用 Vector 的情况下如何实现线程安全的 ArrayList？
 <!-- tabs:start -->
 
 #### **参考回答**
@@ -96,7 +86,28 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 
 <!-- tabs:end -->
 
-## 4、HashMap 和 HashTable 的实现原理和区别以及 JDK8 之后 HashMap的变化？
+## 3、LinkedList
+
+?> **面试题：** LinkedList 的实现原理以及和 ArrayList 相比优缺点是什么？
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+- LinkedList 底层是基于双向链表实现的，有一个静态内部类 Node，里面有前驱指针和后继指针，而且每个链表存储了 first 和 last 指针，在查找的时候会判断 index < (size >> 1) ，也就是如果索引靠左，就从 first 指针往后搜索，否则从 last 指针往前搜索；
+- 和 ArrayList 相比的话，LinkedList 不支持随机访问，但插入和删除只需要先遍历一遍找到插入或删除的节点，然后改变指针的指向就可以了。
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+
+## 4、HashMap 和 HashTable
+
+?> **面试题：** HashMap 和 HashTable 的实现原理和区别以及 JDK8 之后 HashMap的变化？
+
 ### 1）HashMap
 <!-- tabs:start -->
 
@@ -135,7 +146,10 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 
 <!-- tabs:end -->
 
-## 5、ConcurrentHashMap 的实现原理以及它是如何保证线程安全的？
+## 5、ConcurrentHashMap
+
+?> **面试题：** ConcurrentHashMap 的实现原理以及它是如何保证线程安全的？
+
 <!-- tabs:start -->
 
 #### **参考回答**
@@ -152,7 +166,10 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 
 <!-- tabs:end -->
 
-## 6、LinkedHashMap 的实现原理以及如何用它来实现 LRU 缓存？
+## 6、LinkedHashMap
+
+?> **面试题：** LinkedHashMap 的实现原理以及如何用它来实现 LRU 缓存？
+
 <!-- tabs:start -->
 
 #### **参考回答**
@@ -166,7 +183,10 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 
 <!-- tabs:end -->
 
-## 7、你知道 Tomcat 中的 ConcurrentCache 底层是用什么实现的吗？
+## 7、WeakHashMap
+
+?> **面试题：** 你知道 Tomcat 中的 ConcurrentCache 底层是用什么实现的吗？
+
 <!-- tabs:start -->
 
 #### **参考回答**
@@ -184,7 +204,10 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 
 <!-- tabs:end -->
 
-## 8、优先级队列的底层原理是什么，多线程下可以使用吗？
+## 8、优先级队列
+
+?> **面试题：** 优先级队列的底层原理是什么，多线程下可以使用吗？
+
 ### 1）PriorityQueue
 <!-- tabs:start -->
 
