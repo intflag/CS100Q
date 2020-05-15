@@ -8,6 +8,7 @@
   <meta name="description" content="Description">
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css">
+  <link rel="stylesheet" href="//unpkg.com/gitalk/dist/gitalk.css">
   <!-- <link rel="stylesheet" href="https://unpkg.com/docsify-toc@1.0.0/dist/toc.css"> -->
   <!-- 将自定义样式放在 Github 上会导致加载速度变得非常慢，所以采取直接内嵌的方式 -->
   <style type="text/css">
@@ -464,6 +465,16 @@
         title: '详细目录',
       },
     }
+    //基于GitHub的评论插件配置
+    const gitalk = new Gitalk({
+      clientID: 'a0a98074f4241899633d',
+      clientSecret: '4cc331ef07966dd3f922aee6cc418defcc8d8a3e',
+      repo: 'CS100Q',
+      owner: 'intflag',
+      admin: ['intflag'],
+      // facebook-like distraction free mode
+      distractionFreeMode: true
+    })
   </script>
   <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
   <script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
