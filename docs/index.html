@@ -51,16 +51,6 @@
                 title: '详细目录',
             },
         }
-        //基于GitHub的评论插件配置
-        const gitalk = new Gitalk({
-            clientID: 'a0a98074f4241899633d',
-            clientSecret: '4cc331ef07966dd3f922aee6cc418defcc8d8a3e',
-            repo: 'CS100Q',
-            owner: 'intflag',
-            admin: ['intflag'],
-            // facebook-like distraction free mode
-            distractionFreeMode: true
-        })
     </script>
     <script src="//unpkg.com/docsify/lib/docsify.min.js"></script>
     <script src="//unpkg.com/docsify/lib/plugins/search.js"></script>
@@ -71,6 +61,19 @@
     <script src="https://cdn.bootcss.com/viz.js/1.8.0/viz.js"></script>
     <script src="http://images.intflag.com/zoom-image.min.js"></script>
     <script src="//unpkg.com/docsify/lib/plugins/gitalk.min.js"></script>
+    <script src="//unpkg.com/gitalk/dist/gitalk.min.js"></script>
+    <script>
+        //基于GitHub的评论插件配置
+        const gitalk = new Gitalk({
+            clientID: 'a0a98074f4241899633d',
+            clientSecret: '4cc331ef07966dd3f922aee6cc418defcc8d8a3e',
+            repo: 'CS100Q',
+            owner: 'intflag',
+            admin: ['intflag'],
+            id: location.pathname,
+            distractionFreeMode: true
+        })
+    </script>
 </body>
 
 </html>
