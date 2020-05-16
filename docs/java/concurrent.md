@@ -167,12 +167,471 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
 
 <!-- tabs:end -->
 
+## 5、互斥同步
 
+?> **面试题：** Java 多线程中实现互斥同步的方式有几种，它们各自的实现原理是什么？
 
-线程池参数
-## 5、Java 多线程中实现互斥同步的方式有几种，它们之间的对比？
-## 6、Java 是如何实现多线程之间的协作的？
-## 7、Java 中断线程的方式具体有哪些？
+<!-- tabs:start -->
+
+#### **参考回答**
+### 1）Synchronized
+- Synchronized 是 JVM 实现的，可以锁代码块、普通方法和静态方法，还可以锁类；
+- 因为 Synchronized 是 JVM 实现，所以看不了源码，但是可以先使用 `javac` 命令编译一个类，然后用 `javap` 命令查看类的字节码，如果是对代码块加锁，那么看到有两个指令： <mark>&nbsp;monitorenter&nbsp;</mark> 和  <mark>&nbsp;monitorexit&nbsp;</mark> ，具体思想是，每个对象都有一个 monitor 监视器，调用 `monitorenter` 就是尝试获取这个对象，成功获取就将计数器 +1，释放就将计数器 -1，如果是重入就将值再 +1；
+- 如果是对同步方法加锁的话，字节码没有那两个指令，而是有一个 <mark>&nbsp;ACC_SYNCHRONIZED&nbsp;</mark> 标识，他会在常量池中增加一个这个标识符，获取它的 `monitor`，所以本质上是一样的；
+- Synchronized 在获取不到锁的时候会一直阻塞，不可以被中断，但是会自动释放锁；
+- 新版本 Java 对 synchronized 进行了很多优化。
+
+### 2）ReentrantLock
+- ReentrantLock 是 <mark>&nbsp;java.util.concurrent&nbsp;</mark> 包下的锁，实现了 `Lock` 接口，只能锁代码块；
+- ReentrantLock 是基于 <mark>&nbsp;AQS（AbstractQuenedSynchronizer）抽象的队列式同步器&nbsp;</mark> 实现的，需要手动去释放锁，通常方法开始的时候加锁，然后在 `finally` 中释放锁。
+
+#### **源码详解**
+
+### 1）synchronized
+**① 同步代码块**
+```java
+public void fun() {
+    synchronized (this) {
+        // ...
+    }
+}
+```
+它只作用于同一个对象，如果调用两个对象上的同步代码块，就不会进行同步。
+
+对于以下代码，使用 ExecutorService 执行了两个线程，由于调用的是同一个对象的同步代码块，因此这两个线程会进行同步，当一个线程进入同步语句块时，另一个线程就必须等待。
+
+```java
+public class SynchronizedTest {
+
+    public void fun1() {
+        synchronized (this) {
+            for (int i = 0; i < 10; i++) {
+                System.out.println("Thread Name: " + Thread.currentThread().getName() + ", i = " + i);
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        SynchronizedTest sync1 = new SynchronizedTest();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(() -> sync1.fun1());
+        executorService.execute(() -> sync1.fun1());
+    }
+}
+```
+```
+Thread Name: pool-1-thread-1, i = 0
+Thread Name: pool-1-thread-1, i = 1
+Thread Name: pool-1-thread-1, i = 2
+Thread Name: pool-1-thread-1, i = 3
+Thread Name: pool-1-thread-1, i = 4
+Thread Name: pool-1-thread-1, i = 5
+Thread Name: pool-1-thread-1, i = 6
+Thread Name: pool-1-thread-1, i = 7
+Thread Name: pool-1-thread-1, i = 8
+Thread Name: pool-1-thread-1, i = 9
+Thread Name: pool-1-thread-2, i = 0
+Thread Name: pool-1-thread-2, i = 1
+Thread Name: pool-1-thread-2, i = 2
+Thread Name: pool-1-thread-2, i = 3
+Thread Name: pool-1-thread-2, i = 4
+Thread Name: pool-1-thread-2, i = 5
+Thread Name: pool-1-thread-2, i = 6
+Thread Name: pool-1-thread-2, i = 7
+Thread Name: pool-1-thread-2, i = 8
+Thread Name: pool-1-thread-2, i = 9
+```
+对于以下代码，两个线程调用了不同对象的同步代码块，因此这两个线程就不需要同步。从输出结果可以看出，两个线程交叉执行。
+```java
+public static void main(String[] args) {
+    SynchronizedTest sync1 = new SynchronizedTest();
+    SynchronizedTest sync2 = new SynchronizedTest();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> sync1.fun1());
+    executorService.execute(() -> sync2.fun1());
+}
+```
+```
+Thread Name: pool-1-thread-1, i = 0
+Thread Name: pool-1-thread-1, i = 1
+Thread Name: pool-1-thread-1, i = 2
+Thread Name: pool-1-thread-1, i = 3
+Thread Name: pool-1-thread-1, i = 4
+Thread Name: pool-1-thread-1, i = 5
+Thread Name: pool-1-thread-2, i = 0
+Thread Name: pool-1-thread-1, i = 6
+Thread Name: pool-1-thread-2, i = 1
+Thread Name: pool-1-thread-1, i = 7
+Thread Name: pool-1-thread-2, i = 2
+Thread Name: pool-1-thread-1, i = 8
+Thread Name: pool-1-thread-1, i = 9
+Thread Name: pool-1-thread-2, i = 3
+Thread Name: pool-1-thread-2, i = 4
+Thread Name: pool-1-thread-2, i = 5
+Thread Name: pool-1-thread-2, i = 6
+Thread Name: pool-1-thread-2, i = 7
+Thread Name: pool-1-thread-2, i = 8
+Thread Name: pool-1-thread-2, i = 9
+```
+
+**② 同步方法**
+```java
+public synchronized void fun () {
+    // ...
+}
+```
+它和同步代码块一样，作用于同一个对象。
+
+**③ 同步静态方法**
+```java
+public synchronized static void fun() {
+    // ...
+}
+```
+作用于整个类。
+
+**④ 同步类**
+```java
+public void fun() {
+    synchronized (SynchronizedTest.class) {
+        // ...
+    }
+}
+```
+作用于整个类，也就是说两个线程调用同一个类的不同对象上的这种同步语句，也会进行同步。
+```java
+public class SynchronizedExample {
+
+    public void func2() {
+        synchronized (SynchronizedExample.class) {
+            for (int i = 0; i < 10; i++) {
+                System.out.print(i + " ");
+            }
+        }
+    }
+}
+```
+```java
+public static void main(String[] args) {
+    SynchronizedTest sync1 = new SynchronizedTest();
+    SynchronizedTest sync2 = new SynchronizedTest();
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    executorService.execute(() -> sync1.fun2());
+    executorService.execute(() -> sync2.fun2());
+}
+```
+```
+Thread Name: pool-1-thread-1, i = 0
+Thread Name: pool-1-thread-1, i = 1
+Thread Name: pool-1-thread-1, i = 2
+Thread Name: pool-1-thread-1, i = 3
+Thread Name: pool-1-thread-1, i = 4
+Thread Name: pool-1-thread-1, i = 5
+Thread Name: pool-1-thread-1, i = 6
+Thread Name: pool-1-thread-1, i = 7
+Thread Name: pool-1-thread-1, i = 8
+Thread Name: pool-1-thread-1, i = 9
+Thread Name: pool-1-thread-2, i = 0
+Thread Name: pool-1-thread-2, i = 1
+Thread Name: pool-1-thread-2, i = 2
+Thread Name: pool-1-thread-2, i = 3
+Thread Name: pool-1-thread-2, i = 4
+Thread Name: pool-1-thread-2, i = 5
+Thread Name: pool-1-thread-2, i = 6
+Thread Name: pool-1-thread-2, i = 7
+Thread Name: pool-1-thread-2, i = 8
+Thread Name: pool-1-thread-2, i = 9
+```
+
+### 2）ReentrantLock
+ReentrantLock 是 `java.util.concurrent（J.U.C）` 包中的锁。
+
+```java
+public class ReentrantLockTest {
+
+    private ReentrantLock lock = new ReentrantLock();
+
+    public void fun1() {
+        lock.lock();
+        try {
+            for (int i = 0; i < 10; i++) {
+                System.out.println("Thread Name: " + Thread.currentThread().getName() + ", i = " + i);
+            }
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void main(String[] args) {
+        ReentrantLockTest sync1 = new ReentrantLockTest();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(()->sync1.fun1());
+        executorService.execute(()->sync1.fun1());
+    }
+}
+```
+```
+Thread Name: pool-1-thread-1, i = 0
+Thread Name: pool-1-thread-1, i = 1
+Thread Name: pool-1-thread-1, i = 2
+Thread Name: pool-1-thread-1, i = 3
+Thread Name: pool-1-thread-1, i = 4
+Thread Name: pool-1-thread-1, i = 5
+Thread Name: pool-1-thread-1, i = 6
+Thread Name: pool-1-thread-1, i = 7
+Thread Name: pool-1-thread-1, i = 8
+Thread Name: pool-1-thread-1, i = 9
+Thread Name: pool-1-thread-2, i = 0
+Thread Name: pool-1-thread-2, i = 1
+Thread Name: pool-1-thread-2, i = 2
+Thread Name: pool-1-thread-2, i = 3
+Thread Name: pool-1-thread-2, i = 4
+Thread Name: pool-1-thread-2, i = 5
+Thread Name: pool-1-thread-2, i = 6
+Thread Name: pool-1-thread-2, i = 7
+Thread Name: pool-1-thread-2, i = 8
+Thread Name: pool-1-thread-2, i = 9
+```
+
+### 3）synchronized 与 ReentrantLock 比较
+**① 锁的实现**
+
+synchronized 是 JVM 实现的，ReentrantLock 是 JDK 实现的。
+
+**② 性能**
+
+新版本 Java 对 synchronized 进行了很多优化，例如自旋锁等，synchronized 与 ReentrantLock 大致相同。
+
+**③ 等待可中断**
+
+当持有锁的线程长期不释放锁的时候，正在等待的线程可以选择放弃等待，改为处理其他事情。
+
+ReentrantLock 可中断，而 synchronized 不行。
+
+**④ 公平锁**
+
+公平锁是指多个线程在等待同一个锁时，必须按照申请锁的时间顺序来依次获得锁。
+
+synchronized 中的锁是非公平的，ReentrantLock 默认情况下也是非公平的，但是也可以是公平的。
+
+**⑤ 锁绑定多个条件**
+
+一个 ReentrantLock 可以同时绑定多个 Condition 对象。
+
+### 4）使用选择
+除非需要使用 ReentrantLock 的高级功能，否则优先使用 synchronized。这是因为 synchronized 是 JVM 实现的一种锁机制，JVM 原生地支持它，而 ReentrantLock 不是所有的 JDK 版本都支持。并且使用 synchronized 不用担心没有释放锁而导致死锁问题，因为 JVM 会确保锁的释放。
+
+<!-- tabs:end -->
+
+## 6、线程协作
+?> **面试题：** Java 是如何实现多线程之间的协作的？
+
+### 1）join
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+- 可以在线程中调用另一个线程的 join 方法，当前线程会挂起，直到另一个线程执行结束。
+
+#### **源码详解**
+
+在线程中调用另一个线程的 join() 方法，会将当前线程挂起，直到目标线程结束。
+
+join方法有三个重载版本：
+```java
+join()
+join(long millis)                    //参数为毫秒
+join(long millis,int nanoseconds)    //第一参数为毫秒，第二个参数为纳秒
+```
+假如在 main 线程中，调用 thread.join 方法，则 main 方法会等待 thread 线程执行完毕或者等待一定的时间。如果调用的是无参 join 方法，则等待 thread 执行完毕，如果调用的是指定了时间参数的join方法，则等待一定的时间。
+
+```java
+public class JoinTest {
+    class JoinThread extends Thread {
+        @Override
+        public void run() {
+            try {
+                System.out.println("Thread Name: " + this.getName() + ", Sleep Start");
+                sleep(5000);
+                System.out.println("Thread Name: " + this.getName() + ", Sleep End");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        System.out.println("Thread Name: " + Thread.currentThread().getName() + ", Main Start");
+        JoinTest test = new JoinTest();
+        JoinTest.JoinThread s1 = test.new JoinThread();
+        s1.start();
+        //s1.join();        //挂起 main 线程，等待 JoinThread 执行完毕再接着执行 main 线程
+        System.out.println("Thread Name: " + Thread.currentThread().getName() + ", Main End");
+    }
+}
+```
+不调用 s1.join() 的执行结果：
+```
+Thread Name: main, Main Start
+Thread Name: main, Main End
+Thread Name: Thread-0, Sleep Start
+Thread Name: Thread-0, Sleep End
+```
+
+调用 s1.join() 的执行结果：
+```
+Thread Name: main, Main Start
+Thread Name: Thread-0, Sleep Start
+Thread Name: Thread-0, Sleep End
+Thread Name: main, Main End
+```
+可以看出，当调用 s1.join() 方法后，main 线程会进入等待，然后等待 s1 执行完之后再继续执行。
+
+实际上调用 join 方法是调用了 Object 的 wait 方法，这个可以通过查看源码得知：
+```java
+public final synchronized void join(long millis)
+throws InterruptedException {
+    long base = System.currentTimeMillis();
+    long now = 0;
+
+    if (millis < 0) {
+        throw new IllegalArgumentException("timeout value is negative");
+    }
+
+    if (millis == 0) {
+        while (isAlive()) {
+            wait(0);
+        }
+    } else {
+        while (isAlive()) {
+            long delay = millis - now;
+            if (delay <= 0) {
+                break;
+            }
+            wait(delay);
+            now = System.currentTimeMillis() - base;
+        }
+    }
+}
+```
+wait 方法会让线程进入阻塞状态，并且会释放线程占有的锁，并交出 CPU 执行权限。
+
+由于 wait 方法会让线程释放对象锁，所以 join 方法同样会让线程释放对一个对象持有的锁。
+
+<!-- tabs:end -->
+
+### 2）wait() notify() notifyAll()
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+- 调用 wait 方法也会让线程等待，线程在等待时会被挂起，其他线程调用 notify() 或者 notifyAll() 来唤醒挂起的线程，这些都是 Object 类中的方法；
+- 这些方法必须在`同步代码块`或者`同步方法`中使用，否则运行的时候会出现 IllegalMonitorStateException 非法监视状态异常；
+- 使用 wait 挂起线程以后，线程会释放锁，因为如果不释放锁，其他线程就不能进入对象的同步代码块或者同步方法中，也就不能执行 notify() 或者 notifyAll() 方法来唤醒挂起的线程，从而造成死锁；
+- wait() 是 Object 的方法，而 sleep() 是 Thread 的静态方法，wait() 会释放锁，sleep() 不会释放锁。
+
+#### **源码详解**
+
+```java
+public class WaitTest {
+
+    public synchronized void before() {
+        System.out.println("Thread Name: " + Thread.currentThread().getName()+" before");
+        notifyAll();
+    }
+
+    public synchronized void after() {
+        try {
+            wait();
+            System.out.println("Thread Name: " + Thread.currentThread().getName()+" after");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        WaitTest waitTest = new WaitTest();
+        executorService.execute(()->waitTest.after());
+        executorService.execute(()->waitTest.before());
+
+    }
+}
+```
+```
+Thread Name: pool-1-thread-2 before
+Thread Name: pool-1-thread-1 after
+```
+
+<!-- tabs:end -->
+
+### 3）await() signal() signalAll()
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+- java.util.concurrent 类库中提供了 Condition 类来实现线程之间的协调，可以在 Condition 上调用 await() 方法使线程等待，其他线程上调用 signal() 或者 signalAll() 方法唤醒等待的线程。
+- 相比与 wait() 方法，await() 方法可以指定等待的条件，因此更加灵活。
+
+#### **源码详解**
+
+```java
+public class AwaitTest {
+
+    private Lock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition();
+
+    public void before() {
+        lock.lock();
+        try {
+            System.out.println("Thread Name: " + Thread.currentThread().getName() + " before");
+            condition.signalAll();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public void after() {
+        lock.lock();
+        try {
+            condition.await();
+            System.out.println("Thread Name: " + Thread.currentThread().getName() + " after");
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        AwaitTest awaitTest = new AwaitTest();
+        executorService.execute(() -> awaitTest.after());
+        executorService.execute(() -> awaitTest.before());
+    }
+}
+```
+```java
+Thread Name: pool-1-thread-2 before
+Thread Name: pool-1-thread-1 after
+```
+
+<!-- tabs:end -->
+
+## 7、线程中断
+?> **面试题：** Java 中断线程的方式具体有哪些？
+
+## 8、AQS
+?> **面试题：** 谈谈你对 Java 中 AQS 的理解？
+
+## 9、CAS
+
+## 10、锁优化
+
+## 11、阻塞队列
 
 阻塞队列 https://www.infoq.cn/article/java-blocking-queue
 
