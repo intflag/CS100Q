@@ -31,7 +31,8 @@
 
 - 继承 Thread 类，重写 run 方法；
 - 实现 Runnable 接口，然后实现 run 方法；
-- 实现 Callable 接口，然后实现 call 方法，使用的时候需要用 FutureTask 包装一下，其实 FutureTask 也间接实现了 Runnable 接口，但这种方式可以通过 FutureTask 的 get 方法获取线程的异步执行结果。
+- 实现 Callable 接口，然后实现 call 方法，使用的时候需要用 FutureTask 包装一下，其实 FutureTask 也间接实现了 Runnable 接口，但这种方式可以通过 FutureTask 的 get 方法获取线程的异步执行结果；
+- 一般情况下，选择实现接口的方式会好一些，因为 Java 是单继承，如果选择继承 Thread 类以后就不能再继承其他类，但可以实现多个接口，另外如果是实现接口的方式下获取当前线程对象，需要使用 `Thread.currentThread()`，如果是继承方式的话，直接使用 `this` 关键字就可以得到了。
 
 #### **源码详解**
 
@@ -128,7 +129,7 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
 
 ### 1）线程池
 - 线程池是一种基于`池化思想`管理线程的工具；
-- 因为线程会占用资源，而创建和销毁线程又会带来额外的开销，当然也就降低了性能，如果我们用线程池把若干个线程维护起来，任务来的时候直接从线程池取出一个线程去执行，任务执行结束再把这个线程归还到线程池，那这样就实现了一个线程的复用；
+- 因为线程会占用资源，而创建和销毁线程又会带来额外的开销，当然也就降低了性能，如果我们用线程池把若干个线程维护起来，任务来的时候直接从线程池取出一个线程去执行，任务执行结束再把这个线程归还到线程池，那这样就实现了线程的复用；
 - 线程是稀缺资源，如果不停的创建，很可能会把系统的资源耗尽，所以需要用线程池去统一管理；
 - 线程池还具备可扩展性，比如延时定时线程池 ScheduledThreadPoolExecutor，就允许任务延期执行或定期执行。
 
@@ -624,14 +625,70 @@ Thread Name: pool-1-thread-1 after
 ## 7、线程中断
 ?> **面试题：** Java 中断线程的方式具体有哪些？
 
-## 8、AQS
+## 8、CAS & AQS
+?> **面试题：** 谈谈你对 CAS 的理解，Java 8 是如何优化 CAS 性能的？
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考
+- [大白话聊聊Java并发面试问题之Java 8如何优化CAS性能？【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247484070&idx=1&sn=c1d49bce3c9da7fcc7e057d858e21d69&chksm=fba6eaa5ccd163b3a935303f10a54a38f15f3c8364c7c1d489f0b1aa1b2ef293a35c565d2fda&mpshare=1&scene=1&srcid=0517Jzf4pPxfShe3mewgFLDl&sharer_sharetime=1589726268906&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=042d77279f4726137744ab58f229534d4087388bec935765ec760d286f615f9ea1d6b3882cb6d1f37e76f5df4cab13ca69e46d865c0b9939ec0ed0952f9c9855f031fcd09e2b9d3c16edbe35c5593a4d&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AyOp4FTyqw0H66RJ7howCxc%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
 ?> **面试题：** 谈谈你对 Java 中 AQS 的理解？
 
-## 9、CAS
+<!-- tabs:start -->
 
-## 10、锁优化
+#### **参考回答**
 
-## 11、阻塞队列
+### 参考
+- [Java 并发高频面试题：聊聊你对 AQS 的理解？【石杉的架构笔记】](https://mp.weixin.qq.com/s/zdn54VeNSsabwDd3CBvSoA)
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+## 9、锁以及锁优化
+?> **面试题：** Java 中有那些锁？实现了哪些锁优化技术？
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考
+- [不懂什么是 Java 中的锁？看看这篇你就明白了！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486820&idx=1&sn=cdd3ca69c68383a38a48bfd74124f0af&chksm=fba6e567ccd16c71438fe62f40fee9f55746453e91bc12a2c2be47272de84aa1a20dc541c63d&mpshare=1&scene=1&srcid=0517yoHuUp41wrvwCzbB6oaU&sharer_sharetime=1589727926343&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=1f1e787ff7a3f9028b14959bba2dc365d99a3d18a1d04769c87784d8d51fe03f42da291c336e8e5a0e2e5f7cc7108cf40baebbee0813fa48ed9b4e2382e51fa2682f3ac4cddb6c4ff32dc79dfaf4e7b5&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=Ayjq6CBMGjJDbamv49c5fTA%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
+- [一文带你了解 Java 并发中的锁优化和线程池优化！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486831&idx=1&sn=69ca4c63d806f1d22579b3a3df52d3e7&chksm=fba6e56cccd16c7ada14fc23d052de0f2f02c4cc1560f65bdf2c2d473a8a1a0047b35738d911&mpshare=1&scene=1&srcid=0517vTFqkELMfZyIoN8Uk0Ky&sharer_sharetime=1589726717709&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=7696a76dfdc98da9b97c4eb2179ccc28bc842753067f804fa08ee938b7307bfdf685fc9c3901a2b2b9f260bf079c75b1f9bd8d1cbeb71dbf84157afc504b86b87f241940b348d50a0e84b2d1078e8b27&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AytqvL0rdirbI8iwxyaOLzs%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+
+## 10、阻塞队列
+?> **面试题：** 什么是阻塞队列，Java 中有哪些阻塞队列？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考
+- [聊聊并发（七）——Java 中的阻塞队列](https://www.infoq.cn/article/java-blocking-queue)
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
 
 阻塞队列 https://www.infoq.cn/article/java-blocking-queue
 
