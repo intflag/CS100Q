@@ -156,7 +156,7 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
     - <mark>&nbsp;workQueue&nbsp;</mark>：任务队列，用来存放任务，该队列的类型是阻塞队列。
     - <mark>&nbsp;threadFactory&nbsp;</mark>：线程池工厂，用来创建线程。通常在实际项目中，为了便于后期排查问题，在创建线程时需要为线程赋予一定的名称，通过线程池工厂，可以方便的为每一个创建的线程设置具有业务含义的名称。
     - <mark>&nbsp;handler&nbsp;</mark>：拒绝策略。当任务队列已满，线程数量达到 maximumPoolSize 后，线程池就不会再接收新的任务了，这个时候就需要使用拒绝策略来决定最终是怎么处理这个任务。默认情况下使用 AbortPolicy，表示无法处理新任务，直接抛出异常。在 ThreadPoolExecutor 类中定义了四个内部类，分别表示四种拒绝策略。我们也可以通过实现 RejectExecutionHandler 接口来实现自定义的拒绝策略。
-    - <mark>&nbsp;AbortPocily&nbsp;</mark>：不再接收新任务，直接抛出异常；<mark>&nbsp;CallerRunsPolicy&nbsp;</mark>：提交任务的线程自己处理。<mark>&nbsp;DiscardPolicy&nbsp;</mark>：不处理，直接丢弃；<mark>&nbsp;DiscardOldestPolicy&nbsp;</mark>：丢弃任务队列中排在最前面的任务，并执行当前任务。（排在队列最前面的任务并不一定是在队列中待的时间最长的任务，因为有可能是按照优先级排序的队列）
+    - <mark>&nbsp;AbortPolicy&nbsp;</mark>：不再接收新任务，直接抛出异常；<mark>&nbsp;CallerRunsPolicy&nbsp;</mark>：提交任务的线程自己处理。<mark>&nbsp;DiscardPolicy&nbsp;</mark>：不处理，直接丢弃；<mark>&nbsp;DiscardOldestPolicy&nbsp;</mark>：丢弃任务队列中排在最前面的任务，并执行当前任务。（排在队列最前面的任务并不一定是在队列中待的时间最长的任务，因为有可能是按照优先级排序的队列）
 
 ### 参考
 - [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
