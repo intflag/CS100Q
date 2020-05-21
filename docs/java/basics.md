@@ -21,7 +21,7 @@ PS：boolean 只有两个值：true、false，可以使用 1 bit 来存储，但
 - 从大类型到小类型，需要强制转换符实现强制转换。
 
 PS：不参与运算时整数可以直接赋值给byte、short、char，参与运算时需要强制转换。
-```
+```java
 short s1 = 4;
 short s2 = 4;
 short s3 = (short) (s1 + s2);
@@ -54,7 +54,7 @@ PS：在JDK1.5版本之后，引入了自动装箱和自动拆箱
 ### 缓冲池（常量池）
 
 面试题
-```
+```java
 Integer a1 = 127;
 Integer b1 = 127;
 System.out.println(a1 == b1);   //true
@@ -110,7 +110,7 @@ Java中，可以使用访问控制符来保护对类、变量、方法和构造�
 
 4、transient 修饰符，序列化的对象包含被 transient 修饰的实例变量时，java 虚拟机(JVM)跳过该特定的变量。该修饰符包含在定义变量的语句中，用来预处理类和变量的数据类型。
 
-```
+```java
 public transient int limit = 55;   // 不会持久化
 public int b; // 持久化
 ```
@@ -121,7 +121,7 @@ public int b; // 持久化
 
 一个 volatile 对象引用可能是 null。
 
-```
+```java
 public class ConcurrentTest {
 
     //不加volatile关键字会导致死锁
@@ -195,7 +195,7 @@ String 被声明为 `final`，因此它不可被继承。(Integer 等包装类�
 
 在 Java 8 中，String 内部使用 char 数组存储数据。
 
-```
+```java
 public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
     /** The value is used for character storage. */
     private final char value[];
@@ -204,7 +204,7 @@ public final class String implements java.io.Serializable, Comparable<String>, C
 
 在 Java 9 之后，String 类的实现改用 `byte` 数组存储字符串，同时使用 `coder` 来标识使用了哪种编码。
 
-```
+```java
 public final class String implements java.io.Serializable, Comparable<String>, CharSequence {
     /** The value is used for character storage. */
     private final byte[] value;
@@ -255,7 +255,7 @@ String 不可变性天生具备线程安全，可以在多个线程中安全地�
 
 下面示例中，s1 和 s2 采用 new String() 的方式新建了两个不同字符串，而 s3 和 s4 是通过 s1.intern() 方法取得同一个字符串引用。intern() 首先把 s1 引用的字符串放到 String Pool 中，然后返回这个字符串引用。因此 s3 和 s4 引用的是同一个字符串。
 
-```
+```java
 String s1 = new String("aaa");
 String s2 = new String("aaa");
 System.out.println(s1 == s2);           // false
@@ -266,7 +266,7 @@ System.out.println(s3 == s4);           // true
 
 如果是采用 "bbb" 这种字面量的形式创建字符串，会自动地将字符串放入 String Pool 中。
 
-```
+```java
 String s5 = "bbb";
 String s6 = "bbb";
 System.out.println(s5 == s6);  // true
@@ -286,7 +286,7 @@ System.out.println(s5 == s6);  // true
 - 而使用 new 的方式会在堆中创建一个字符串对象。
 创建一个测试类，其 main 方法中使用这种方式来创建字符串对象。
 
-```
+```java
 public class NewStringTest {
     public static void main(String[] args) {
         String s = new String("abc");
@@ -296,7 +296,7 @@ public class NewStringTest {
 
 使用 javap -verbose 进行反编译，得到以下内容：
 
-```
+```java
 // ...
 Constant pool:
 // ...
@@ -324,7 +324,7 @@ Constant pool:
 
 以下是 String 构造函数的源码，可以看到，在将一个字符串对象作为另一个字符串对象的构造函数参数时，并不会完全复制 value 数组内容，而是都会指向同一个 value 数组。
 
-```
+```java
 public String(String original) {
     this.value = original.value;
     this.hash = original.hash;
@@ -337,7 +337,7 @@ public String(String original) {
 ### 概述
 所有类都直接或者间接的继承自该类
 
-```
+```java
 public native int hashCode()
 
 public boolean equals(Object obj)
@@ -367,17 +367,17 @@ public final void wait() throws InterruptedException
 两个对象具有等价关系，需要满足以下五个条件：
 
 1）自反性
-```
+```java
 a.equals(a); // true
 ```
 
 2）对称性
-```
+```java
 a.equals(b) == b.equals(a); // true
 ```
 
 3）传递性
-```
+```java
 if (a.equals(b) && b.equals(c)) {
     a.equals(c); // true;
 }
@@ -386,14 +386,14 @@ if (a.equals(b) && b.equals(c)) {
 4）一致性
 
 多次调用 equals() 方法结果不变
-```
+```java
 a.equals(b) == b.equals(a); // true
 ```
 
 Ⅴ 与 null 的比较
 
 对任何不是 null 的对象 x 调用 x.equals(null) 结果都为 false
-```
+```java
 a.equals(null); // false;
 ```
 
@@ -401,7 +401,7 @@ a.equals(null); // false;
 - 对于基本类型，== 判断两个值是否相等，基本类型没有 equals() 方法。
 - 对于引用类型，== 判断两个变量是否引用同一个对象，而 equals() 判断引用的对象是否等价。
 
-```
+```java
 Integer x = new Integer(1);
 Integer y = new Integer(1);
 System.out.println(x.equals(y)); // true
@@ -414,7 +414,7 @@ System.out.println(x == y);      // false
 - 将 Object 对象进行转型；
 - 判断每个关键域是否相等。
 
-```
+```java
 public class EqualExample {
 
     private int x;
@@ -450,7 +450,7 @@ HashSet 和 HashMap 等集合类使用了 hashCode() 方法来计算对象应该
 
 下面的代码中，新建了两个等价的对象，并将它们添加到 HashSet 中。我们希望将这两个对象当成一样的，只在集合中添加一个对象。但是 EqualExample 没有实现 hashCode() 方法，因此这两个对象的哈希值是不同的，最终导致集合添加了两个等价的对象。
 
-```
+```java
 EqualExample e1 = new EqualExample(1, 1, 1);
 EqualExample e2 = new EqualExample(1, 1, 1);
 System.out.println(e1.equals(e2)); // true
@@ -464,7 +464,7 @@ System.out.println(set.size());   // 2
 
 R 一般取 31，因为它是一个奇素数，如果是偶数的话，当出现乘法溢出，信息就会丢失，因为与 2 相乘相当于向左移一位，最左边的位丢失。并且一个数与 31 相乘可以转换成移位和减法：`31*x == (x<<5)-x`，编译器会自动进行这个优化。
 
-```
+```java
 @Override
 public int hashCode() {
     int result = 17;
@@ -478,7 +478,7 @@ public int hashCode() {
 ### toString()
 默认返回 ToStringExample@4554617c 这种形式，其中 @ 后面的数值为散列码的无符号十六进制表示。
 
-```
+```java
 public class ToStringExample {
 
     private int number;
@@ -488,7 +488,7 @@ public class ToStringExample {
     }
 }
 ```
-```
+```java
 ToStringExample example = new ToStringExample(123);
 System.out.println(example.toString());
 ```
@@ -501,18 +501,18 @@ ToStringExample@4554617c
 
 clone() 是 Object 的 protected 方法，它不是 public，一个类不显式去重写 clone()，其它类就不能直接去调用该类实例的 clone() 方法。
 
-```
+```java
 public class CloneExample {
     private int a;
     private int b;
 }
 ```
-```
+```java
 CloneExample e1 = new CloneExample();
 // CloneExample e2 = e1.clone(); // 'clone()' has protected access in 'java.lang.Object'
 ```
 重写 clone() 得到以下实现：
-```
+```java
 public class CloneExample {
     private int a;
     private int b;
@@ -523,7 +523,7 @@ public class CloneExample {
     }
 }
 ```
-```
+```java
 CloneExample e1 = new CloneExample();
 try {
     CloneExample e2 = e1.clone();
@@ -539,7 +539,7 @@ java.lang.CloneNotSupportedException: CloneExample
 
 应该注意的是，clone() 方法并不是 Cloneable 接口的方法，而是 Object 的一个 protected 方法。Cloneable 接口只是规定，如果一个类没有实现 Cloneable 接口又调用了 clone() 方法，就会抛出 CloneNotSupportedException。
 
-```
+```java
 public class CloneExample implements Cloneable {
     private int a;
     private int b;
@@ -554,7 +554,7 @@ public class CloneExample implements Cloneable {
 2、浅拷贝
 
 拷贝对象和原始对象的引用类型引用同一个对象。
-```
+```java
 public class ShallowCloneExample implements Cloneable {
 
     private int[] arr;
@@ -580,7 +580,7 @@ public class ShallowCloneExample implements Cloneable {
     }
 }
 ```
-```
+```java
 ShallowCloneExample e1 = new ShallowCloneExample();
 ShallowCloneExample e2 = null;
 try {
@@ -594,7 +594,7 @@ System.out.println(e2.get(2)); // 222
 3、深拷贝
 
 拷贝对象和原始对象的引用类型引用不同对象。
-```
+```java
 public class DeepCloneExample implements Cloneable {
 
     private int[] arr;
@@ -625,7 +625,7 @@ public class DeepCloneExample implements Cloneable {
     }
 }
 ```
-```
+```java
 DeepCloneExample e1 = new DeepCloneExample();
 DeepCloneExample e2 = null;
 try {
@@ -639,7 +639,7 @@ System.out.println(e2.get(2)); // 2
 4、clone() 的替代方案
 
 使用 clone() 方法来拷贝一个对象即复杂又有风险，它会抛出异常，并且还需要类型转换。Effective Java 书上讲到，最好不要去使用 clone()，可以使用拷贝构造函数或者拷贝工厂来拷贝一个对象。
-```
+```java
 public class CloneConstructorExample {
 
     private int[] arr;
@@ -667,7 +667,7 @@ public class CloneConstructorExample {
     }
 }
 ```
-```
+```java
 CloneConstructorExample e1 = new CloneConstructorExample();
 CloneConstructorExample e2 = new CloneConstructorExample(e1);
 e1.set(2, 222);
@@ -687,7 +687,7 @@ System.out.println(e2.get(2)); // 2
 - 解析：将类的二进制数据中的符号引用替换为直接引用。
 
 3）初始化：参考下面说明。
-```
+```java
 Student s = new Student();
 
 1、Student.class加载进内存
@@ -715,7 +715,7 @@ JAVA反射机制是在运行状态中，对任意一个类，都能知道这个�
 - 静态属性class，锁对象。
 - Class类中的静态方法forName()，读取配置文件。
 
-```
+```java
 public class Person {
 
     public String name;     //故意设置为public
@@ -754,7 +754,7 @@ public class Person {
     }
 }
 ```
-```
+```java
 public class ReflectTest {
 
     public static void main(String[] args) throws ClassNotFoundException {
@@ -778,7 +778,7 @@ public class ReflectTest {
 > 以下示例为了减少篇幅，不捕获异常，采用抛出的方式
 
 1）通过反射获取带参构造方法并使用
-```
+```java
 @Test
 public void constructorTest() throws Exception {
     Class clazz = Class.forName("com.intflag.bean.Person");
@@ -791,7 +791,7 @@ public void constructorTest() throws Exception {
 }
 ```
 2）通过反射获取成员变量并使用
-```
+```java
 @Test
 public void fieldTest() throws Exception {
     Class clazz = Class.forName("com.intflag.bean.Person");
@@ -811,7 +811,7 @@ public void fieldTest() throws Exception {
 }
 ```
 3）通过反射获取成员方法并使用
-```
+```java
 @Test
 public void methodTest() throws Exception {
     Class clazz = Class.forName("com.intflag.bean.Person");
@@ -828,7 +828,7 @@ public void methodTest() throws Exception {
 ```
 
 4）通过反射越过泛型检查
-```
+```java
 @Test
 public void genericsTest() throws Exception {
     List<Integer> list = new ArrayList<>();
@@ -871,7 +871,7 @@ Throwable 可以用来表示任何可以作为异常抛出的类，分为两种�
 - throw：用在`方法体内`，跟的是`异常对象名`，只能`抛出一个`异常。
 
 ## 泛型
-```
+```java
 public class Generics <T> {
 
     private T value;
