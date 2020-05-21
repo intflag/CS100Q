@@ -158,7 +158,7 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
     - <mark>&nbsp;handler&nbsp;</mark>：拒绝策略。当任务队列已满，线程数量达到 maximumPoolSize 后，线程池就不会再接收新的任务了，这个时候就需要使用拒绝策略来决定最终是怎么处理这个任务。默认情况下使用 AbortPolicy，表示无法处理新任务，直接抛出异常。在 ThreadPoolExecutor 类中定义了四个内部类，分别表示四种拒绝策略。我们也可以通过实现 RejectExecutionHandler 接口来实现自定义的拒绝策略。
     - <mark>&nbsp;AbortPolicy&nbsp;</mark>：不再接收新任务，直接抛出异常；<mark>&nbsp;CallerRunsPolicy&nbsp;</mark>：提交任务的线程自己处理。<mark>&nbsp;DiscardPolicy&nbsp;</mark>：不处理，直接丢弃；<mark>&nbsp;DiscardOldestPolicy&nbsp;</mark>：丢弃任务队列中排在最前面的任务，并执行当前任务。（排在队列最前面的任务并不一定是在队列中待的时间最长的任务，因为有可能是按照优先级排序的队列）
 
-### 参考
+### 参考资料
 - [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
 - [面试官：来！聊聊线程池的实现原理以及使用时的问题](https://juejin.im/post/5dd2d2205188254a0e15b991)
 
@@ -632,7 +632,7 @@ Thread Name: pool-1-thread-1 after
 
 #### **参考回答**
 
-### 参考
+### 参考资料
 - [大白话聊聊Java并发面试问题之Java 8如何优化CAS性能？【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247484070&idx=1&sn=c1d49bce3c9da7fcc7e057d858e21d69&chksm=fba6eaa5ccd163b3a935303f10a54a38f15f3c8364c7c1d489f0b1aa1b2ef293a35c565d2fda&mpshare=1&scene=1&srcid=0517Jzf4pPxfShe3mewgFLDl&sharer_sharetime=1589726268906&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=042d77279f4726137744ab58f229534d4087388bec935765ec760d286f615f9ea1d6b3882cb6d1f37e76f5df4cab13ca69e46d865c0b9939ec0ed0952f9c9855f031fcd09e2b9d3c16edbe35c5593a4d&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AyOp4FTyqw0H66RJ7howCxc%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
 
 #### **源码详解**
@@ -647,7 +647,7 @@ Thread Name: pool-1-thread-1 after
 
 #### **参考回答**
 
-### 参考
+### 参考资料
 - [Java 并发高频面试题：聊聊你对 AQS 的理解？【石杉的架构笔记】](https://mp.weixin.qq.com/s/zdn54VeNSsabwDd3CBvSoA)
 
 #### **源码详解**
@@ -663,7 +663,8 @@ Thread Name: pool-1-thread-1 after
 
 #### **参考回答**
 
-### 参考
+### 参考资料
+- [不可不说的Java“锁”事](https://tech.meituan.com/2018/11/15/java-lock.html)
 - [不懂什么是 Java 中的锁？看看这篇你就明白了！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486820&idx=1&sn=cdd3ca69c68383a38a48bfd74124f0af&chksm=fba6e567ccd16c71438fe62f40fee9f55746453e91bc12a2c2be47272de84aa1a20dc541c63d&mpshare=1&scene=1&srcid=0517yoHuUp41wrvwCzbB6oaU&sharer_sharetime=1589727926343&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=1f1e787ff7a3f9028b14959bba2dc365d99a3d18a1d04769c87784d8d51fe03f42da291c336e8e5a0e2e5f7cc7108cf40baebbee0813fa48ed9b4e2382e51fa2682f3ac4cddb6c4ff32dc79dfaf4e7b5&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=Ayjq6CBMGjJDbamv49c5fTA%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
 - [一文带你了解 Java 并发中的锁优化和线程池优化！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486831&idx=1&sn=69ca4c63d806f1d22579b3a3df52d3e7&chksm=fba6e56cccd16c7ada14fc23d052de0f2f02c4cc1560f65bdf2c2d473a8a1a0047b35738d911&mpshare=1&scene=1&srcid=0517vTFqkELMfZyIoN8Uk0Ky&sharer_sharetime=1589726717709&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=7696a76dfdc98da9b97c4eb2179ccc28bc842753067f804fa08ee938b7307bfdf685fc9c3901a2b2b9f260bf079c75b1f9bd8d1cbeb71dbf84157afc504b86b87f241940b348d50a0e84b2d1078e8b27&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AytqvL0rdirbI8iwxyaOLzs%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
 
@@ -680,7 +681,7 @@ Thread Name: pool-1-thread-1 after
 
 #### **参考回答**
 
-### 参考
+### 参考资料
 - [聊聊并发（七）——Java 中的阻塞队列](https://www.infoq.cn/article/java-blocking-queue)
 
 #### **源码详解**
@@ -690,7 +691,16 @@ Thread Name: pool-1-thread-1 after
 <!-- tabs:end -->
 
 
-阻塞队列 https://www.infoq.cn/article/java-blocking-queue
-
-至少得知道aba，cas，aqs，unsafe，volatile，sync，常见的各种lock，死锁，线程池参数和如何合理的去设置，你必须明白自旋，阻塞，死锁和它如何去定位，oom如何定位问题，cpu过高如何定位等基本的操作，你可以没有生产调试经验，但不代表你可以不会top，jps，jstack，jmap这些可能会问的东西。以及可能衍生的jmm模型和mesi协议等。
+至少得知道
+aba
+cas
+aqs
+unsafe
+volatile
+sync，常见的各种lock，死锁，
+线程池参数和如何合理的去设置，
+你必须明白自旋，阻塞，死锁和它如何去定位，
+oom如何定位问题，cpu过高如何定位等基本的操作，
+你可以没有生产调试经验，但不代表你可以不会top，jps，jstack，jmap这些可能会问的东西。
+以及可能衍生的jmm模型和mesi协议等。
 
