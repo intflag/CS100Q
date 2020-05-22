@@ -234,7 +234,8 @@ G1 把堆划分成多个大小相等的独立区域（Region），新生代和�
 ## 5、类加载机制
 ?> **面试题：** 一个 Java 类是经过那几个步骤加载到 JVM 中的？
 
-
+### 参考资料
+- [面试官对于JVM类加载机制的猛烈炮火，你能顶住吗？【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247485642&idx=1&sn=14542b61ed71e94732f71ab4956049d4&chksm=fba6e0c9ccd169df1329d12712db786076d1da4aaed6a07dca6d45ef3321d6ac6ab27485ad77&mpshare=1&scene=1&srcid=0522QVPE50kBGwFSjDyyOUVQ&sharer_sharetime=1590160642289&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=234ddfccebaed6d3de40636d141901de96ca03cb8f267d0848296f81fc8a3a0bc99846409c200e17a5ebfc82d2a97d13d65178bfa46582c3441573f46e88e0483be368dd74d08364020d64300999ea04&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AwOKF7muaLBI4q7MmhLpmVg%3D&pass_ticket=Ymvfb4S%2Bj%2FEZLlpZpZ9MIKY7FY4b2NSv9nuifvFmC5UNwlNncYmf9nJtN%2BF0jb5X)
 
 
 
