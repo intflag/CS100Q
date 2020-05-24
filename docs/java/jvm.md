@@ -245,7 +245,7 @@ G1 把堆划分成多个大小相等的独立区域（Region），新生代和�
     - 将该字节流表示的静态存储结构转换为方法区的运行时存储结构；
     - 在内存中生成一个代表该类的 Class 对象，作为方法区中该类各种数据的访问入口；
 - <mark>&nbsp;验证&nbsp;</mark>：根据 Java 虚拟机规范，来验证你加载进来的 .class 字节码文件中的内容是否符合规范，防止字节码被篡改；
-- <mark>&nbsp;准备&nbsp;</mark>：为静态成员变量分配内存并设置初始值，普通成员变量不会在准备阶段分配内存，它会在实例化时随对象一起被分配在堆中，应该注意到，实例化不是类加载的一个过程，类加载发生在所有实例化操作之前，并且类加载只进行一次，实例化可以进行多次；
+- <mark>&nbsp;准备&nbsp;</mark>：为类变量（静态成员变量）分配内存并设置初始值，普通成员变量不会在准备阶段分配内存，它会在实例化时随对象一起被分配在堆中，应该注意到，实例化不是类加载的一个过程，类加载发生在所有实例化操作之前，并且类加载只进行一次，实例化可以进行多次；
 - <mark>&nbsp;解析&nbsp;</mark>：将常量池的符号引用替换为直接引用；
 - <mark>&nbsp;初始化&nbsp;</mark>：给类变量（静态成员变量）真正赋值一个值，初始化阶段是虚拟机执行类构造器 `<clinit>()` 方法的过程，`<clinit>()` 方法是由编译器自动收集类中所有类变量的赋值动作和静态语句块中的语句合并产生的，编译器收集的顺序由语句在源文件中出现的顺序决定；
 - `<clinit>()` 方法是线程安全的，如果多个线程同时初始化一个类，只会有一个线程执行这个类的 `<clinit>()` 方法，其它线程都会阻塞等待，直到活动线程执行 `<clinit>()` 方法完毕。如果在一个类的 `<clinit>()` 方法中有耗时的操作，就可能造成多个线程阻塞，在实际过程中此种阻塞很隐蔽；
@@ -263,8 +263,8 @@ G1 把堆划分成多个大小相等的独立区域（Region），新生代和�
 - JVM的类加载器是有亲子层级结构的，就是说启动类加载器是最上层的，扩展类加载器在第二层，第三层是应用程序类加载器，最后一层是自定义类加载器；
 - 双亲委派模型：假设你的应用程序类加载器需要加载一个类，他首先会委派给自己的父类加载器去加载，最终传导到顶层的类加载器去加载，但是如果父类加载器在自己负责加载的范围内，没找到这个类，那么就会下推加载权利给自己的子类加载器。
 
-### 3）整理流程图
-- [](http://images.intflag.com/jvm20.png)
+### 3）整体流程图
+![](http://images.intflag.com/jvm20.png)
 
 ### 参考资料
 - [面试官对于JVM类加载机制的猛烈炮火，你能顶住吗？【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247485642&idx=1&sn=14542b61ed71e94732f71ab4956049d4&chksm=fba6e0c9ccd169df1329d12712db786076d1da4aaed6a07dca6d45ef3321d6ac6ab27485ad77&mpshare=1&scene=1&srcid=0522QVPE50kBGwFSjDyyOUVQ&sharer_sharetime=1590160642289&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=234ddfccebaed6d3de40636d141901de96ca03cb8f267d0848296f81fc8a3a0bc99846409c200e17a5ebfc82d2a97d13d65178bfa46582c3441573f46e88e0483be368dd74d08364020d64300999ea04&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AwOKF7muaLBI4q7MmhLpmVg%3D&pass_ticket=Ymvfb4S%2Bj%2FEZLlpZpZ9MIKY7FY4b2NSv9nuifvFmC5UNwlNncYmf9nJtN%2BF0jb5X)
@@ -550,7 +550,3 @@ public class FileSystemClassLoader extends ClassLoader {
 
 各种oom的种类，
 jvm调优经验，没有你也要做过，自己去设置启动参数，知道常见参数的含义，
-
-类加载过程，
-双亲委派，
-什么时候young gc，full gc，各种情况进入老年代的方式，你知道的越多越好，因为吹起来就越自信，举个例子，逃逸分析是什么？markword里面有什么？
