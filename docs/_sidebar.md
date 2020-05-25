@@ -18,15 +18,17 @@
 
 - 数据库
 
+    - [Redis](database/redis.md)
+
     - [MySQL](database/mysql.md)
+
+    - [Greenplum](database/gp.md)
 
 - 框架
 
     - [Spring](frame/spring.md)
 
     - [MyBatis](frame/mybatis.md)
-
-    - [Redis](frame/redis.md)
 
     - [Kafka](frame/kafka.md)
 
