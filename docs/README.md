@@ -12,4 +12,5 @@
 ### 致谢
 感谢以下技术大牛的博客在我学习过程中的帮助。
 - [CS-Notes](https://github.com/CyC2018/CS-Notes)
+- [JavaGuide](https://github.com/Snailclimb/JavaGuide)
 - [Java Core Sprout：处于萌芽阶段的 Java 核心知识库](https://crossoverjie.top/JCSprout/)
