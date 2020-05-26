@@ -7,14 +7,14 @@
 #### **参考回答**
 
 ### 1）Redis简介
-- Redis 是一个 key-value 数据库，和传统的数据库不同的是，它的数据可以存在内存中，所以读写速度非常快，因此经常用它来缓存数据；
+- Redis 是一个 key-value 数据库，和传统的数据库不同的是，它的数据可以存在内存中，所以读写速度非常快，因此经常用它来对数据进行缓存；
 - 除了保存在内存中还可以持久化到磁盘上，另外 Redis 也经常用来做分布式锁；
 - Redis 提供多种数据类型支持不同的业务场景，还支持事务、LUA脚本、LRU驱动事件、多种集群方案。
 
 ### 2）Redis 优势
 - <mark>&nbsp;高性能&nbsp;</mark>：通常情况下，一些频繁使用且很少更新的数据会用 Redis 进行缓存，当第一次访问时会从数据库加载，之后访问会直接从 Redis 中获取，数据库更新时同步更新 Redis 中的数据，采用这种方式可以大大提高程序的性能；
 - <mark>&nbsp;高并发&nbsp;</mark>：因为 Redis 中的数据是存储在内存中的，直接操作内存能够承受的请求是远远大于直接访问数据库的，所以可以实现高并发；
-- <mark>&nbsp;分布式&nbsp;</mark>：缓存分为本地缓存和分布式缓存，Redis 可以支持分布式缓存，多个实例共用一份缓存数据，具有一致性。
+- <mark>&nbsp;分布式&nbsp;</mark>：缓存分为本地缓存和分布式缓存，Redis 可以支持分布式缓存，多个实例共用一份缓存，数据拥有一致性。
 
 #### **源码详解**
 
@@ -50,12 +50,169 @@
 <!-- tabs:start -->
 
 #### **参考回答**
+### 1）String
+- 常规的 key-value 缓存，key 是字符串，value 可以是字符串也可以是数字；
+- 常用命令：set、get、mget、incr、decr
 
+### 2）Hash
+- 保存哈希表，适合存储对象；
+- 常用命令：hset、hget、hgetall
 
+### 3）List
+- Redis List 相当于一个队列，和 Java 中的 LinkedList，其实他的实现也是一个双向链表，支持反向查找和遍历；
+- 另外可以通过 lrange 命令，就是从某个元素开始读取多少个元素，可以基于 list 实现分页查询，这个很棒的一个功能，基于 redis 实现简单的高性能分页，可以做类似微博那种下拉不断分页的东西（一页一页的往下走），性能高。
+- 常用命令：lpush、rpush、lpop、rpop、lrange
+
+### 4）Set
+- Redis 的 Set 是 String 类型的无序集合。集合成员是唯一的，这就意味着集合中不能出现重复的数据；
+- Redis 中集合是通过哈希表实现的，所以添加，删除，查找的复杂度都是 O(1)；
+- Set 可以实现交集、并集、差集的操作。比如：在微博应用中，可以将一个用户所有的关注人存在一个集合中，将其所有粉丝存在一个集合，Redis可以非常方便的实现如共同关注、共同粉丝、共同喜好等功能，求交集可以用 `sinterstore` 命令。
+
+### 5）Sorted Set
 
 #### **源码详解**
 
+### 1）String
+```bash
+127.0.0.1:6379> set hello_redis "Hello Redis"
+OK
+127.0.0.1:6379> keys *
+1) "hello_redis"
 
+127.0.0.1:6379> get hello_redis
+"Hello Redis"
+
+127.0.0.1:6379> set hello_int 1
+OK
+127.0.0.1:6379> get hello_int
+"1"
+127.0.0.1:6379> incr hello_int
+(integer) 2
+127.0.0.1:6379> get hello_int
+"2"
+127.0.0.1:6379> decr hello_int
+(integer) 1
+127.0.0.1:6379> get hello_int
+"1"
+127.0.0.1:6379> mget hello_redis hello_int
+1) "Hello Redis"
+2) "1"
+```
+### 2）Hash
+```bash
+127.0.0.1:6379> hmset user_map name "tom" age 18 local "beijing"
+OK
+
+127.0.0.1:6379> HGETAll user_map
+1) "name"
+2) "tom"
+3) "age"
+4) "18"
+5) "local"
+6) "beijing"
+
+127.0.0.1:6379> hget user_map name
+"tom"
+127.0.0.1:6379> HSET user_map name "tom2"
+(integer) 0
+127.0.0.1:6379> hget user_map name
+"tom2"
+127.0.0.1:6379> HSET user_map age 25
+(integer) 0
+127.0.0.1:6379> hget user_map age
+"25"
+```
+
+### 3）List
+```bash
+127.0.0.1:6379> lpush hello_list "zhangsan"
+(integer) 1
+127.0.0.1:6379> lpush hello_list "lisi"
+(integer) 2
+127.0.0.1:6379> lpush hello_list "wangwu" "zhangliu"
+(integer) 4
+
+127.0.0.1:6379> llen hello_list
+(integer) 4
+
+127.0.0.1:6379> lindex hello_list 2
+"lisi"
+
+127.0.0.1:6379> lpop hello_list
+"zhangliu"
+
+127.0.0.1:6379> llen hello_list
+(integer) 3
+
+127.0.0.1:6379> lset hello_list 2 "tom"
+OK
+
+127.0.0.1:6379> lindex hello_list 2
+"tom"
+```
+
+### 4）Set
+```bash
+127.0.0.1:6379> sadd hello_set redis mysql oracle greenplum
+(integer) 4
+
+127.0.0.1:6379> scard hello_set
+(integer) 4
+
+127.0.0.1:6379> smembers hello_set
+1) "mysql"
+2) "redis"
+3) "greenplum"
+4) "oracle"
+
+127.0.0.1:6379> sismember hello_set mysql
+(integer) 1
+
+127.0.0.1:6379> sismember hello_set oracle
+(integer) 1
+
+127.0.0.1:6379> sismember hello_set zookeeper
+(integer) 0
+
+127.0.0.1:6379> srem hello_set redis
+(integer) 1
+
+127.0.0.1:6379> smembers hello_set
+1) "mysql"
+2) "greenplum"
+3) "oracle"
+```
+
+### 5）Sorted Set
+```bash
+127.0.0.1:6379> zadd hello_sorted 2 redis 1 mysql 4 greenplum 3 oracle
+(integer) 4
+
+127.0.0.1:6379> zcard hello_sorted
+(integer) 4
+
+127.0.0.1:6379> zrange hello_sorted 1 4
+1) "redis"
+2) "oracle"
+3) "greenplum"
+
+127.0.0.1:6379> zrange hello_sorted 1 5
+1) "redis"
+2) "oracle"
+3) "greenplum"
+
+127.0.0.1:6379> zrank hello_sorted mysql
+(integer) 0
+
+127.0.0.1:6379> zrank hello_sorted redis
+(integer) 1
+
+127.0.0.1:6379> zrank hello_sorted mysql
+(integer) 0
+
+127.0.0.1:6379> zrank hello_sorted oracle
+(integer) 2
+```
 
 <!-- tabs:end -->
 
