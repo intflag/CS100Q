@@ -245,12 +245,47 @@ OK
 <!-- tabs:start -->
 
 #### **参考回答**
+- 在 Redis 配置文件 `redis.conf` 中有一个配置参数 `maxmemory`，通过这个参数可以设置 Redis 能使用的最大内存，如果不配置默认为 0，在64位操作系统下不限制内存大小，在32位操作系统下最多使用3GB内存；
+- 如果内存被用完了，Redis 会使用配置的内存淘汰策略对数据进行淘汰，4.0 版本以后共有 8 种策略；
+- <mark>&nbsp;noeviction&nbsp;</mark>：默认策略，对于写请求不再提供服务，直接返回错误（DEL请求和部分特殊请求除外）；
+- <mark>&nbsp;volatile-lru&nbsp;</mark>：在设置了过期时间的 key 中使用 LRU 算法进行淘汰，Redis使用的是近似 LRU 算法，该算法通过随机采样法淘汰数据，每次随机出5（默认）个 key，从里面淘汰掉最近最少使用的 key，在 redis.conf 中有一个叫做 maxmemory-samples 的参数可以控制随机的个数，这个参数越大，越接近严格的 LRU 算法；
+- <mark>&nbsp;volatile-random&nbsp;</mark>：在设置了过期时间的 key 中随机选择数据进行淘汰；
+- <mark>&nbsp;volatile-lfu&nbsp;</mark>：LFU 算法是 Redis4.0 里面新加的一种淘汰策略。它的全称是 Least Frequently Used，它的核心思想是根据 key 的最近被访问的频率进行淘汰，很少被访问的优先被淘汰，被访问的多的则被留下来；
+- LFU 算法能更好的表示一个 key 被访问的热度，假如你使用的是 LRU 算法，一个 key 很久没有被访问到，只刚刚是偶尔被访问了一次，那么它就被认为是热点数据，不会被淘汰，而有些 key 将来是很有可能被访问到的则被淘汰了，如果使用 LFU 算法则不会出现这种情况，因为使用一次并不会使一个key成为热点数据；
+- <mark>&nbsp;volatile-ttl&nbsp;</mark>：在设置了过期时间的 key 中挑选将要过期的数据进行淘汰；
+- <mark>&nbsp;allkeys-lru&nbsp;</mark>：在所有 key 中使用 LRU 算法进行淘汰；
+- <mark>&nbsp;allkeys-random&nbsp;</mark>：在所有 key 中随机选择数据进行淘汰；
+- <mark>&nbsp;allkeys-lfu&nbsp;</mark>：在所有 key 中使用 LFU 算法进行淘汰。
 
-
+### 参考资料
+- [redis 内存淘汰机制（MySQL里有2000w数据，Redis中只存20w的数据，如何保证Redis中的数据都是热点数据?）](https://snailclimb.gitee.io/javaguide/#/docs/database/Redis/Redis?id=redis-%e5%86%85%e5%ad%98%e6%b7%98%e6%b1%b0%e6%9c%ba%e5%88%b6mysql%e9%87%8c%e6%9c%892000w%e6%95%b0%e6%8d%ae%ef%bc%8credis%e4%b8%ad%e5%8f%aa%e5%ad%9820w%e7%9a%84%e6%95%b0%e6%8d%ae%ef%bc%8c%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81redis%e4%b8%ad%e7%9a%84%e6%95%b0%e6%8d%ae%e9%83%bd%e6%98%af%e7%83%ad%e7%82%b9%e6%95%b0%e6%8d%ae)
+- [Redis的内存淘汰策略](https://juejin.im/post/5d674ac2e51d4557ca7fdd70)
 
 #### **源码详解**
 
+### 1）noeviction 默认策略
 
+测试将 maxmemory 调到 10kb 后写入数据会发生什么
+
+```bash
+# maxmemory <bytes>
+maxmemory 10kb
+```
+
+重启 Redis 后写入数据
+
+```bash
+127.0.0.1:6379> CONFIG GET maxmemory-policy
+1) "maxmemory-policy"
+2) "noeviction"
+
+127.0.0.1:6379> CONFIG GET maxmemory
+1) "maxmemory"
+2) "10240"
+
+127.0.0.1:6379> hmset user_map2 name "tom" age 18 local "beijing" local2 "beijing" local3 "beijing" local4 "beijing" local5 "beijing" local6 "beijing" local7 "beijing" local8 "beijing" local9 "beijing" local10 "beijing" local11 "beijing" local12 "beijing" local13 "beijing" local14 "beijing" local15 "beijing" local16 "beijing" local17 "beijing"
+(error) OOM command not allowed when used memory > 'maxmemory'.
+```
 
 <!-- tabs:end -->
 
