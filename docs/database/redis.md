@@ -240,6 +240,7 @@ OK
 <!-- tabs:end -->
 
 ## 5、内存淘汰机制
+
 ?> **面试题：** 你知道 Redis 的内存淘汰机制吗？
 
 <!-- tabs:start -->
@@ -289,7 +290,41 @@ maxmemory 10kb
 
 <!-- tabs:end -->
 
+## 6、持久化机制
 
+?> **面试题：** 谈一谈你对 Redis 持久化机制的理解？
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+- Redis 的数据全部存储在内存中，如果突然宕机，数据就会全部丢失，因此必须有一套机制来保证 Redis 的数据不会因为故障而丢失，这种机制就是 Redis 的持久化机制，它会将内存中的数据库状态保存到磁盘中；
+- Redis 通常有两种持久化方式，一种叫做 <mark>&nbsp;RDB&nbsp;</mark>，默认也是这种，另一种叫做 <mark>&nbsp;AOF&nbsp;</mark>。
+
+### 1）RDB
+- 通过建立快照来保存数据在某个时间点上的副本，可以对快照备份，也可以把快照同步到其他服务器，还可以根据快照进行数据恢复；
+- RDB 是 Redis 的默认持久化方式，默认配置是：
+    - <mark>&nbsp;save 900 1&nbsp;</mark>：在900秒（15分钟）之后，如果至少有1个key发生变化，Redis就会自动触发BGSAVE命令创建快照；
+    - <mark>&nbsp;save 300 10&nbsp;</mark>：在300秒（5分钟）之后，如果至少有10个key发生变化，Redis就会自动触发BGSAVE命令创建快照；
+    - <mark>&nbsp;save 60 10000&nbsp;</mark>：在60秒（1分钟）之后，如果至少有10000个key发生变化，Redis就会自动触发BGSAVE命令创建快照。
+
+### 2）AOF
+- AOF 是 append-only file 的缩写，就是只追加文件，每执行一条会改变 Redis 中数据的命令时，就会把这个命令写入硬盘中的 AOF 文件；
+- Redis 默认没有开启 AOF 持久化，redis.conf 配置参数 <mark>&nbsp;appendonly&nbsp;</mark> 默认为 no，如果设置为 yes 就代表开启，AOF 文件默认名称为 appendonly.aof，可以配置，存储位置和 RDB 一样，是通过配置项 <mark>&nbsp;dir&nbsp;</mark> 设置的；
+- Redis 的 AOF 持久化具体有三种方式：
+    - <mark>&nbsp;appendfsync always&nbsp;</mark>：每次有数据修改发生时都会写入AOF文件,这样会严重降低Redis的速度；
+    - <mark>&nbsp;appendfsync everysec&nbsp;</mark>：每秒钟同步一次，显示地将多个写命令同步到硬盘，默认是这种，同时为了兼顾数据和写入性能，也推荐这种方式，让 Redis 每秒同步一次 AOF 文件，Redis 性能几乎没受到任何影响，而且这样即使出现系统崩溃，用户最多只会丢失一秒之内产生的数据；
+    - <mark>&nbsp;appendfsync no&nbsp;</mark>：让操作系统决定何时进行同步。
+
+### 3）混合持久化
+- Redis 4.0 开始支持 RDB 和 AOF 的混合持久化（默认关闭，可以通过配置项 aof-use-rdb-preamble 开启）；
+- 如果把混合持久化打开，AOF 重写的时候就直接把 RDB 的内容写到 AOF 文件开头，这样做的好处是可以结合 RDB 和 AOF 的优点, 快速加载同时避免丢失过多的数据，当然缺点也是有的，AOF 里面的 RDB 部分是压缩格式不再是 AOF 格式，可读性较差。
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
 
 Redis，必须会的，我这方便还算懂得多点，可以和面试官大战几个回合吧，应该不至于上来被打趴下，
 

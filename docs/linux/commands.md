@@ -8,6 +8,7 @@
 |查看进程|ps -ef \| grep 程序名称|例：ps -ef \| grep HelloApplication|
 |查看端口占用情况|netstat -nltp|可以在后面使用grep命令进行过滤|
 |查看与目标主机端口连通情况|telnet 主机IP 端口|例：telnet 127.0.0.1 8080|
+|创建tar包|tar -cf archive.tar foo bar|从文件 foo 和 bar 创建归档文件 archive.tar|
 |解压tar包|tar -zxvf xxx.tar.gz -C 保存路径|.tar文件不用加z命令|
 |解压zip包|unzip xxx.zip -d 保存路径|unzip xxx.zip -d 保存路径|
 |建立多级目录|mkdir -p /opt/m1/m2/m3|当目录不存在时会建立| 

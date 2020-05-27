@@ -9,7 +9,6 @@
 - 数据结构与算法
 
     - [LeetCode必刷清单](algorithm/leetCodeList.md)
-
     - [经典数据结构和算法](algorithm/classical.md)
 
 - 程序设计
@@ -19,21 +18,15 @@
 - 数据库
 
     - [Redis](database/redis.md)
-
     - [MySQL](database/mysql.md)
-
     - [Greenplum](database/gp.md)
 
 - 框架
 
     - [Spring](frame/spring.md)
-
     - [MyBatis](frame/mybatis.md)
-
     - [Kafka](frame/kafka.md)
-
     - [Zookeeper](frame/zookeeper.md)
-
     - [Netty](frame/netty.md)
 
 - 计算机网络
