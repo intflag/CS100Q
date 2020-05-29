@@ -213,7 +213,7 @@ CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的�
 
 #### **参考回答**
 
-- 在 Java 中，优先级队列 `PriorityQueue` 底层是用`堆`实现的，需要先[了解堆这种数据结构](algorithm/classical?id=_1、如何理解堆，它的应用场景有哪些？)。
+- 在 Java 中，优先级队列 `PriorityQueue` 底层是用`堆`实现的，需要先[了解堆这种数据结构](algorithm/classical?id=_1、堆)。
 - PriorityQueue 是在 JDK 1.5 引入的，无参构造默认自然排序，有参构造需要传入一个 Comparator 比较器，它不允许空值，也不支持不可比较的对象，往队列中添加的对象要么实现 `Comparable` 接口，重写 `compareTo` 方法，要么根据对象的类型创建一个比较器 `Comparator`，实现 `compare` 方法，否则会报错；
 - 优先队列默认容量是 11，在使用 add 方法添加元素时，真正调用的是 offer 方法，如果发现队列元素个数大于等于队列容量时，就会调用 grow 方法进行扩容，扩容会判断旧容量是否小于 64，如果小于，会扩容 2 * oldCapacity + 2，否则会扩容 1.5 倍，然后会使用 Arrays.copyOf 方法拷贝数据；
 - offer 入队、poll 出队、removeAt 删除指定位置元素方法的时间复杂度都是 O(logn)，remove 删除指定元素方法为 O(n)，peek 方法为 O(1)；

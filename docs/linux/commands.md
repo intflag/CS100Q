@@ -1,18 +1,20 @@
 # 工作中常用的Linux命令
 ## 常用命令
-|功能|命令|说明|
-|:----|:----|:----|
-|时间逆序查看|ls -lrt||
-|推送文件到目标主机|scp 文件路径 主机用户名@IP地址:存放路径|例：scp /opt/soft/nginx-0.5.38.tar.gz root@10.10.10.10:/opt/soft/|
-|从目标主机拉取文件|scp 主机用户名@IP地址:文件路径 存放路径|例：scp root@10.10.10.10:/opt/soft/test.xml ./|
-|查看进程|ps -ef \| grep 程序名称|例：ps -ef \| grep HelloApplication|
-|查看端口占用情况|netstat -nltp|可以在后面使用grep命令进行过滤|
-|查看与目标主机端口连通情况|telnet 主机IP 端口|例：telnet 127.0.0.1 8080|
-|创建tar包|tar -cf archive.tar foo bar|从文件 foo 和 bar 创建归档文件 archive.tar|
-|解压tar包|tar -zxvf xxx.tar.gz -C 保存路径|.tar文件不用加z命令|
-|解压zip包|unzip xxx.zip -d 保存路径|unzip xxx.zip -d 保存路径|
-|建立多级目录|mkdir -p /opt/m1/m2/m3|当目录不存在时会建立| 
-|查找文件|find 查找路径 文件名称|例：find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中|
+|功能|命令|
+|:----|:----|
+|时间逆序查看|ls -lrt|
+|推送文件到目标主机|scp /opt/soft/nginx-0.5.38.tar.gz root@10.10.10.10:/opt/soft/|
+|从目标主机拉取文件|scp root@10.10.10.10:/opt/soft/test.xml ./|
+|查看进程|ps -ef \| grep 程序名称|
+|查看端口占用情况|netstat -nltp|
+|查看与目标主机端口连通情况|telnet 127.0.0.1 8080|
+|创建tar包|tar -cf archive.tar foo bar|
+|解压tar包|tar -zxvf xxx.tar.gz -C 保存路径|
+|解压zip包|unzip xxx.zip -d 保存路径|
+|建立多级目录|mkdir -p /opt/m1/m2/m3|
+|查找文件|find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中|
+|查看Linux程序的工作目录|pwdx 266469|
+|查看文件夹大小|du -sh /opt|
 
 ## 常用脚本
 ### 1、快速修改tomcat端口
