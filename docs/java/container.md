@@ -75,7 +75,7 @@
 
 #### **参考回答**
 
-- 不使用 Vector 的情况下，实现线程安全的 ArrayList 有两种方法，一种是使用 Collections.synchronizedList() 得到一个线程安全的 ArrayList，另一种是使用 concurrent 并发包下的 CopyOnWriteArrayList 类；
+- 不使用 Vector 的情况下，实现线程安全的 ArrayList 有两种方法，一种是使用 <mark>&nbsp;Collections.synchronizedList()&nbsp;</mark> 得到一个线程安全的 ArrayList，另一种是使用 concurrent 并发包下的 <mark>&nbsp;CopyOnWriteArrayList&nbsp;</mark> 类；
 - CopyOnWriteArrayList 是读写分离的，写操作在一个复制的数组上进行，读操作还是在原始数组中进行，读写分离，互不影响；
 - 写操作前会用 ReentrantLock 加锁，写入后会把引用指向新数组，然后在 finally 里面释放锁；
 CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的场景，同时它也有缺陷，比如内存占用是原来的两倍左右，还有可能会导致数据不一致的现象（读操作的时候写操作还没有同步到数组中），所以不适合内存敏感以及对实时性要求很高的场景。
