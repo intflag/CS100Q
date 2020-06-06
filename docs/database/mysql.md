@@ -57,8 +57,84 @@ mysql> show engines;
 
 <!-- tabs:end -->
 
-## 3、事务及隔离级别
+## 3、事务
+?> **面试题：** 什么是事务？事务的特性是什么？并发事务会带来哪些问题？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+- [事务【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e4%bb%80%e4%b9%88%e6%98%af%e4%ba%8b%e5%8a%a1)
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+## 4、隔离级别
+?> **面试题：** MySQL 隔离级别有哪些，默认的是什么？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+- [事务隔离级别有哪些?MySQL的默认隔离级别是?【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e4%ba%8b%e5%8a%a1%e9%9a%94%e7%a6%bb%e7%ba%a7%e5%88%ab%e6%9c%89%e5%93%aa%e4%ba%9bmysql%e7%9a%84%e9%bb%98%e8%ae%a4%e9%9a%94%e7%a6%bb%e7%ba%a7%e5%88%ab%e6%98%af)
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+## 5、锁机制与 InnoDB 锁算法
+?> **面试题：** MySQL 有哪些锁？InnoDB 锁算法原理是什么？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+- [锁机制与InnoDB锁算法【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e9%94%81%e6%9c%ba%e5%88%b6%e4%b8%8einnodb%e9%94%81%e7%ae%97%e6%b3%95)
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
 ## 6、SQL 执行细节
-## 5、SQL 优化
-## 4、分库分表
-## 7、MySQL 部署
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+- [一条SQL语句在MySQL中如何执行的【JavaGuide】](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485097&idx=1&sn=84c89da477b1338bdf3e9fcd65514ac1&chksm=cea24962f9d5c074d8d3ff1ab04ee8f0d6486e3d015cfd783503685986485c11738ccb542ba7&token=79317275&lang=zh_CN#rd)
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+## 7、SQL 优化
+## 8、分库分表
+?> **面试题：** 项目中有分库分表吗？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+- [大表优化【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e5%a4%a7%e8%a1%a8%e4%bc%98%e5%8c%96)
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+## 9、MySQL 部署
