@@ -121,6 +121,21 @@ mysql> show engines;
 <!-- tabs:end -->
 
 ## 7、SQL 优化
+?> **面试题：** 对 SQL 做过优化吗？怎么做的？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+- [一次非常有意思的sql优化经历【风过无痕的博客】](https://www.cnblogs.com/tangyanbo/p/4462734.html)
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
 ## 8、分库分表
 ?> **面试题：** 项目中有分库分表吗？
 <!-- tabs:start -->
