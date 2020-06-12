@@ -445,5 +445,6 @@ maxmemory 10kb
 ?> **面试题：** Redis 有哪几种部署方式？
 
 ### 参考资料
+- [Redis的几种部署模式概述](https://mp.weixin.qq.com/s/mc5sK8bRtl1IqZsoVnGO_w)
 - [Redis 4 种模式简单了解](https://www.zhangaoo.com/article/redis-cluster-sentinel)
 - [这可能是目前最全的Redis高可用技术解决方案总结](https://juejin.im/entry/5b7a27ade51d4538d5174b83)
