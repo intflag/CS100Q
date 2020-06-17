@@ -168,7 +168,7 @@ d7dcb79f447b        nginx                            "nginx -g 'daemon ..."   22
 ### 1）建立目录映射
 ```bash
 # 外部主机中建立目录
-sudo mkdir -p ./nginx/www ./nginx/logs ./nginx/conf
+sudo mkdir -p ./nginx/www ./nginx/logs ./nginx/conf 
 ```
 
 ### 2）拷贝容器 Nginx 的配置文件
@@ -179,7 +179,13 @@ sudo docker cp d7c2dfc6cd87:/etc/nginx/nginx.conf /data1/nginx/conf/
 ### 3）重新部署 Nginx
 
 ```bash
-sudo docker run -d -p 10012:80 --name nginx-v1 -v /data1/nginx/www:/usr/share/nginx/html -v /data1/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /data1/nginx/logs:/var/log/nginx nginx
+sudo docker run -d -p 10012:80 \
+--name nginx-v1 \
+-v /data1/nginx/www:/usr/share/nginx/html \
+-v /data1/nginx/conf/nginx.conf:/etc/nginx/nginx.conf \
+-v /data1/nginx/conf.d:/etc/nginx/conf.d \
+-v /data1/nginx/logs:/var/log/nginx \
+nginx
 
 -p 10012:80 表示将本地 10012 端口映射到容器 80 端口
 --name nginx-v1 表示将容器命名为 nginx-v1
