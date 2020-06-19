@@ -696,7 +696,72 @@ Thread Name: pool-1-thread-1 after
 
 #### **源码详解**
 
+### 1、BlockingQueue
+java.util.concurrent.BlockingQueue 接口有以下阻塞队列的实现：
 
+FIFO 队列 ：LinkedBlockingQueue、ArrayBlockingQueue（固定长度）
+优先级队列 ：PriorityBlockingQueue
+提供了阻塞的 take() 和 put() 方法：如果队列为空 take() 将阻塞，直到队列中有内容；如果队列为满 put() 将阻塞，直到队列有空闲位置。
+
+**使用 BlockingQueue 实现生产者消费者问题**
+
+```java
+public class BlockQueueTest {
+
+    private static BlockingQueue<String> blockingQueue = new ArrayBlockingQueue<>(5);
+
+    public static class Producer extends Thread {
+        @Override
+        public void run() {
+            try {
+                blockingQueue.put(this.getName() + " produce");
+                System.out.println(this.getName() + " produce...");
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static class Consumer extends Thread {
+        @Override
+        public void run() {
+            try {
+                String take = blockingQueue.take();
+                System.out.println(this.getName() + " consume: " + take);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void main(String[] args) {
+        for (int i = 0; i < 2; i++) {
+            Producer producer = new Producer();
+            producer.start();
+        }
+        for (int i = 0; i < 5; i++) {
+            Consumer consumer = new Consumer();
+            consumer.start();
+        }
+        for (int i = 0; i < 3; i++) {
+            Producer producer = new Producer();
+            producer.start();
+        }
+    }
+}
+```
+```
+Thread-0 produce...
+Thread-1 produce...
+Thread-2 consume: Thread-0 produce
+Thread-3 consume: Thread-1 produce
+Thread-7 produce...
+Thread-4 consume: Thread-7 produce
+Thread-5 consume: Thread-8 produce
+Thread-6 consume: Thread-9 produce
+Thread-8 produce...
+Thread-9 produce...
+```
 
 <!-- tabs:end -->
 
