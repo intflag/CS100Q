@@ -34,3 +34,8 @@
 - Linux
 
     - [工作常用命令](linux/commands.md)
+
+- 常用工具
+
+    - [Java 常见问题排查](tools/javaQ.md)
+    - [Arthas 生产实践](tools/arthas.md)
