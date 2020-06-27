@@ -546,6 +546,24 @@ public class FileSystemClassLoader extends ClassLoader {
 
 <!-- tabs:end -->
 
+## 6、JVM 调优
+?> **面试题：** 工作中对 JVM 做了哪些调优操作？
+
+<!-- tabs:start -->
+
+#### **参考回答**
+|配置参数|功能|
+|:----|:----|
+|-Xms|初始堆大小。如：-Xms256m|
+|-Xmx|最大堆大小。如：-Xmx512m|
+|-XX:+HeapDumpOnOutOfMemoryError|让虚拟机在发生内存溢出时 Dump 出当前的<br>内存堆转储快照，以便分析用|
+|-XX:+UseConcMarkSweepGC|指定老年代的GC收集器为 CMS|
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
 
 
 各种oom的种类，
