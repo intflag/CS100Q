@@ -26,6 +26,9 @@ cat 18412.stack | grep '47ed' -C 8
 ![](http://images.intflag.com/cpu100-04.png)
 ![](http://images.intflag.com/cpu100-05.png)
 
+### 参考
+- [敖丙我把线上CPU打到100%，三歪吓尿了【三太子敖丙】](https://mp.weixin.qq.com/s/roEMz-5tzBZvGxbjq8NhOQ)
+
 ## 2、排查 oom
 ### 1）写程序模拟内存耗尽从而发生 OOM
 ```java
@@ -69,11 +72,14 @@ java -XX:+HeapDumpOnOutOfMemoryError -jar Bugs-App-v1.0-jar-with-dependencies.ja
 - 直到发生 OOM。
 ![](http://images.intflag.com/oom-03.png)
 
-### 3）使用 jvisualvm.exe 进行离线分析
+### 4）使用 jvisualvm.exe 进行离线分析
 - 将 dump 后的文件导入工具中进行分析；
 ![](http://images.intflag.com/oom-05.png)
 - 通过分析得知是由于 byte 数组太多导致内存溢出。
 ![](http://images.intflag.com/oom-06.png)
 
-### 4）使用其他工具分析
-参考：[老公：怎么排查堆内存溢出啊？【三太子敖丙】](https://mp.weixin.qq.com/s/7XGD-Z3wrThv5HyoK3B8AQ)
+### 5）使用其他工具分析
+- MAT 工具
+
+### 参考
+- [老公：怎么排查堆内存溢出啊？【三太子敖丙】](https://mp.weixin.qq.com/s/7XGD-Z3wrThv5HyoK3B8AQ)
