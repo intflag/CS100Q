@@ -545,6 +545,7 @@ wait 方法会让线程进入阻塞状态，并且会释放线程占有的锁，
 
 #### **源码详解**
 
+### 1、简单使用
 ```java
 public class WaitTest {
 
@@ -576,6 +577,70 @@ Thread Name: pool-1-thread-2 before
 Thread Name: pool-1-thread-1 after
 ```
 
+### 2、三个线程顺序打印 ABC
+```java
+public class DidiTest {
+
+    private int flag = 0;
+
+    public synchronized void printA() throws InterruptedException {
+        if (flag == 0) {
+            System.out.print("A ");
+            flag = 1;
+            notifyAll();
+        }
+        wait();
+    }
+    public synchronized void printB() throws InterruptedException {
+        if (flag == 1) {
+            System.out.print("B ");
+            flag = 2;
+            notifyAll();
+        }
+        wait();
+    }
+    public synchronized void printC() throws InterruptedException {
+        if (flag == 2) {
+            System.out.print("C ");
+            flag = 0;
+            notifyAll();
+        }
+        wait();
+    }
+
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        DidiTest didiTest = new DidiTest();
+        for (int i = 0; i < 15; i++) {
+            executorService.execute(()-> {
+                try {
+                    didiTest.printA();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            executorService.execute(()-> {
+                try {
+                    didiTest.printB();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+            executorService.execute(()-> {
+                try {
+                    didiTest.printC();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            });
+        }
+    }
+}
+```
+```
+A B C A B C A B C A B C A B C A B C A B C 
+```
+
 <!-- tabs:end -->
 
 ### 3）await() signal() signalAll()
@@ -589,6 +654,7 @@ Thread Name: pool-1-thread-1 after
 
 #### **源码详解**
 
+### 1、简单使用
 ```java
 public class AwaitTest {
 
@@ -628,6 +694,75 @@ public class AwaitTest {
 ```java
 Thread Name: pool-1-thread-2 before
 Thread Name: pool-1-thread-1 after
+```
+
+### 2、三个线程顺序打印 ABC
+
+```java
+public class PrintABC {
+    private final Lock lock = new ReentrantLock();
+    private Condition condition = lock.newCondition();
+    private int flag = 0;
+
+    public void printA() {
+        lock.lock();
+        try {
+            if (flag == 0) {
+                System.out.print("A ");
+                flag = 1;
+                condition.signalAll();
+            }
+            condition.await();
+        } catch (Exception e) {
+
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void printB() {
+        lock.lock();
+        try {
+            if (flag == 1) {
+                System.out.print("B ");
+                flag = 2;
+                condition.signalAll();
+            }
+            condition.await();
+        } catch (Exception e) {
+
+        } finally {
+            lock.unlock();
+        }
+    }
+    public void printC() {
+        lock.lock();
+        try {
+            if (flag == 2) {
+                System.out.print("C ");
+                flag = 0;
+                condition.signalAll();
+            }
+            condition.await();
+        } catch (Exception e) {
+
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    public static void main(String[] args) {
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        PrintABC printABC = new PrintABC();
+        for (int i = 0; i < 15; i++) {
+            executorService.execute(()->printABC.printA());
+            executorService.execute(()->printABC.printB());
+            executorService.execute(()->printABC.printC());
+        }
+    }
+}
+```
+```
+A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C 
 ```
 
 <!-- tabs:end -->
