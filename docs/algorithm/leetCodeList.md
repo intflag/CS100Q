@@ -511,7 +511,7 @@ PS：点击题目编号即可跳转到LeetCode中该题的位置，点击语言�
 	    <td><a href="https://github.com/intflag/LeetCodeAC/blob/master/java/524.%E9%80%9A%E8%BF%87%E5%88%A0%E9%99%A4%E5%AD%97%E6%AF%8D%E5%8C%B9%E9%85%8D%E5%88%B0%E5%AD%97%E5%85%B8%E9%87%8C%E6%9C%80%E9%95%BF%E5%8D%95%E8%AF%8D.java" target="_blank" title="查看解题代码">Y</a></td>
 	</tr>
     <tr >
-	    <td rowspan="4">排序</td>
+	    <td rowspan="5">排序</td>
 	    <td>[快速选择]</td>
 	    <td></td>
 	    <td></td>
@@ -530,6 +530,11 @@ PS：点击题目编号即可跳转到LeetCode中该题的位置，点击语言�
 	    <td>[桶排序] 2. 按照字符出现次数对字符串排序</td>
 	    <td><a href="https://leetcode-cn.com/problems/sort-characters-by-frequency/description/" target="_blank" title="查看LeetCode题目">451</a></td>
 	    <td><a href="https://github.com/intflag/LeetCodeAC/blob/master/java/451.%E6%A0%B9%E6%8D%AE%E5%AD%97%E7%AC%A6%E5%87%BA%E7%8E%B0%E9%A2%91%E7%8E%87%E6%8E%92%E5%BA%8F.java" target="_blank" title="查看解题代码">Y</a></td>
+	</tr>
+    <tr >
+	    <td>[快排] 快速排序</td>
+	    <td></td>
+	    <td><a href="https://github.com/intflag/LeetCodeAC/blob/master/java/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F.java" target="_blank" title="查看解题代码">Y</a></td>
 	</tr>
 	<tr >
 	    <td rowspan="11">贪心思想</td>
