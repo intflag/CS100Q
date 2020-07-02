@@ -583,62 +583,59 @@ public class DidiTest {
 
     private int flag = 0;
 
-    public synchronized void printA() throws InterruptedException {
-        if (flag == 0) {
-            System.out.print("A ");
-            flag = 1;
-            notifyAll();
+    public synchronized void printA() {
+        while (flag != 0) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        wait();
+        System.out.print("A ");
+        flag = 1;
+        notifyAll();
     }
-    public synchronized void printB() throws InterruptedException {
-        if (flag == 1) {
-            System.out.print("B ");
-            flag = 2;
-            notifyAll();
+    public synchronized void printB() {
+        while (flag != 1) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        wait();
+        System.out.print("B ");
+        flag = 2;
+        notifyAll();
     }
-    public synchronized void printC() throws InterruptedException {
-        if (flag == 2) {
-            System.out.print("C ");
-            flag = 0;
-            notifyAll();
+    public synchronized void printC() {
+        while (flag != 2) {
+            try {
+                wait();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
-        wait();
+        System.out.print("C ");
+        flag = 0;
+        notifyAll();
     }
 
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newCachedThreadPool();
         DidiTest didiTest = new DidiTest();
         for (int i = 0; i < 15; i++) {
-            executorService.execute(()-> {
-                try {
-                    didiTest.printA();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-            executorService.execute(()-> {
-                try {
-                    didiTest.printB();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
-            executorService.execute(()-> {
-                try {
-                    didiTest.printC();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            });
+            Thread threadA = new Thread(() -> didiTest.printA());
+            Thread threadB = new Thread(() -> didiTest.printB());
+            Thread threadC = new Thread(() -> didiTest.printC());
+            threadC.start();
+            threadB.start();
+            threadA.start();
         }
     }
 }
 ```
 ```
-A B C A B C A B C A B C A B C A B C A B C 
+A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C 
+Process finished with exit code 0
 ```
 
 <!-- tabs:end -->
@@ -702,67 +699,72 @@ Thread Name: pool-1-thread-1 after
 public class PrintABC {
     private final Lock lock = new ReentrantLock();
     private Condition condition = lock.newCondition();
-    private int flag = 0;
+    private volatile int flag = 0;
 
     public void printA() {
         lock.lock();
         try {
-            if (flag == 0) {
-                System.out.print("A ");
-                flag = 1;
-                condition.signalAll();
+            while (flag != 0) {
+                condition.await();
             }
-            condition.await();
-        } catch (Exception e) {
-
+            System.out.print("A ");
+            flag = 1;
+            condition.signalAll();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }
     }
+
     public void printB() {
         lock.lock();
         try {
-            if (flag == 1) {
-                System.out.print("B ");
-                flag = 2;
-                condition.signalAll();
+            while (flag != 1) {
+                condition.await();
             }
-            condition.await();
-        } catch (Exception e) {
-
+            System.out.print("B ");
+            flag = 2;
+            condition.signalAll();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }
     }
+
     public void printC() {
         lock.lock();
         try {
-            if (flag == 2) {
-                System.out.print("C ");
-                flag = 0;
-                condition.signalAll();
+            while (flag != 2) {
+                condition.await();
             }
-            condition.await();
-        } catch (Exception e) {
-
+            System.out.print("C ");
+            flag = 0;
+            condition.signalAll();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         } finally {
             lock.unlock();
         }
     }
 
     public static void main(String[] args) {
-        ExecutorService executorService = Executors.newCachedThreadPool();
-        PrintABC printABC = new PrintABC();
+        PrintABC print = new PrintABC();
         for (int i = 0; i < 15; i++) {
-            executorService.execute(()->printABC.printA());
-            executorService.execute(()->printABC.printB());
-            executorService.execute(()->printABC.printC());
+            Thread threadA = new Thread(() -> print.printA());
+            Thread threadB = new Thread(() -> print.printB());
+            Thread threadC = new Thread(() -> print.printC());
+            threadA.start();
+            threadB.start();
+            threadC.start();
         }
     }
 }
 ```
 ```
-A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C 
+A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C A B C 
+Process finished with exit code 0
 ```
 
 <!-- tabs:end -->
