@@ -108,3 +108,98 @@ sudo sh uninstall.sh
 ```
 
 ## 离线安装 Nginx
+### 1）导出 Nginx 镜像
+- 查看镜像 ID
+
+```bash
+sudo docker images
+
+REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
+nginx               latest              6678c7c2e56c        5 months ago        127MB
+```
+- 导出镜像
+
+```bash
+sudo docker save 6678c7c2e56c -o /home/intflag/backup/nginx.tar
+```
+
+### 2）导入 Nginx 镜像
+- 导入
+
+```bash
+sudo docker load -i /data1/ftp/intell/nginx.tar 
+
+f2cb0ecef392: Loading layer [==================================================>] 72.48 MB/72.48 MB
+71f2244bc14d: Loading layer [==================================================>] 58.11 MB/58.11 MB
+55a77731ed26: Loading layer [==================================================>] 3.584 kB/3.584 kB
+Loaded image ID: sha256:6678c7c2e56c970388f8d5a398aa30f2ab60e85f20165e101053c3d3a11e6663
+
+sudo docker images
+
+REPOSITORY                            TAG                 IMAGE ID            CREATED             SIZE
+<none>                                <none>              6678c7c2e56c        5 months ago        127 MB
+```
+
+- 导入后 REPOSITORY 和 TAG 都为none
+
+### 3）重新标记
+
+```bash
+sudo docker tag 6678c7c2e56c nginx:latest
+
+sudo docker images
+
+REPOSITORY                            TAG                 IMAGE ID            CREATED             SIZE
+nginx                                 latest              6678c7c2e56c        5 months ago        127 MB
+```
+
+### 4）启动 Nginx
+```bash
+sudo docker run --name nginx -d -p 8090:80 nginx
+
+sudo docker ps -a
+
+CONTAINER ID        IMAGE                            COMMAND                  CREATED             STATUS              PORTS                        NAMES
+d7dcb79f447b        nginx                            "nginx -g 'daemon ..."   22 seconds ago      Up 21 seconds       0.0.0.0:8090->80/tcp         nginx
+```
+
+## 部署 Nginx
+
+### 1）建立目录映射
+```bash
+# 外部主机中建立目录
+sudo mkdir -p ./nginx/www ./nginx/logs ./nginx/conf
+```
+
+### 2）拷贝容器 Nginx 的配置文件
+```bash
+sudo docker cp d7c2dfc6cd87:/etc/nginx/nginx.conf /data1/nginx/conf/
+```
+
+### 3）重新部署 Nginx
+
+```bash
+sudo docker run -d -p 10012:80 --name nginx-v1 -v /data1/nginx/www:/usr/share/nginx/html -v /data1/nginx/conf/nginx.conf:/etc/nginx/nginx.conf -v /data1/nginx/logs:/var/log/nginx nginx
+
+-p 10012:80 表示将本地 10012 端口映射到容器 80 端口
+--name nginx-v1 表示将容器命名为 nginx-v1
+-v /data1/nginx/www:/usr/share/nginx/html 表示将本地目录 /data1/nginx/www 映射到容器内部目录 /usr/share/nginx/html
+```
+
+- 进www文件目录创建一个index.html
+
+```bash
+# 创建文件
+sudo vi index.html
+
+# 写入信息，然后保存
+
+# 测试
+curl 172.17.38.1:10012
+
+Hello My Nginx!!!
+```
+
+
+### 参考资料
+- [Docker离线安装Nginx镜像](https://zhouyanwei.cn/2019/08/13/2019-8-13-DockerNginx/)
