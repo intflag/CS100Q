@@ -15,6 +15,7 @@
 |查找文件|find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中|
 |查看Linux程序的工作目录|pwdx 266469|
 |查看文件夹大小|du -sh /opt|
+|定时任务配置|crontab -l 查看用户定时任务列表，-e 编辑用户定时任务|
 
 ## 常用脚本
 ### 1、快速修改tomcat端口
