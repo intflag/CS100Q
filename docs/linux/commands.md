@@ -2,6 +2,7 @@
 ## 常用命令
 |功能|命令|
 |:----|:----|
+|查看机器配置|系统版本：cat /etc/redhat-release<br>CPU位数：uname -a<br>逻辑CPU个数：cat /proc/cpuinfo \| grep "processor" \| wc -l<br>物理CPU个数：cat /proc/cpuinfo \| grep "physical id" \| sort \| uniq \| wc -l<br>物理CPU中Core的个数：cat /proc/cpuinfo \| grep "cpu cores" \| wc -l<br>内存：free -h<br>硬盘：df -hT<br>默认语言：echo $LANG $LANGUAGE|
 |时间逆序查看|ls -lrt|
 |推送文件到目标主机|scp /opt/soft/nginx-0.5.38.tar.gz root@10.10.10.10:/opt/soft/|
 |从目标主机拉取文件|scp root@10.10.10.10:/opt/soft/test.xml ./|
@@ -12,10 +13,11 @@
 |解压tar包|tar -zxvf xxx.tar.gz -C 保存路径|
 |解压zip包|unzip xxx.zip -d 保存路径|
 |建立多级目录|mkdir -p /opt/m1/m2/m3|
-|查找文件|find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中|
+|查找文件|find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中<br>grep -rn "关键字符串" /opt/ 查找包含字符串的文件|
 |查看Linux程序的工作目录|pwdx 266469|
 |查看文件夹大小|du -sh /opt|
 |定时任务配置|crontab -l 查看用户定时任务列表，-e 编辑用户定时任务|
+
 
 ## 常用脚本
 ### 1、快速修改tomcat端口
