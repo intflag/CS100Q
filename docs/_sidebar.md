@@ -36,6 +36,7 @@
 - Linux
 
     - [工作常用命令](linux/commands.md)
+    - [Deepin 系统](linux/deepin.md)
 
 - 常用工具
 
