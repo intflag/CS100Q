@@ -33,10 +33,11 @@
 
     - [传输协议](network/protocol.md)
 
-- Linux
+- 操作系统
 
-    - [工作常用命令](linux/commands.md)
-    - [Deepin 系统](linux/deepin.md)
+    - [Linux 使用笔记](os/linux.md)
+    - [Deepin 使用笔记](os/deepin.md)
+    - [Windows 使用笔记](os/windows.md)
 
 - 常用工具
 
