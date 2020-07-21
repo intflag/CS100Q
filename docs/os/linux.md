@@ -99,3 +99,14 @@ export PATH=$PATH:$JAVA_HOME/bin
 source  /etc/profile
 ```
 
+### 8、端口扫描工具 nmap
+```bash
+# 安装
+yum install nmap
+
+# 使用
+nmap 目标主机IP
+
+# 扫描禁用 ping 命令的主机
+nmap -Pn 目标主机IP
+```
