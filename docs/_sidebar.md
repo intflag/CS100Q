@@ -5,6 +5,7 @@
     - [Java 并发](java/concurrent.md)
     - [Java 虚拟机](java/jvm.md)
     - [Java IO](java/io.md)
+    - [Java 代码片段](java/codeSnippet.md)
 
 - 数据结构与算法
 
