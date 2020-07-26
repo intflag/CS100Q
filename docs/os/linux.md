@@ -110,3 +110,20 @@ nmap 目标主机IP
 # 扫描禁用 ping 命令的主机
 nmap -Pn 目标主机IP
 ```
+## 常见问题
+### 1、无法使用 root 进行 ssh 登录
+- 原因：禁止了 root 用户通过 ssh 登录系统的功能
+
+```bash
+# 编辑ssh配置
+vi /etc/ssh/sshd_config
+
+# 修改 PermitRootLogin 值为 yes
+PermitRootLogin yes
+
+# 重启 ssh 服务
+# centos 6
+service ssh restart
+# centos 7
+systemctl restart sshd
+```
