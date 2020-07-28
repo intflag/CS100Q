@@ -28,3 +28,18 @@ t = JSON.parseObject(json,T.class);
 
 return t;
 ```
+## Java 8 Stream
+### 1）List 过滤
+```java
+List<Student> collect = valueList.stream().filter(stu -> "tom".equals(stu.getName())).collect(Collectors.toList());
+```
+### 2）List 转 Map
+```java
+public static Map<Object, Object> getStudentObjectMap(List<Student> list) {
+    Map<Object, Object> map = list.stream().collect(Collectors.toMap(Student::getStuId, student -> student));
+    map.forEach((key, value) -> {
+        System.out.println("key:" + key + ",value:" + value);
+    });
+    return map;
+}
+```
