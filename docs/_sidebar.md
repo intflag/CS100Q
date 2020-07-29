@@ -6,7 +6,7 @@
     - [Java 虚拟机](java/jvm.md)
     - [Java IO](java/io.md)
     - [Java 代码片段](java/codeSnippet.md)
-    - [Java 常见问题排查](java/javaQ.md)
+    - [Java 问题排查](java/javaQ.md)
 
 - 数据结构与算法
 
