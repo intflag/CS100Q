@@ -160,7 +160,7 @@ public class TestClassB implements Job {
 ```
 
 ```
-使用 java -cp 命令会报一下错误：
+使用 java -cp 命令会报以下错误：
 错误: 找不到或无法加载主类 com.intflag.java.TestClassB
 ```
 
