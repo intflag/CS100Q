@@ -34,8 +34,10 @@ sed -i 's/redirectPort="8443"/redirectPort="18443"/g' server.xml
 ### 2、Linux中没有`ll`命令
 ```bash
 sudo vi ~/.bashrc
+
 加入
 alias ll='ls -lrt'
+
 然后刷新配置
 source  ~/.bashrc
 ```
@@ -47,6 +49,7 @@ ps -ef|grep flume|grep -E "myconf/.*properties"|awk '{print $2}'|xargs kill -9
 ### 4、设置DNS
 ```bash
 vi /etc/resolv.conf
+
 加入或修改
 nameserver 114.114.114.114
 ```
