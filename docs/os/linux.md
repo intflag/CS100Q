@@ -94,3 +94,4 @@ export PATH=$PATH:$JAVA_HOME/bin
 刷新：
 source  /etc/profile
 ```
+
