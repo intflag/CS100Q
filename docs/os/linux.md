@@ -18,7 +18,7 @@
 |定时任务配置|crontab -l 查看用户定时任务列表，-e 编辑用户定时任务|
 |查看命令所在位置|which java|
 |软链接的创建和删除|创建：sudo ln -s /usr/local/node-v10.15.3-linux-x64/bin/node /usr/local/bin/<br>删除：rm –rf /usr/local/redis (最后不要加/，否则会删除实际文件)<br>更新：ln –snf  /opt/apps/redis-5.0.4 /usr/local/redis|
-|改变文件所有者|chown root:root app.jar|
+|改变文件所有者|chown -R root:root app.jar（-R表示递归）|
 
 
 ## 常用脚本
