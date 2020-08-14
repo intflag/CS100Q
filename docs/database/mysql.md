@@ -85,8 +85,6 @@ mysql> show engines;
 
 #### **源码详解**
 
-
-
 <!-- tabs:end -->
 
 ## 5、锁机制与 InnoDB 锁算法
