@@ -53,8 +53,6 @@ mysql> show engines;
 
 #### **源码详解**
 
-
-
 <!-- tabs:end -->
 
 ## 3、事务
@@ -68,8 +66,6 @@ mysql> show engines;
 
 
 #### **源码详解**
-
-
 
 <!-- tabs:end -->
 
