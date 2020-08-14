@@ -153,3 +153,9 @@ mysql> show engines;
 <!-- tabs:end -->
 
 ## 9、MySQL 部署
+
+## 10、常用 SQl
+### 1）查询进程
+```sql
+select * from information_schema.processlist
+```
