@@ -11,6 +11,7 @@
 |创建解压 tar 包|tar -cf archive.tar foo bar<br>tar -zxvf xxx.tar.gz -C 保存路径|
 |创建解压 zip 包|zip -r xxx.zip xxx<br>unzip xxx.zip -d 保存路径|
 |创建解压 xz 包|xz -zk 要压缩的文件<br>xz -dk 要解压的文件|
+|创建解压 gzip 包|gzip -c filename > filename.gz<br>gunzip -c filename.gz > filename|
 |建立多级目录|mkdir -p /opt/m1/m2/m3|
 |查找文件|find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中<br>grep -rn "关键字符串" /opt/ 查找包含字符串的文件|
 |查看Linux程序的工作目录|pwdx 266469|
