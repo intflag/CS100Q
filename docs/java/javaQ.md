@@ -164,7 +164,7 @@ public class TestClassB implements Job {
 错误: 找不到或无法加载主类 com.intflag.java.TestClassB
 ```
 
-可以用一下方式改写：
+可以用以下方式改写：
 ```java
 package com.intflag.java;
 
