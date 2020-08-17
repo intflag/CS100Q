@@ -6,6 +6,7 @@
     - [Java 虚拟机](java/jvm.md)
     - [Java IO](java/io.md)
     - [Java 代码片段](java/codeSnippet.md)
+    - [Java 常见问题排查](java/javaQ.md)
 
 - 数据结构与算法
 
@@ -42,5 +43,4 @@
 
 - 常用工具
 
-    - [Java 常见问题排查](tools/javaQ.md)
     - [Arthas 生产实践](tools/arthas.md)
