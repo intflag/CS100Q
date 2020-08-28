@@ -1,20 +1,20 @@
 # SQL 优化
-## information_schema.processlist
+## 进程及死锁
 ### 1）按客户端 IP 分组，看哪个客户端的链接数最多
-```sql
+```bash
 select client_ip,count(client_ip) as client_num from (select substring_index(host,':' ,1) as client_ip from information_schema.processlist ) as connect_info group by client_ip order by client_ip,client_num desc;
 ```
 ### 2）查看正在执行的线程，并按 Time 倒排序，看看有没有执行时间特别长的线程
-```sql
+```bash
 select * from information_schema.processlist where Command != 'Sleep' order by Time desc;
 ```
 ### 3）找出所有执行时间超过 5 分钟的线程，拼凑出 kill 语句，方便后面查杀
-```sql
+```bash
 select concat('kill ', id, ';') from information_schema.processlist where Command != 'Sleep' and Time > 300 order by Time desc;
 ```
 ## 慢查询
 ### 1）开启慢查询
-```sql
+```bash
 -- 查询是否开启慢查询
 show variables  like '%slow_query_log%';
 
@@ -45,7 +45,7 @@ slow_query_log_file=/tmp/mysql_slow.log
 ```
 
 ### 2）慢查询时间设置
-```sql
+```bash
 -- 查看慢查询时间阈值，默认为 10 秒
 show variables like 'long_query_time%';
 
@@ -69,7 +69,7 @@ show global variables like 'long_query_time';
 ```
 
 ### 3）慢查询日志输出方式
-```sql
+```bash
 -- 查询输出方式，默认为 FILE，表示输出到文件中
 show variables like '%log_output%';
 
@@ -102,7 +102,7 @@ select * from mysql.slow_log;
 ### 4）未使用索引慢查询
 系统变量 log-queries-not-using-indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。如果调优的话，建议开启这个选项。另外，开启了这个参数，其实使用 full index scan 的 sql 也会被记录到慢查询日志。
 
-```sql
+```bash
 -- 查看
 show variables like 'log_queries_not_using_indexes';
 +-------------------------------+-------+
@@ -124,7 +124,7 @@ show variables like 'log_queries_not_using_indexes';
 
 ### 5）慢管理语句
 系统变量 log_slow_admin_statements 表示是否将慢管理语句例如 ANALYZE TABLE 和 ALTER TABLE 等记入慢查询日志
-```sql
+```bash
 show variables like 'log_slow_admin_statements';
 +---------------------------+-------+
 | Variable_name             | Value |
@@ -134,7 +134,7 @@ show variables like 'log_slow_admin_statements';
 ```
 
 ### 6）慢查询记录数
-```sql
+```bash
 show global status like '%Slow_queries%';
 +---------------+-------+
 | Variable_name | Value |
@@ -143,8 +143,10 @@ show global status like '%Slow_queries%';
 +---------------+-------+
 ```
 
-### 7）慢查询分析工具 mysqldumpslow
-```sql
+### 7）慢查询分析工具
+- mysqldumpslow
+
+```bash
 mysqldumpslow --help
 
 c: 访问计数
@@ -160,7 +162,11 @@ al:平均锁定时间
 ar:平均返回记录数
 
 at:平均查询时间
+```
 
+- 常用分析命令
+
+```bash
 得到返回记录集最多的10个SQL。
 
 mysqldumpslow -s r -t 10 /database/mysql/mysql06_slow.log

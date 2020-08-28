@@ -19,9 +19,11 @@
 
 - 数据库
 
+    - [SQL 优化](database/sql.md)
     - [Redis](database/redis.md)
     - [MySQL](database/mysql.md)
     - [Greenplum](database/gp.md)
+    - [ClickHouse](database/clickhouse.md)
 
 - 框架
 
@@ -30,6 +32,8 @@
     - [Kafka](frame/kafka.md)
     - [Zookeeper](frame/zookeeper.md)
     - [Netty](frame/netty.md)
+    - [Docker](frame/docker.md)
+    - [Nginx](frame/nginx.md)
 
 - 计算机网络
 
