@@ -43,3 +43,137 @@ slow_query_log =1
 slow_query_log_file=/tmp/mysql_slow.log
 
 ```
+
+### 2）慢查询时间设置
+```sql
+-- 查看慢查询时间阈值，默认为 10 秒
+show variables like 'long_query_time%';
+
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 10.000000 |
++-----------------+-----------+
+
+-- 修改阈值
+set global long_query_time=4;
+
+-- 全局查看修改后的结果，普通查询方式需要新开一个会话才能看到修改效果
+show global variables like 'long_query_time';
+
++-----------------+-----------+
+| Variable_name   | Value     |
++-----------------+-----------+
+| long_query_time | 11.000000 |
++-----------------+-----------+
+```
+
+### 3）慢查询日志输出方式
+```sql
+-- 查询输出方式，默认为 FILE，表示输出到文件中
+show variables like '%log_output%';
+
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_output    | FILE  |
++---------------+-------+
+
+-- 修改输出方式，TABLE 表示会输出到表中，也可以使用 FILE,TABLE 逗号分隔的方式另种都配置
+set global log_output='TABLE';
+
+show variables like '%log_output%';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_output    | TABLE |
++---------------+-------+
+
+select * from mysql.slow_log;
+
++---------------------+---------------------------+------------+-----------+-----------+---------------+----+----------------+-----------+-----------+-----------------+-----------+
+| start_time          | user_host                 | query_time | lock_time | rows_sent | rows_examined | db | last_insert_id | insert_id | server_id | sql_text        | thread_id |
++---------------------+---------------------------+------------+-----------+-----------+---------------+----+----------------+-----------+-----------+-----------------+-----------+
+| 2016-06-16 17:37:53 | root[root] @ localhost [] | 00:00:03   | 00:00:00  |         1 |             0 |    |              0 |         0 |         1 | select sleep(3) |         5 |
+| 2016-06-16 21:45:23 | root[root] @ localhost [] | 00:00:05   | 00:00:00  |         1 |             0 |    |              0 |         0 |         1 | select sleep(5) |         2 |
++---------------------+---------------------------+------------+-----------+-----------+---------------+----+----------------+-----------+-----------+-----------------+-----------+
+```
+
+### 4）未使用索引慢查询
+系统变量 log-queries-not-using-indexes：未使用索引的查询也被记录到慢查询日志中（可选项）。如果调优的话，建议开启这个选项。另外，开启了这个参数，其实使用 full index scan 的 sql 也会被记录到慢查询日志。
+
+```sql
+-- 查看
+show variables like 'log_queries_not_using_indexes';
++-------------------------------+-------+
+| Variable_name                 | Value |
++-------------------------------+-------+
+| log_queries_not_using_indexes | OFF   |
++-------------------------------+-------+
+
+-- 开启
+set global log_queries_not_using_indexes=1;
+ 
+show variables like 'log_queries_not_using_indexes';
++-------------------------------+-------+
+| Variable_name                 | Value |
++-------------------------------+-------+
+| log_queries_not_using_indexes | ON    |
++-------------------------------+-------+
+```
+
+### 5）慢管理语句
+系统变量 log_slow_admin_statements 表示是否将慢管理语句例如 ANALYZE TABLE 和 ALTER TABLE 等记入慢查询日志
+```sql
+show variables like 'log_slow_admin_statements';
++---------------------------+-------+
+| Variable_name             | Value |
++---------------------------+-------+
+| log_slow_admin_statements | OFF   |
++---------------------------+-------+
+```
+
+### 6）慢查询记录数
+```sql
+show global status like '%Slow_queries%';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| Slow_queries  | 3     |
++---------------+-------+
+```
+
+### 7）慢查询分析工具 mysqldumpslow
+```sql
+mysqldumpslow --help
+
+c: 访问计数
+
+l: 锁定时间
+
+r: 返回记录
+
+t: 查询时间
+
+al:平均锁定时间
+
+ar:平均返回记录数
+
+at:平均查询时间
+
+得到返回记录集最多的10个SQL。
+
+mysqldumpslow -s r -t 10 /database/mysql/mysql06_slow.log
+
+得到访问次数最多的10个SQL
+
+mysqldumpslow -s c -t 10 /database/mysql/mysql06_slow.log
+
+得到按照时间排序的前10条里面含有左连接的查询语句。
+
+mysqldumpslow -s t -t 10 -g “left join” /database/mysql/mysql06_slow.log
+
+另外建议在使用这些命令时结合 | 和more 使用 ，否则有可能出现刷屏的情况。
+
+mysqldumpslow -s r -t 20 /mysqldata/mysql/mysql06-slow.log | more
+```
