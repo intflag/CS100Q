@@ -8,6 +8,22 @@ echo 'select * from table_name' | curl ip:8123?database=mybi -uroot:password -d 
 导入数据库的本机执行：
 cat table_name.sql | clickhouse-client --query="INSERT INTO database.table_name FORMAT TabSeparated"
 ```
+### 2）删除或更新数据
+```bash
+# 删除
+ALTER TABLE [db.]table DELETE WHERE filter_expr
+
+如：
+
+# 更新
+ALTER TABLE [db.]table UPDATE column1 = expr1 [, ...] WHERE filter_expr
+
+# 注意：
+1.、这两条命令必须在版本号大于1.1.54388才可以使用，适用于 mergeTree 引擎
+
+2、这两条命令是异步执行的，可以通过查看表 system.mutations 来查看命令的是否执行完毕
+select * from system.mutations where table='test_update';
+```
 ## 问题记录
 ### 1）启动报时区相关的错误
 报错：
