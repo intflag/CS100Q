@@ -673,6 +673,18 @@ CloneConstructorExample e2 = new CloneConstructorExample(e1);
 e1.set(2, 222);
 System.out.println(e2.get(2)); // 2
 ```
+
+5、包装类型克隆
+
+包装类型并没有实现 Cloneable 接口，但却是深拷贝，因为被 final 修饰了。
+```java
+public final class Integer extends Number implements Comparable<Integer>
+
+public final class Long extends Number implements Comparable<Long>
+
+public final class Double extends Number implements Comparable<Double>
+```
+
 ## 反射
 ### 类加载概述和加载时机
 1、类加载概述
