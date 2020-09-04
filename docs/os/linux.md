@@ -127,3 +127,8 @@ service ssh restart
 # centos 7
 systemctl restart sshd
 ```
+### 2、找不到 netstat 命令
+```bash
+# 安装网络工具
+sudo yum -y install net-tools
+```
