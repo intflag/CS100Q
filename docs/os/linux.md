@@ -132,3 +132,7 @@ systemctl restart sshd
 # 安装网络工具
 sudo yum -y install net-tools
 ```
+### 3、ssh提示 IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY
+```bash
+rm -rf ~/.ssh/known_hosts
+```
