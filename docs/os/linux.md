@@ -15,7 +15,7 @@
 |建立多级目录|mkdir -p /opt/m1/m2/m3|
 |查找文件|find . ".jar" \| xargs grep "CodeManager" 查找某个类在哪个jar包中<br>grep -rn "关键字符串" /opt/ 查找包含字符串的文件|
 |查看Linux程序的工作目录|pwdx 266469|
-|查看文件夹大小|du -sh /opt|
+|查看文件夹大小|目录总大小：du -sh /opt<br>直接子目录文件及文件夹大小：du -h --max-depth=0 opt/|
 |定时任务配置|crontab -l 查看用户定时任务列表，-e 编辑用户定时任务|
 |查看命令所在位置|which java|
 |软链接的创建和删除|创建：sudo ln -s /usr/local/node-v10.15.3-linux-x64/bin/node /usr/local/bin/<br>删除：rm –rf /usr/local/redis (最后不要加/，否则会删除实际文件)<br>更新：ln –snf  /opt/apps/redis-5.0.4 /usr/local/redis|
