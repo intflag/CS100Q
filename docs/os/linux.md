@@ -22,6 +22,7 @@
 |改变文件所有者|chown -R root:root app.jar（-R表示递归）|
 |查看系统所有用户|cat /etc/passwd|
 |网络抓包|控制台抓包：sudo tcpdump -i bond0 -n -nn host 192.168.1.1 and port 165<br>生成pcap文件：sudo tcpdump -i bond0 -v -w ./192.168.1.1trap2.pcap host 192.168.1.1 and port 165|
+|测试硬盘读取速度|hdparm -t /dev/sda1|
 
 
 ## 常用脚本
