@@ -153,3 +153,89 @@ mysql> show engines;
 ```sql
 select * from information_schema.processlist
 ```
+
+## 10、MySQL 数据库调优
+### 1）脏页
+?> **面试题：** 对 MySQL 数据库做过调优吗？怎么做的？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+
+
+#### **源码详解**
+### 1）InnoDB 的 IO 能力
+- 测试磁盘的 IOPS
+
+```bash
+fio -filename=$filename -direct=1 -iodepth 1 -thread -rw=randrw -ioengine=psync -bs=16k -size=500M -numjobs=10 -runtime=10 -group_reporting -name=mytest 
+```
+
+- 设置 InnoDB 的 IO 能力
+
+```bash
+-- 查看
+show variables like '%innodb_io_capacity%';
+
++------------------------+-------+
+| Variable_name          | Value |
++------------------------+-------+
+| innodb_io_capacity     | 200   |
+| innodb_io_capacity_max | 2000  |
++------------------------+-------+
+
+-- 设置成磁盘的 IOPS
+
+```
+
+### 2）脏页控制策略
+- 开启 show_compatibility_56
+
+```bash
+
+-- 查看
+
+show variables like '%show_compatibility_56%';
+
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| show_compatibility_56 | OFF   |
++-----------------------+-------+
+
+-- 开启
+set global show_compatibility_56=on;
+
+-- 验证
++-----------------------+-------+
+| Variable_name         | Value |
++-----------------------+-------+
+| show_compatibility_56 | ON    |
++-----------------------+-------+
+```
+
+- 查看脏页比例
+
+```bash
+select VARIABLE_VALUE into @a from global_status where VARIABLE_NAME = 'Innodb_buffer_pool_pages_dirty';select VARIABLE_VALUE into @b from global_status where VARIABLE_NAME = 'Innodb_buffer_pool_pages_total';select round(100*@a/@b,2) as '脏页比例';
+```
+
+- 查看脏页比例上限
+
+```bash
+show variables like '%innodb_max_dirty_pages_pct%';
+
++--------------------------------+-----------+
+| Variable_name                  | Value     |
++--------------------------------+-----------+
+| innodb_max_dirty_pages_pct     | 75.000000 |
+| innodb_max_dirty_pages_pct_lwm | 0.000000  |
++--------------------------------+-----------+
+
+平时要多关注脏页比例，不要让它经常接近 75%
+```
+
+### 3）redo log
+
+<!-- tabs:end -->
