@@ -183,3 +183,17 @@ mysqldumpslow -s t -t 10 -g “left join” /database/mysql/mysql06_slow.log
 
 mysqldumpslow -s r -t 20 /mysqldata/mysql/mysql06-slow.log | more
 ```
+## 脏页
+### 磁盘能力 innodb_io_capacity
+- innodb_io_capacity 会告诉 InnoDB 你的磁盘能力，通常设置成磁盘的 IOPS
+
+```bash
+-- 查看 innodb_io_capacity
+mysql> show global variables like '%capacity%';
++------------------------+-------+
+| Variable_name          | Value |
++------------------------+-------+
+| innodb_io_capacity     | 200   |
+| innodb_io_capacity_max | 2000  |
++------------------------+-------+
+```
