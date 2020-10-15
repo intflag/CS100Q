@@ -197,3 +197,29 @@ mysql> show global variables like '%capacity%';
 | innodb_io_capacity_max | 2000  |
 +------------------------+-------+
 ```
+
+## 事务隔离级别
+### 设置隔离级别
+- 命令：SET [SESSION | GLOBAL] TRANSACTION ISOLATION LEVEL {READ UNCOMMITTED | READ COMMITTED | REPEATABLE READ | SERIALIZABLE}
+
+```bash
+-- 查看当前级别
+select @@global.tx_isolation,@@tx_isolation;
++-----------------------+-----------------+
+| @@global.tx_isolation | @@tx_isolation  |
++-----------------------+-----------------+
+| REPEATABLE-READ       | REPEATABLE-READ |
++-----------------------+-----------------+
+
+-- 修改
+set global transaction isolation level read committed;
+
+select @@global.tx_isolation,@@tx_isolation;
++-----------------------+-----------------+
+| @@global.tx_isolation | @@tx_isolation  |
++-----------------------+-----------------+
+| READ-COMMITTED        | REPEATABLE-READ |
++-----------------------+-----------------+
+
+
+```
