@@ -223,3 +223,36 @@ select @@global.tx_isolation,@@tx_isolation;
 
 
 ```
+
+## 查询优化
+### innodb_buffer_pool_size
+
+```
+mysql> show variables  like '%innodb_buffer_pool_size%';
++-------------------------+-----------+
+| Variable_name           | Value     |
++-------------------------+-----------+
+| innodb_buffer_pool_size | 134217728 |
++-------------------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> set global innodb_buffer_pool_size = 8589934592;
+Query OK, 0 rows affected (0.30 sec)
+
+mysql> show variables  like '%innodb_buffer_pool_size%';
++-------------------------+-----------+
+| Variable_name           | Value     |
++-------------------------+-----------+
+| innodb_buffer_pool_size | 134217728 |
++-------------------------+-----------+
+1 row in set (0.00 sec)
+
+mysql> show variables  like '%innodb_buffer_pool_size%';
++-------------------------+------------+
+| Variable_name           | Value      |
++-------------------------+------------+
+| innodb_buffer_pool_size | 8589934592 |
++-------------------------+------------+
+1 row in set (0.00 sec)
+
+```
