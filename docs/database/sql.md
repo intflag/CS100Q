@@ -227,7 +227,7 @@ select @@global.tx_isolation,@@tx_isolation;
 ## 查询优化
 ### innodb_buffer_pool_size
 
-```
+```sql
 mysql> show variables  like '%innodb_buffer_pool_size%';
 +-------------------------+-----------+
 | Variable_name           | Value     |
