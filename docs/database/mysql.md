@@ -187,6 +187,9 @@ show variables like '%innodb_io_capacity%';
 
 -- 设置成磁盘的 IOPS
 
+set global innodb_io_capacity=1000;
+set global innodb_io_capacity_max=10000;
+
 ```
 
 ### 2）脏页控制策略
@@ -218,6 +221,9 @@ set global show_compatibility_56=on;
 - 查看脏页比例
 
 ```bash
+
+use information_schema;
+
 select VARIABLE_VALUE into @a from global_status where VARIABLE_NAME = 'Innodb_buffer_pool_pages_dirty';select VARIABLE_VALUE into @b from global_status where VARIABLE_NAME = 'Innodb_buffer_pool_pages_total';select round(100*@a/@b,2) as '脏页比例';
 ```
 

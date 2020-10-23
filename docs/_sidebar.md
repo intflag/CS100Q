@@ -7,6 +7,7 @@
     - [Java IO](java/io.md)
     - [Java 代码片段](java/codeSnippet.md)
     - [Java 问题排查](java/javaQ.md)
+    - [Java 正则表达式](java/regex.md)
 
 - 数据结构与算法
 
