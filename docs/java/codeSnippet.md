@@ -28,6 +28,21 @@ t = JSON.parseObject(json,T.class);
 
 return t;
 ```
+
+### 2）jackson 数组格式 json 字符串转换成 List
+```java
+//类主要是
+import org.codehaus.jackson.type.TypeReference;
+import org.codehaus.jackson.map.ObjectMapper;
+
+[{"id":"36CD0224C1ED25F5E0538A3B0B7A8190","catgId":null,"matcAmont":50000,"lendPoolId":"36CD0224C1C225F5E0538A3B0B7A8190","balance":50000,"matchFlag":1,"isLock":1,"createTime":1467576000000,"userId":0,"mltCustLendPool":{"id":"36CD0224C1C225F5E0538A3B0B7A8190","userId":157020,"state":1,"isLock":1,"balance":50000,"curTotaAmt":50000,"syncDate":1467561600000,"inviFlag":2,"investTime":1467595065000,"deadline":1499131065000,"billDate":1467681465000,"billDay":5,"productId":"6","productName":"xxx","investAmt":50000,"prodOrderId":38662,"userTelephone":"15922166933","userName":"张三","idcardNum":"1111111111111","projectNum":null,"matchModelCode":null,"creditProduct":{"id":"290AA19B1134838EE053A716C0769130","swldid":"6","prodName":"xxx","prodType":null,"prodRate":0.13,"synFeeRate":null,"payCapitalType":null,"freezeTime":12,"prodCode":6,"prodCatgory":1,"unit":1},"subject":null},"orderFlag":null,"subject":0,"projectNum":null,"matchModeCode":"1"},{"id":"36DA5B50E54E2790E0538A3B0B7A2261","catgId":null,"matcAmont":50000,"lendPoolId":"36CD0224C1C225F5E0538A3B0B7A8190","balance":50000,"matchFlag":1,"isLock":1,"createTime":1467748800000,"userId":0,"mltCustLendPool":{"id":"36CD0224C1C225F5E0538A3B0B7A8190","userId":157020,"state":1,"isLock":1,"balance":50000,"curTotaAmt":50000,"syncDate":1467561600000,"inviFlag":2,"investTime":1467595065000,"deadline":1499131065000,"billDate":1467681465000,"billDay":5,"productId":"6","productName":"xxx","investAmt":50000,"prodOrderId":38662,"userTelephone":"15922166933","userName":"王dd","idcardNum":"2222222222222","projectNum":null,"matchModelCode":null,"creditProduct":{"id":"290AA19B1134838EE053A716C0769130","swldid":"6","prodName":"dfdfd","prodType":null,"prodRate":0.13,"synFeeRate":null,"payCapitalType":null,"freezeTime":12,"prodCode":6,"prodCatgory":1,"unit":1},"subject":null},"orderFlag":null,"subject":0,"projectNum":null,"matchModeCode":"1"}]
+
+ObjectMapper mapper = new ObjectMapper();
+List<MltWaitLendReco> lendReco = mapper.readValue(listStr,new TypeReference<List<MltWaitLendReco>>() { });
+System.out.println(lendReco.get(0).getId());
+```
+
+
 ## Java 8 Stream
 ### 1）List 过滤
 ```java
