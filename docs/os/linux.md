@@ -139,3 +139,8 @@ sudo yum -y install net-tools
 ```bash
 rm -rf ~/.ssh/known_hosts
 ```
+
+### 4、找不到 snmpwalk 命令
+```bash
+sudo yum install net-snmp* -y
+```
