@@ -33,7 +33,7 @@ select * from system.mutations where table='test_update';
 
 ./bin/kafka-topics.sh --zookeeper localhost:2181 --create --topic ck_test --partitions 3 --replication-factor 3
 
-# 2、在 ClickHouse 每个节点中创建 Kafka 引擎表和与之对应的分布式表
+# 2、在 ClickHouse 每个节点中创建 Kafka 引擎表
 
 drop table if exists test_kafka_table;
 
@@ -53,13 +53,29 @@ kafka_group_name = 'ck_group',
 kafka_format = 'JSONEachRow',
 kafka_skip_broken_messages = 100;
 
+# 3、创建数据表及对应分布式表
+drop table if exists test_ck_table;
+CREATE TABLE `test_ck_table` (
+    `key` Int64 COMMENT 'key',
+    `tag` String COMMENT 'tag',
+    `id` Int64 COMMENT 'id',
+    `code` String COMMENT 'code',
+    `name` String COMMENT 'name'
+) ENGINE = ReplicatedReplacingMergeTree(
+    '/clickhouse/tables/{shard}/test_ck_table',
+    '{replica}'
+)
+ORDER BY
+    (id, code) PARTITION BY (id) SETTINGS storage_policy = 'allData';
+
+
 CREATE TABLE test_ck_table_all AS test_ck_table ENGINE = Distributed(intell, default, test_ck_table);
 
-# 3、在 ClickHouse 每个节点中创建物化视图
+# 4、在 ClickHouse 每个节点中创建物化视图
 drop table if exists test_ck_view;
 CREATE MATERIALIZED VIEW test_ck_view TO test_ck_table AS (SELECT key,tag,t.id as id, t.code as code, t.name as name FROM test_kafka_table ARRAY JOIN datas AS t);
 
-# 4、写入 topic 数据测试
+# 5、写入 topic 数据测试
 
 { "tag": "202010291636", "key": 202000001906, "datas.id": [8, 9], "datas.code": ["a8", "a9"], "datas.name": ["n8", "n9"] }
 
