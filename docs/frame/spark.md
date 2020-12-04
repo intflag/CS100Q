@@ -32,3 +32,30 @@ executor 的内存不足，需要设置每个Executor进程的内存。
 Executor 内存的大小，很多时候直接决定了 Spark 作业的性能，而且跟常见的 JVM OOM 异常，也有直接的关联
 
 - 解决方案
+### 3）依赖问题
+- 错误信息
+
+```
+Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/kafka/common/serialization/StringDeserializer
+```
+
+- 解决方案
+```
+启动指定 jar 包
+--jars lib/spark-streaming-kafka-0-10_2.11-2.4.0.jar,lib/kafka-clients-2.0.0.jar
+```
+
+- 解决方案
+
+### 4）连不上 kafka
+- 错误信息
+
+```
+20/12/03 19:14:40 WARN NetworkClient: [Consumer clientId=consumer-1, groupId=xxxxxx] Connection to node -1 could not be established. Broker may not be available.
+```
+
+- 解决方案
+```
+配置正确的 Broker 地址
+broken.server = host1:9092,host2:9092
+```
