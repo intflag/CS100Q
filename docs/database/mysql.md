@@ -246,9 +246,24 @@ show variables like '%innodb_max_dirty_pages_pct%';
 
 <!-- tabs:end -->
 
-## 10、使用 Canal 同步 MySQL binlog 到 Kafka
+## 10、Canal 同步 MySQL binlog 到 Kafka
 ### 1）binlog
-?> **面试题：** binlog 是什么？用什么作用？具体原理？
+?> **面试题：** binlog 是什么？有什么作用？具体原理？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+
+
+#### **源码详解**
+
+
+
+<!-- tabs:end -->
+
+
+### 2）binlog 的应用
+?> **面试题：** 工作中 binlog 是如何应用的？
 <!-- tabs:start -->
 
 #### **参考回答**
@@ -280,10 +295,11 @@ log-bin=mysql-bin
 # 选择ROW(行)模式
 binlog-format=ROW
 # 配置MySQL replaction需要定义，不要和canal的slaveId重复
-server_id=1
+server_id=11
 ```
 
 - 重启 MySQL
+
 ```bash
 # 5.5.7+版本命令
 service mysql restart
@@ -351,9 +367,7 @@ drwxrwxrwx 2 root root 4096 Aug 22 13:17 logs
 drwxrwxrwx 2 root root 4096 Aug 22 13:17 plugin
 ```
 
-- 修改配置文件
-
-a. 修改instance 配置文件 vi conf/example/instance.properties
+- 修改 instance 配置文件 vi conf/example/instance.properties
 
 ```bash
 # position info
@@ -366,10 +380,15 @@ canal.instance.connectionCharset = GBK
 
 # mq config
 canal.mq.topic=canal-test
+# 指定多个表达式，会将test库的表都发送到test0的topic下，test1\\.test1的表发送到对应的test1的topic下，其余的表发送到默认的canal.mq.topic值
+canal.mq.dynamicTopic=test0:test,test1:test1\\.test1
+# 散列模式的分区数
 canal.mq.partition=3
+# 针对test的表按照id散列,其余的表按照table散列
+canal.mq.partitionHash=test\\.test:id,.\\..*
 ```
 
-b. 修改canal 配置文件vi /usr/local/canal/conf/canal.properties
+- 修改 canal 配置文件vi /usr/local/canal/conf/canal.properties
 
 ```bash
 # tcp, kafka, rocketMQ, rabbitMQ
@@ -378,17 +397,23 @@ canal.mq.partitionsNum=3
 ```
 
 - 启动 canal
+
 ```bash
 ./bin/startup.sh
 ```
 
 - 验证
-```bash
 
-# 在数据库中插入/修改/删除一条数据
+```bash
+# 在数据库中创建表，然后插入/修改/删除一条数据
 
 # 启动一个消费者进行查看
 ./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic canal-test
+
+{"data":null,"database":"ifault_alarm_level_db_1","es":1607481097000,"id":4,"isDdl":false,"mysqlType":null,"old":null,"pkNames":null,"sql":"CREATE TABLE `ifault_alarm_level_db_1`.`canal_test`  (\r\n  `id` int(0) NOT NULL AUTO_INCREMENT,\r\n  `name` varchar(255),\r\n  `age` int(0),\r\n  PRIMARY KEY (`id`)\r\n)","sqlType":null,"table":"canal_test","ts":1607481097846,"type":"CREATE"}
+{"data":[{"id":"1","name":"张三","age":"24"}],"database":"ifault_alarm_level_db_1","es":1607481288000,"id":5,"isDdl":false,"mysqlType":{"id":"int(0)","name":"varchar(255)","age":"int(0)"},"old":null,"pkNames":["id"],"sql":"","sqlType":{"id":4,"name":12,"age":4},"table":"canal_test","ts":1607481288365,"type":"INSERT"}
+{"data":[{"id":"1","name":"李四","age":"24"}],"database":"ifault_alarm_level_db_1","es":1607481423000,"id":6,"isDdl":false,"mysqlType":{"id":"int(0)","name":"varchar(255)","age":"int(0)"},"old":[{"name":"张三"}],"pkNames":["id"],"sql":"","sqlType":{"id":4,"name":12,"age":4},"table":"canal_test","ts":1607481423413,"type":"UPDATE"}
+{"data":[{"id":"1","name":"李四","age":"24"}],"database":"ifault_alarm_level_db_1","es":1607481583000,"id":7,"isDdl":false,"mysqlType":{"id":"int(0)","name":"varchar(255)","age":"int(0)"},"old":null,"pkNames":["id"],"sql":"","sqlType":{"id":4,"name":12,"age":4},"table":"canal_test","ts":1607481583712,"type":"DELETE"}
 ```
 
 <!-- tabs:end -->
