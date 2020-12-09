@@ -245,3 +245,150 @@ show variables like '%innodb_max_dirty_pages_pct%';
 ### 3）redo log
 
 <!-- tabs:end -->
+
+## 10、使用 Canal 同步 MySQL binlog 到 Kafka
+### 1）binlog
+?> **面试题：** binlog 是什么？用什么作用？具体原理？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 参考资料
+
+
+#### **源码详解**
+### 1）开启 MySQL binlog
+
+- 查询是否开启
+
+```sql
+mysql> show variables like 'log_bin';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_bin       | OFF   |
++---------------+-------+
+1 row in set (0.00 sec)
+```
+
+- 编辑 MySQL 配置文件(/etc/my.cnf)
+
+```bash
+[mysqld]
+# 打开binlog
+log-bin=mysql-bin
+# 选择ROW(行)模式
+binlog-format=ROW
+# 配置MySQL replaction需要定义，不要和canal的slaveId重复
+server_id=1
+```
+
+- 重启 MySQL
+```bash
+# 5.5.7+版本命令
+service mysql restart
+```
+
+- 验证
+
+```sql
+-- 查看是否打开binlog模式
+mysql> show variables like 'log_bin';
++---------------+-------+
+| Variable_name | Value |
++---------------+-------+
+| log_bin       | ON    |
++---------------+-------+
+1 row in set (0.00 sec)
+
+-- 查看binlog日志文件列表
+mysql> show binary logs;
++------------------+-----------+
+| Log_name         | File_size |
++------------------+-----------+
+| mysql-bin.000001 |       107 |
++------------------+-----------+
+1 row in set (0.00 sec)
+
+-- 查看当前正在写入的binlog文件
+mysql> show master status;
++------------------+----------+--------------+------------------+
+| File             | Position | Binlog_Do_DB | Binlog_Ignore_DB |
++------------------+----------+--------------+------------------+
+| mysql-bin.000001 |      107 |              |                  |
++------------------+----------+--------------+------------------+
+1 row in set (0.00 sec)
+```
+
+### 2）创建 Canal 用户并授权
+```sql
+-- 创建用户
+create user 'canal'@'%' identified by 'canal';
+-- 授权 *.*表示所有库
+grant SELECT, REPLICATION SLAVE, REPLICATION CLIENT on *.* to 'canal'@'%' identified by 'canal';
+```
+
+### 3）在 Kafka 创建 Topic
+```bash
+bin/kafka-topics.sh --create --zookeeper localhost:2181 --replication-factor 1 --partitions 3 --topic canal-test
+```
+
+### 4）安装 Canal
+- 下载地址：https://github.com/alibaba/canal/releases
+- 将canal.deployer 复制到固定目录并解压
+
+```bash
+mkdir -p /usr/local/canal
+cp canal.deployer-1.1.5-SNAPSHOT.tar.gz /usr/local/canal/
+cd /usr/local/canal/
+tar -zxvf canal.deployer-1.1.5-SNAPSHOT.tar.gz
+ll
+
+drwxr-xr-x 2 root root 4096 Dec  9 09:45 bin
+drwxr-xr-x 5 root root 4096 Dec  9 09:45 conf
+drwxr-xr-x 2 root root 4096 Dec  9 09:45 lib
+drwxrwxrwx 2 root root 4096 Aug 22 13:17 logs
+drwxrwxrwx 2 root root 4096 Aug 22 13:17 plugin
+```
+
+- 修改配置文件
+
+a. 修改instance 配置文件 vi conf/example/instance.properties
+
+```bash
+# position info
+canal.instance.master.address=127.0.0.1:3306
+
+# username/password
+canal.instance.dbUsername=canal
+canal.instance.dbPassword=canal
+canal.instance.connectionCharset = GBK
+
+# mq config
+canal.mq.topic=canal-test
+canal.mq.partition=3
+```
+
+b. 修改canal 配置文件vi /usr/local/canal/conf/canal.properties
+
+```bash
+# tcp, kafka, rocketMQ, rabbitMQ
+canal.serverMode = kafka
+canal.mq.partitionsNum=3
+```
+
+- 启动 canal
+```bash
+./bin/startup.sh
+```
+
+- 验证
+```bash
+
+# 在数据库中插入/修改/删除一条数据
+
+# 启动一个消费者进行查看
+./bin/kafka-console-consumer.sh --bootstrap-server localhost:9092 --topic canal-test
+```
+
+<!-- tabs:end -->
