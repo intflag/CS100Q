@@ -378,14 +378,17 @@ canal.instance.dbUsername=canal
 canal.instance.dbPassword=canal
 canal.instance.connectionCharset = GBK
 
+# table regex 匹配 testDb 下的所有表
+canal.instance.filter.regex=testDb\\..*
+
 # mq config
 canal.mq.topic=canal-test
-# 指定多个表达式，会将test库的表都发送到test0的topic下，test1\\.test1的表发送到对应的test1的topic下，其余的表发送到默认的canal.mq.topic值
-canal.mq.dynamicTopic=test0:test,test1:test1\\.test1
+# 指定多个表达式，会将 testDb 库的表都发送到 test0 的 topic 下，其余的表发送到默认的canal.mq.topic值
+canal.mq.dynamicTopic=test0:testDb
 # 散列模式的分区数
-canal.mq.partition=3
-# 针对test的表按照id散列,其余的表按照table散列
-canal.mq.partitionHash=test\\.test:id,.\\..*
+canal.mq.partitionsNum=3
+# 指定所有正则匹配的表对应的hash字段为表主键(自动查找)
+canal.mq.partitionHash=.*\\..*:$pk$
 ```
 
 - 修改 canal 配置文件vi /usr/local/canal/conf/canal.properties
@@ -393,7 +396,6 @@ canal.mq.partitionHash=test\\.test:id,.\\..*
 ```bash
 # tcp, kafka, rocketMQ, rabbitMQ
 canal.serverMode = kafka
-canal.mq.partitionsNum=3
 ```
 
 - 启动 canal
