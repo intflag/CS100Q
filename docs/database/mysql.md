@@ -418,4 +418,33 @@ canal.serverMode = kafka
 {"data":[{"id":"1","name":"李四","age":"24"}],"database":"ifault_alarm_level_db_1","es":1607481583000,"id":7,"isDdl":false,"mysqlType":{"id":"int(0)","name":"varchar(255)","age":"int(0)"},"old":null,"pkNames":["id"],"sql":"","sqlType":{"id":4,"name":12,"age":4},"table":"canal_test","ts":1607481583712,"type":"DELETE"}
 ```
 
+### 5）采集多个IP不同的数据库
+
+- 先停止 canal：因为配置是热加载的，最好全部配好再启动
+
+- 创建目录并复制一个实例的配置
+
+```bash
+cd conf
+
+mkdir db_1 db_2 db_3
+
+cp example/instance.properties db_1
+cp example/instance.properties db_2
+cp example/instance.properties db_3
+
+修改各目录下的 instance.properties
+canal.instance.master.address=db_1数据库地址:3306
+canal.instance.master.address=db_2数据库地址:3306
+canal.instance.master.address=db_3数据库地址:3306
+```
+
+- 修改 canal.properties
+
+```bash
+canal.destinations = db_1,db_2,db_3
+```
+
+- 启动
+
 <!-- tabs:end -->
