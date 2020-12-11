@@ -30,11 +30,12 @@
 
     - [Spring](frame/spring.md)
     - [MyBatis](frame/mybatis.md)
-    - [Kafka](frame/kafka.md)
-    - [Zookeeper](frame/zookeeper.md)
-    - [Netty](frame/netty.md)
-    - [Docker](frame/docker.md)
     - [Nginx](frame/nginx.md)
+    - [Zookeeper](frame/zookeeper.md)
+    - [Kafka](frame/kafka.md)
+    - [Flume](frame/flume.md)
+    - [Docker](frame/docker.md)
+    - [Netty](frame/netty.md)
 
 - 计算机网络
 
