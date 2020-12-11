@@ -21,16 +21,16 @@ bin/kafka-topics.sh --describe --zookeeper 127.0.0.1:2181 --topic test
 bin/kafka-topics.sh --zookeeper 127.0.0.1:2181 --alter --partitions 20 --topic test
 
 # 控制台生产者
-bin/kafka-console-producer.sh --broker-list 10.1.192.171:9092 --topic bametl-cop-lltf
+bin/kafka-console-producer.sh --broker-list 127.0.0.1:9092 --topic bametl-cop-lltf
 
 # 控制台消费者
-bin/kafka-console-consumer.sh --bootstrap-server 172.17.38.61:9092 --topic test | grep -E '201800001345'
+bin/kafka-console-consumer.sh --bootstrap-server 127.0.0.1:9092 --topic test | grep -E '201800001345'
 
 # 平衡
 bin/kafka-preferred-replica-election.sh --zookeeper 127.0.0.1:2181
 
 # Kafka查看最大偏移量（总消息个数） -1 偏移量最大值 -2 偏移量最小值
-bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 172.17.38.61:9092 --topic test --time -1
+bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 --topic test --time -1
 
 # 修改topic的partition数量（只能增加不能减少）
 ./bin/kafka-topics.sh --zookeeper 127.0.0.1:2181 --alter --partitions 20 --topic test
