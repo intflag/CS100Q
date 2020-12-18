@@ -444,6 +444,30 @@ maxmemory 10kb
 ## 11、Redis 部署模式
 ?> **面试题：** Redis 有哪几种部署方式？
 
+<!-- tabs:start -->
+
+#### **参考回答**
+
+
+
+#### **源码详解**
+
+### 1、Redis 单点安装
+
+```bash
+# 后台启动
+daemonize yes
+
+# 允许远程连接
+bind 0.0.0.0
+
+# 设置密码
+requirepass admin123
+```
+
+<!-- tabs:end -->
+
+
 ### 参考资料
 - [Redis的几种部署模式概述](https://mp.weixin.qq.com/s/mc5sK8bRtl1IqZsoVnGO_w)
 - [Redis 4 种模式简单了解](https://www.zhangaoo.com/article/redis-cluster-sentinel)
