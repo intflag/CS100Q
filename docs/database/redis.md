@@ -522,7 +522,13 @@ public void simpleSinkTest() {
     for (int i = 0; i < 100000; i++) {
         jedis.set("simple" + i, "simple-value" + i);
     }
-    System.out.println("simpleSinkTest time=" + DateUtils.getExecuteTime(st));
+    System.out.println("simpleSinkTest set time=" + DateUtils.getExecuteTime(st));
+    List<String> keys = new LinkedList<>();
+    for (int i = 0; i < 100000; i++) {
+        keys.add(jedis.get("simple" + i));
+    }
+    List<String> res = jedis.mget(keys.toArray(new String[0]));
+    System.out.println("simpleSinkTest get time=" + DateUtils.getExecuteTime(st) + " conut=" + res.size());
 }
 
 @Test
@@ -533,13 +539,22 @@ public void pipelineSinkTest() {
         pipeline.set("pipeline" + i, "pipeline-value" + i);
     }
     pipeline.sync();
-    System.out.println("pipelineSinkTest time=" + DateUtils.getExecuteTime(st));
+    System.out.println("pipelineSinkTest set time=" + DateUtils.getExecuteTime(st));
+
+    Pipeline pipeline2 = jedis.pipelined();
+    for (int i = 0; i < 100000; i++) {
+        pipeline2.get("pipeline" + i);
+    }
+    List<Object> res = pipeline2.syncAndReturnAll();
+    System.out.println("pipelineSinkTest get time=" + DateUtils.getExecuteTime(st) + " conut=" + res.size());
 }
 ```
 ```
-simpleSinkTest time=19
+simpleSinkTest set time=19
+simpleSinkTest get time=38 conut=100000
 
-pipelineSinkTest time=0
+pipelineSinkTest set time=0
+pipelineSinkTest get time=0 conut=100000
 ```
 
 

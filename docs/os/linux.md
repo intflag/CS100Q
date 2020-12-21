@@ -146,3 +146,8 @@ rm -rf ~/.ssh/known_hosts
 ```bash
 sudo yum install net-snmp* -y
 ```
+
+### 5、找不到 rz、sz 命令
+```bash
+yum -y install lrzsz
+```
