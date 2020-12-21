@@ -17,7 +17,7 @@
     - 在 JDK 7 中，方法区用于存放已被加载的类信息、常量、静态变量、即时编译器编译后的代码等数据，从 JDK 1.8 开始，移除永久代，并把方法区移至元空间，它位于本地内存中，而不是虚拟机内存中；
     - 方法区是一个 JVM 规范，永久代与元空间都是其一种实现方式，在 JDK 1.8 之后，原来永久代的数据被分到了堆和元空间中，元空间存储类的元信息，静态变量和常量池等放入堆中。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 参考资料
 - [Metaspace 之一：Metaspace整体介绍（永久代被替换原因、元空间特点、元空间内存查看分析方法）](https://www.cnblogs.com/duanxz/p/3520829.html)
@@ -43,7 +43,7 @@
 - HotSpot 虚拟机的 Eden 和 Survivor 大小比例默认为 <mark>&nbsp;8:1&nbsp;</mark>，保证了内存的利用率达到 90%。如果每次回收时有超过 10% 的对象存活，那么一块 Survivor 就不够用了，此时需要依赖于老年代进行空间分配担保，也就是借用老年代的空间存储放不下的对象。
 - <mark>&nbsp;分代收集&nbsp;</mark>：现在的商业虚拟机基本都采用分代收集，一般将堆划分成<mark>&nbsp;新生代&nbsp;</mark>和<mark>&nbsp;老年代&nbsp;</mark>，新生代通常使用`复制算法`，老年代使用`标记-清除`或者`标记-整理`算法；
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -88,7 +88,7 @@
     - 最终标记（Final Marking）：为了修正在并发标记期间因用户程序继续运作而导致标记产生变动的那一部分标记记录，虚拟机将这段时间对象变化记录在线程的 Remembered Set Logs 里面，最终标记阶段需要把 Remembered Set Logs 的数据合并到 Remembered Set 中，这阶段需要停顿线程，但是可多线程执行。
     - 筛选回收（Live Data Counting and Evacuation）：首先对各个 Region 中的回收价值和成本进行排序，根据用户所期望的 GC 停顿时间来制定回收计划，此阶段其实也可以做到与用户程序一起并发执行，但是因为只回收一部分 Region，时间是用户可控制的，而且停顿用户线程将大幅度提高收集效率。
 
-#### **源码详解**
+#### **代码详解**
 
 ![](http://images.intflag.com/jvm08.png)
 
@@ -269,7 +269,7 @@ G1 把堆划分成多个大小相等的独立区域（Region），新生代和�
 ### 参考资料
 - [面试官对于JVM类加载机制的猛烈炮火，你能顶住吗？【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247485642&idx=1&sn=14542b61ed71e94732f71ab4956049d4&chksm=fba6e0c9ccd169df1329d12712db786076d1da4aaed6a07dca6d45ef3321d6ac6ab27485ad77&mpshare=1&scene=1&srcid=0522QVPE50kBGwFSjDyyOUVQ&sharer_sharetime=1590160642289&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=234ddfccebaed6d3de40636d141901de96ca03cb8f267d0848296f81fc8a3a0bc99846409c200e17a5ebfc82d2a97d13d65178bfa46582c3441573f46e88e0483be368dd74d08364020d64300999ea04&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AwOKF7muaLBI4q7MmhLpmVg%3D&pass_ticket=Ymvfb4S%2Bj%2FEZLlpZpZ9MIKY7FY4b2NSv9nuifvFmC5UNwlNncYmf9nJtN%2BF0jb5X)
 
-#### **源码详解**
+#### **代码详解**
 
 类是在运行期间第一次使用时动态加载的，而不是一次性加载所有类。因为如果一次性加载，那么会占用很多的内存。
 
@@ -559,7 +559,7 @@ public class FileSystemClassLoader extends ClassLoader {
 |-XX:+HeapDumpOnOutOfMemoryError|让虚拟机在发生内存溢出时 Dump 出当前的<br>内存堆转储快照，以便分析用|
 |-XX:+UseConcMarkSweepGC|指定老年代的GC收集器为 CMS|
 
-#### **源码详解**
+#### **代码详解**
 
 
 

@@ -16,7 +16,7 @@
 - <mark>&nbsp;高并发&nbsp;</mark>：因为 Redis 中的数据是存储在内存中的，直接操作内存能够承受的请求是远远大于直接访问数据库的，所以可以实现高并发；
 - <mark>&nbsp;分布式&nbsp;</mark>：缓存分为本地缓存和分布式缓存，Redis 可以支持分布式缓存，多个实例共用一份缓存，数据拥有一致性。
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -38,7 +38,7 @@
 - 多个 socket 可能会并发产生不同的操作，每个操作对应不同的文件事件，但是 IO 多路复用程序会监听多个 socket，会将 socket 产生的事件放入队列中排队，事件分派器每次从队列中取出一个事件，把该事件交给对应的事件处理器进行处理。
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -73,7 +73,7 @@
 - 在直播系统中，实时排行信息包含直播间在线用户列表，各种礼物排行榜，弹幕消息（可以理解为按消息维度的消息排行榜）等信息，适合使用 Redis 中的 Sorted Set 结构进行存储；
 - 常用命令：zadd、zrange、zrem、zcard。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1）String
 ```bash
@@ -233,7 +233,7 @@ OK
 - 但是如果某个 key 过期了并且也没有再使用过它，就有可能还储存在内存中，所以 Redis 还有一个<mark>&nbsp;内存淘汰机制&nbsp;</mark>来解决这个问题。
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -262,7 +262,7 @@ OK
 - [redis 内存淘汰机制（MySQL里有2000w数据，Redis中只存20w的数据，如何保证Redis中的数据都是热点数据?）](https://snailclimb.gitee.io/javaguide/#/docs/database/Redis/Redis?id=redis-%e5%86%85%e5%ad%98%e6%b7%98%e6%b1%b0%e6%9c%ba%e5%88%b6mysql%e9%87%8c%e6%9c%892000w%e6%95%b0%e6%8d%ae%ef%bc%8credis%e4%b8%ad%e5%8f%aa%e5%ad%9820w%e7%9a%84%e6%95%b0%e6%8d%ae%ef%bc%8c%e5%a6%82%e4%bd%95%e4%bf%9d%e8%af%81redis%e4%b8%ad%e7%9a%84%e6%95%b0%e6%8d%ae%e9%83%bd%e6%98%af%e7%83%ad%e7%82%b9%e6%95%b0%e6%8d%ae)
 - [Redis的内存淘汰策略](https://juejin.im/post/5d674ac2e51d4557ca7fdd70)
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1）noeviction 默认策略
 
@@ -320,7 +320,7 @@ maxmemory 10kb
 - Redis 4.0 开始支持 RDB 和 AOF 的混合持久化（默认关闭，可以通过配置项 aof-use-rdb-preamble 开启）；
 - 如果把混合持久化打开，AOF 重写的时候就直接把 RDB 的内容写到 AOF 文件开头，这样做的好处是可以结合 RDB 和 AOF 的优点, 快速加载同时避免丢失过多的数据，当然缺点也是有的，AOF 里面的 RDB 部分是压缩格式不再是 AOF 格式，可读性较差。
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -338,7 +338,7 @@ maxmemory 10kb
 - 在传统的关系式数据库中，常常用 ACID 性质来检验事务功能的可靠性和安全性，在 Redis 中，事务总是具有原子性（Atomicity）、一致性（Consistency）和隔离性（Isolation），并且当 Redis 运行在某种特定的持久化模式下时，事务也具有持久性（Durability）；
 - Redis 在事务失败时不进行回滚，而是继续执行余下的命令，Redis 认为失败的命令是由编程错误造成的，而这些错误应该在开发的过程中被发现，而不应该出现在生产环境中，另一方面正是因为不需要对回滚进行支持，所以 Redis 的内部可以保持简单且快速。
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -377,7 +377,7 @@ maxmemory 10kb
 ### 参考资料：
 - [阿里一面：关于【缓存穿透、缓存击穿、缓存雪崩、热点数据失效】问题的解决方案【石杉的架构笔记】](https://juejin.im/post/5c9a67ac6fb9a070cb24bf34)
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -414,7 +414,7 @@ maxmemory 10kb
 - [分布式锁的实现之 redis 篇【小米信息部技术团队】](https://xiaomi-info.github.io/2019/12/17/redis-distributed-lock/)
 - [Java分布式锁三种实现方案【蓝汀华韶】](https://www.jianshu.com/p/535efcab356d)
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -434,7 +434,7 @@ maxmemory 10kb
 - 串行化之后，就会导致系统的吞吐量会大幅度的降低，用比正常情况下多几倍的机器去支撑线上的一个请求。
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -450,7 +450,7 @@ maxmemory 10kb
 
 
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、Redis 单点安装
 
@@ -472,3 +472,91 @@ requirepass admin123
 - [Redis的几种部署模式概述](https://mp.weixin.qq.com/s/mc5sK8bRtl1IqZsoVnGO_w)
 - [Redis 4 种模式简单了解](https://www.zhangaoo.com/article/redis-cluster-sentinel)
 - [这可能是目前最全的Redis高可用技术解决方案总结](https://juejin.im/entry/5b7a27ade51d4538d5174b83)
+
+## 12、Redis 常用命令
+- 客户端连接
+
+```bash
+./redis-cli -h 127.0.0.1 -p 6379 -a Passw0rd
+```
+- 批量删除 key
+
+```bash
+./src/redis-cli -a pwd keys "simple*" | xargs ./src/redis-cli -a pwd del
+```
+
+## 13、Redis 优化
+
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 1、Pipeline 批量操作
+
+### 2、Redis 碎片整理
+
+- info memory：查询 Redis 的内存使用情况
+    - used_memory：是 Redis 中的数据占用的内存。
+    - used_memory_rss：是 Redis 向操作系统申请的内存。
+    - mem_fragmentation_ratio：就是内存碎片率，mem_fragmentation_ratio = used_memory_rss / used_memory
+
+- 内存碎片如何产生的？
+    - Redis 内部有自己的内存管理器，为了提高内存使用的效率，来对内存的申请和释放进行管理。
+    - Redis 中的值删除的时候，并没有把内存直接释放，交还给操作系统，而是交给了 Redis 内部的内存管理器。
+    - Redis 中申请内存的时候，也是先看自己的内存管理器中是否有足够的内存可用。
+    - Redis 的这种机制，提高了内存的使用率，但是会使Redis中有部分自己没在用，却不释放的内存，导致了内存碎片的发生。
+    
+- 碎片率的意义
+    - 大于1：说明内存有碎片，一般在1到1.5之间是正常的。
+    - 大于1.5：说明内存碎片率比较大，需要考虑是否要进行内存碎片清理，要引起重视。
+    - 小于1：说明已经开始使用交换内存，也就是使用硬盘了，正常的内存不够用了，需要考虑是否要进行内存的扩容。
+
+#### **代码详解**
+
+### 1、Pipeline 批量操作
+
+```java
+@Test
+public void simpleSinkTest() {
+    long st = DateUtils.getCurrentTimeMillis();
+    for (int i = 0; i < 100000; i++) {
+        jedis.set("simple" + i, "simple-value" + i);
+    }
+    System.out.println("simpleSinkTest time=" + DateUtils.getExecuteTime(st));
+}
+
+@Test
+public void pipelineSinkTest() {
+    long st = System.currentTimeMillis();
+    Pipeline pipeline = jedis.pipelined();
+    for (int i = 0; i < 100000; i++) {
+        pipeline.set("pipeline" + i, "pipeline-value" + i);
+    }
+    pipeline.sync();
+    System.out.println("pipelineSinkTest time=" + DateUtils.getExecuteTime(st));
+}
+```
+```
+simpleSinkTest time=19
+
+pipelineSinkTest time=0
+```
+
+
+### 2、Redis 碎片整理
+
+- 重启：所有版本都适用，Redis服务器重启后，Redis会将没用的内存归还给操作系统，碎片率会降下来。
+- 修改配置：Redis 版本 > 4.0
+
+```bash
+# 开启自动碎片清理功能
+config set activedefrag yes
+
+# 将配置写入配置文件，防止重启失效
+config rewrite
+
+# 手动整理碎片
+memory purge
+```
+
+<!-- tabs:end -->

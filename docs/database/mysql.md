@@ -16,7 +16,7 @@
 - 速度：不要轻易相信 “MyISAM 比 InnoDB 快” 之类的经验之谈，这个结论往往不是绝对的，在很多我们已知场景中，InnoDB 的速度都可以让 MyISAM 望尘莫及，尤其是用到了聚簇索引，或者需要访问的数据都可以放入内存的应用；
 - 使用场景：大多数时候我们使用的都是 InnoDB 存储引擎，但是在某些情况下使用 MyISAM 也是合适的比如读密集的情况下，（如果你不介意 MyISAM 崩溃恢复问题的话）。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、查看 MySQL 提供的所有存储引擎
 ```bash
@@ -51,7 +51,7 @@ mysql> show engines;
 - InnoDB：其数据文件本身就是索引文件，相比 MyISAM，索引文件和数据文件是分离的，其表数据文件本身就是按 B+Tree 组织的一个索引结构，树的叶节点 data 域保存了完整的数据记录，这个索引的 key 是数据表的主键，因此 InnoDB 表数据文件本身就是主索引，这被称为`聚簇索引（或聚集索引）`，而其余的索引都作为辅助索引，辅助索引的data 域存储相应记录主键的值而不是地址，这也是和 MyISAM 不同的地方，在根据主索引搜索时，直接找到 key 所在的节点即可取出数据，在根据辅助索引查找时，则需要先取出主键的值，再走一遍主索引，因此，在设计表的时候，不建议使用过长的字段作为主键，也不建议使用非单调的字段作为主键，这样会造成主索引频繁分裂。 
 
 
-#### **源码详解**
+#### **代码详解**
 
 <!-- tabs:end -->
 
@@ -65,7 +65,7 @@ mysql> show engines;
 - [事务【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e4%bb%80%e4%b9%88%e6%98%af%e4%ba%8b%e5%8a%a1)
 
 
-#### **源码详解**
+#### **代码详解**
 
 <!-- tabs:end -->
 
@@ -79,7 +79,7 @@ mysql> show engines;
 - [事务隔离级别有哪些?MySQL的默认隔离级别是?【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e4%ba%8b%e5%8a%a1%e9%9a%94%e7%a6%bb%e7%ba%a7%e5%88%ab%e6%9c%89%e5%93%aa%e4%ba%9bmysql%e7%9a%84%e9%bb%98%e8%ae%a4%e9%9a%94%e7%a6%bb%e7%ba%a7%e5%88%ab%e6%98%af)
 
 
-#### **源码详解**
+#### **代码详解**
 
 <!-- tabs:end -->
 
@@ -93,7 +93,7 @@ mysql> show engines;
 - [锁机制与InnoDB锁算法【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e9%94%81%e6%9c%ba%e5%88%b6%e4%b8%8einnodb%e9%94%81%e7%ae%97%e6%b3%95)
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -108,7 +108,7 @@ mysql> show engines;
 - [一条SQL语句在MySQL中如何执行的【JavaGuide】](https://mp.weixin.qq.com/s?__biz=Mzg2OTA0Njk0OA==&mid=2247485097&idx=1&sn=84c89da477b1338bdf3e9fcd65514ac1&chksm=cea24962f9d5c074d8d3ff1ab04ee8f0d6486e3d015cfd783503685986485c11738ccb542ba7&token=79317275&lang=zh_CN#rd)
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -124,7 +124,7 @@ mysql> show engines;
 - [一次非常有意思的sql优化经历【风过无痕的博客】](https://www.cnblogs.com/tangyanbo/p/4462734.html)
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -140,7 +140,7 @@ mysql> show engines;
 - [大表优化【JavaGuide】](https://snailclimb.gitee.io/javaguide/#/docs/database/MySQL?id=%e5%a4%a7%e8%a1%a8%e4%bc%98%e5%8c%96)
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -164,7 +164,7 @@ select * from information_schema.processlist
 ### 参考资料
 
 
-#### **源码详解**
+#### **代码详解**
 ### 1）InnoDB 的 IO 能力
 - 测试磁盘的 IOPS
 
@@ -255,7 +255,7 @@ show variables like '%innodb_max_dirty_pages_pct%';
 
 
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -271,7 +271,7 @@ show variables like '%innodb_max_dirty_pages_pct%';
 ### 参考资料
 
 
-#### **源码详解**
+#### **代码详解**
 ### 1）开启 MySQL binlog
 
 - 查询是否开启
