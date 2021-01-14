@@ -2,7 +2,7 @@
 ## 常用命令
 |功能|命令|
 |:----|:----|
-|查看机器配置|系统版本：cat /etc/redhat-release<br>CPU位数：uname -a<br>逻辑CPU个数：cat /proc/cpuinfo \| grep "processor" \| wc -l<br>物理CPU个数：cat /proc/cpuinfo \| grep "physical id" \| sort \| uniq \| wc -l<br>物理CPU中Core的个数：cat /proc/cpuinfo \| grep "cpu cores" \| wc -l<br>内存：free -h<br>硬盘：df -hT<br>默认语言：echo $LANG $LANGUAGE|
+|查看机器配置|系统版本：cat /etc/redhat-release<br>虚拟机 OR 物理机：dmesg \| grep -i virtual 或者 dmidecode -s system-product-name<br>CPU位数：uname -a<br>逻辑CPU个数：cat /proc/cpuinfo \| grep "processor" \| wc -l<br>物理CPU个数：cat /proc/cpuinfo \| grep "physical id" \| sort \| uniq \| wc -l<br>物理CPU中Core的个数：cat /proc/cpuinfo \| grep "cpu cores" \| wc -l<br>内存：free -h<br>硬盘：df -hT<br>默认语言：echo $LANG $LANGUAGE|
 |时间逆序查看|ls -lrt|
 |推送拉取文件|推送：scp /opt/soft/nginx-0.5.38.tar.gz root@10.10.10.10:/opt/soft/<br>拉取：scp root@10.10.10.10:/opt/soft/test.xml ./|
 |查看进程|ps -ef \| grep 程序名称|
