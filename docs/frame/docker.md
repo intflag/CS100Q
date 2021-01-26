@@ -209,3 +209,204 @@ Hello My Nginx!!!
 
 ### 参考资料
 - [Docker离线安装Nginx镜像](https://zhouyanwei.cn/2019/08/13/2019-8-13-DockerNginx/)
+
+## docker-compose 搭建 ES + Kibana 集群
+
+### 1）创建 docker 映射目录并授权
+```bash
+# es
+esPath=/data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0 && \
+mkdir -p $esPath/node1/config && \
+mkdir -p $esPath/node1/data && \
+mkdir -p $esPath/node1/log && \
+mkdir -p $esPath/node2/config && \
+mkdir -p $esPath/node2/data && \
+mkdir -p $esPath/node2/log && \
+mkdir -p $esPath/node3/config && \
+mkdir -p $esPath/node3/data && \
+mkdir -p $esPath/node3/log && \
+chmod 777 -R $esPath/node1 && \
+chmod 777 -R $esPath/node2 && \
+chmod 777 -R $esPath/node3
+
+# kibana
+kibanaPath=/data1/hadoop/rssoft/zncyw/kibana-7.3.0 && \
+mkdir -p $kibanaPath/config && \
+```
+
+### 2）创建 ES 和 kibana 配置文件
+```bash
+#node1
+vi $esPath/node1/config/elasticsearch.yml
+
+cluster.name: es-cluster
+node.name: es-node1
+node.master: true
+node.data: true
+ 
+network.host: es-node1
+http.port: 9200
+transport.tcp.port: 9300
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+ 
+discovery.zen.ping.unicast.hosts: ["es-node1:9300", "es-node1:9300", "es-node2:9300"]
+discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping_timeout: 5s
+ 
+bootstrap.memory_lock: true
+action.destructive_requires_name: true
+cluster.initial_master_nodes: ["es-node1"]
+
+#node2
+vi $esPath/node2/config/elasticsearch.yml
+
+cluster.name: es-cluster
+node.name: es-node2
+node.master: false
+node.data: true
+ 
+network.host: es-node2
+http.port: 9200
+transport.tcp.port: 9300
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+ 
+discovery.zen.ping.unicast.hosts: ["es-node1:9300", "es-node1:9300", "es-node2:9300"]
+discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping_timeout: 5s
+ 
+bootstrap.memory_lock: true
+action.destructive_requires_name: true
+cluster.initial_master_nodes: ["es-node1"]
+
+#node3
+vi $esPath/node3/config/elasticsearch.yml
+
+cluster.name: es-cluster
+node.name: es-node3
+node.master: false
+node.data: true
+ 
+network.host: es-node3
+http.port: 9200
+transport.tcp.port: 9300
+http.cors.enabled: true
+http.cors.allow-origin: "*"
+ 
+discovery.zen.ping.unicast.hosts: ["es-node1:9300", "es-node1:9300", "es-node2:9300"]
+discovery.zen.minimum_master_nodes: 2
+discovery.zen.ping_timeout: 5s
+ 
+bootstrap.memory_lock: true
+action.destructive_requires_name: true
+cluster.initial_master_nodes: ["es-node1"]
+
+#kibana
+vi $kibanaPath/config/kibana.yml
+
+server.name: kibana
+server.host: "0.0.0.0"
+elasticsearch.hosts: [ "http://es-node1:9200", "http://es-node2:9200", "http://es-node3:9200" ]
+```
+
+### 3）创建 docker-compose.yml
+```bash
+vi docker-compose.yaml
+
+version: "3"
+services:
+  es-node1:
+    image: elasticsearch:7.3.0
+    container_name: es-node1
+    environment:
+      - "ES_JAVA_OPTS=-Xms10g -Xmx10g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "19200:9200"
+      - "19300:9300"
+    volumes:
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node1/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node1/data:/usr/share/elasticsearch/data
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node1/log:/usr/share/elasticsearch/log
+    networks:
+      - net-es
+  es-node2:
+    image: elasticsearch:7.3.0
+    container_name: es-node2
+    environment:
+      - "ES_JAVA_OPTS=-Xms10g -Xmx10g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "19201:9200"
+      - "19301:9300"
+    volumes:
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node2/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node2/data:/usr/share/elasticsearch/data
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node2/log:/usr/share/elasticsearch/log
+    networks:
+      - net-es
+  es-node3:
+    image: elasticsearch:7.3.0
+    container_name: es-node3
+    environment:
+      - "ES_JAVA_OPTS=-Xms10g -Xmx10g"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    ports:
+      - "19202:9200"
+      - "19302:9300"
+    volumes:
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node3/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node3/data:/usr/share/elasticsearch/data
+      - /data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0/node3/log:/usr/share/elasticsearch/log
+    networks:
+      - net-es
+  kibana:
+    image: kibana:7.3.0
+    container_name: kibana73
+    environment:
+      - I18N_LOCALE=zh-CN
+      - XPACK_GRAPH_ENABLED=true
+      - TIMELION_ENABLED=true
+      - XPACK_MONITORING_COLLECTION_ENABLED="true"
+    ports:
+      - "5601:5601"
+    volumes:
+      - /data1/hadoop/rssoft/zncyw/kibana-7.3.0/config/kibana.yml:/usr/share/kibana/config/kibana.yml
+    networks:
+      - net-es
+networks:
+  net-es:
+    driver: bridge
+```
+
+### 4）启动并验证
+```bash
+docker-compose -f docker-compose.yml up -d
+
+# 验证
+curl -XGET 'http://127.0.0.1:19200/_cat/nodes?pretty'
+
+#  *号表示为当前节点为主节点的意思
+172.23.0.2 26 32 4 0.71 1.42 1.06 dim * es-node1
+172.23.0.4 27 32 4 0.71 1.42 1.06 di  - es-node2
+172.23.0.3 18 32 4 0.71 1.42 1.06 di  - es-node3
+```
