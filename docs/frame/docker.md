@@ -210,7 +210,7 @@ Hello My Nginx!!!
 ### 参考资料
 - [Docker离线安装Nginx镜像](https://zhouyanwei.cn/2019/08/13/2019-8-13-DockerNginx/)
 
-## docker-compose 搭建 ES + Kibana 集群
+## 搭建 ES + Kibana 集群
 
 ### 1）创建 docker 映射目录并授权
 ```bash
