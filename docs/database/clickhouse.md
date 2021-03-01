@@ -24,6 +24,25 @@ ALTER TABLE [db.]table UPDATE column1 = expr1 [, ...] WHERE filter_expr
 2、这两条命令是异步执行的，可以通过查看表 system.mutations 来查看命令的是否执行完毕
 select * from system.mutations where table='test_update';
 ```
+
+### 3）系统表
+
+- 查看数据库容量、行数、压缩率
+
+```
+SELECT sum(rows) AS `total_count`, formatReadableSize(sum(data_uncompressed_bytes)) AS `original_size`, formatReadableSize(sum(data_compressed_bytes)) AS `compressed_size`, round((sum(data_compressed_bytes) / sum(data_uncompressed_bytes)) * 100, 0) AS `compression_ratio` FROM system.parts
+
+┌─total_count─┬─original_size─┬─compressed_size─┬─compression_ratio─┐
+│ 27130807069 │ 2.76 TiB      │ 482.91 GiB      │                17 │
+└─────────────┴───────────────┴─────────────────┴───────────────────┘
+```
+
+- 查看数据表容量、行数、压缩率
+
+```
+SELECT table AS `table_name`, sum(rows) AS `total_count`, formatReadableSize(sum(data_uncompressed_bytes)) AS `original_size`, formatReadableSize(sum(data_compressed_bytes)) AS `compressed_size`, round((sum(data_compressed_bytes) / sum(data_uncompressed_bytes)) * 100, 0) AS `compression_ratio` FROM system.parts WHERE table IN ('temp_1') GROUP BY table
+```
+
 ## 高级操作
 ### 1）kafka 表引擎实时接收数据
 
