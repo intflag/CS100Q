@@ -10,6 +10,7 @@
 ![](http://images.intflag.com/protocol002.jpg)
 
 ### 3）ip addr 命令
+![](http://images.intflag.com/protocol004.jpg)
 
 ### 3）IP 地址
 ![](http://images.intflag.com/protocol003.jpg)
@@ -41,3 +42,4 @@ IP/掩码位：16.158.165.91/22
 ### 4）MAC 地址
 - 作用：区分全局唯一的功能 & 子网内定位功能
 - 格式：6 字节，48 位，前 24 位由 IEEE 分配，称为OUI（组织唯一标识符），后 24 位由网卡制造商为其网卡分配一个唯一的编号
+- MAC 地址的通信范围比较小，局限在一个子网里面
