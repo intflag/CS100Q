@@ -46,7 +46,7 @@
 - 在源码里面，存储数据的数组 elementData 被 transient 修饰，所以默认不会序列化，但是它实现了 writeObject 和 readObject 来控制只序列化数组中有元素填充的部分；
 - 最后一比较重要的点是，ArrayList 具有一个快速失败的机制，在源码里面有一个 modCount 变量，用来记录 ArrayList 结构发生变化的次数，在进行序列化或者是迭代操作前后，都会判断这个变量是否发生了改变，如果改变了就会抛出 ConcurrentModificationException 并发修改异常。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、概览
 因为 ArrayList 是基于数组实现的，所以支持快速随机访问。 RandomAccess 接口标识着该类支持快速随机访问。
@@ -164,7 +164,7 @@ modCount 用来记录 ArrayList 结构发生变化的次数。结构发生变化
 - 它跟 ArrayList 最大的区别就是，ArrayList 不是线程安全的，而 Vector 是线程安全，因为它的添加，查找，删除等方法都用了 synchronized 关键字进行同步；
 - 然后他的默认容量也是 10，它内部保证容量足够的方法叫做 ensureCapacityHelper，如果新建的时候没有使用有参构造，默认扩容后的容量是之前的 2 倍。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、同步
 它的实现与 ArrayList 类似，但是使用了 `synchronized` 进行同步。
@@ -238,7 +238,7 @@ public Vector() {
 - 写操作前会用 ReentrantLock 加锁，写入后会把引用指向新数组，然后在 finally 里面释放锁；
 CopyOnWriteArrayList 大大提高了读操作的性能，适合读多写少的场景，同时它也有缺陷，比如内存占用是原来的两倍左右，还有可能会导致数据不一致的现象（读操作的时候写操作还没有同步到数组中），所以不适合内存敏感以及对实时性要求很高的场景。
 
-#### **源码详解**
+#### **代码详解**
 
 可以使用 `Collections.synchronizedList();` 得到一个线程安全的 `ArrayList`。
 ```java
@@ -306,7 +306,7 @@ CopyOnWriteArrayList 在写操作的同时允许读操作，大大提高了读�
 - LinkedList 底层是基于双向链表实现的，有一个静态内部类 Node，里面有前驱指针和后继指针，而且每个链表存储了 first 和 last 指针，在查找的时候会判断 index < (size >> 1) ，也就是如果索引靠左，就从 first 指针往后搜索，否则从 last 指针往前搜索；
 - 和 ArrayList 相比的话，LinkedList 不支持随机访问，但插入和删除只需要先遍历一遍找到插入或删除的节点，然后改变指针的指向就可以了。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、概览
 
@@ -356,7 +356,7 @@ ArrayList 基于动态数组实现，LinkedList 基于双向链表实现。Array
 - 至于为什么在长度 >= 8 的时候转，是因为 HashMap 遵循泊松分布，也就是哈希冲突满足小概率事件、独立、稳定三个条件，最后从概率统计的角度出发选择了 8；然后选择转为红黑树的原因是，红黑树在添加、查找、删除元素的时候，时间复杂度都为 O(log n)，比较稳定；
 - HashMap 是线程不安全的。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、存储结构
 内部包含了一个 Entry 类型的数组 table。Entry 存储着键值对。它包含了四个字段，从 next 字段我们可以看出 Entry 是一个链表。即数组中的每个位置被当成一个桶，一个桶存放一个链表。HashMap 使用拉链法来解决冲突，同一个链表中存放哈希值和散列桶取模运算结果相同的 Entry。
@@ -703,7 +703,7 @@ static final int tableSizeFor(int cap) {
 - HashTable 是线程安全的，因为它的 put、get、remove 等方法都用 synchronized 进行同步，但这种方式效率比较低，当一个线程使用 put 方法添加元素的时候，不但不能使用 put 方法，连 get 方法也不能使用，也就是说会竞争同一把锁，竞争越激烈效率越低，所以现在不推荐使用了；
 - HashTable 不支持存储 null 键值对。
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -723,7 +723,7 @@ static final int tableSizeFor(int cap) {
 - 它在执行 size 方法计算所有元素个数的时候，会遍历所有 Segment 然后把每个 Segment 中的 count 累加起来，如果连续两次不加锁操作得到的结果一致，那么可以认为这个结果是正确的，否则会对所有 Segment 都加锁；
 - JDK8 使用了 CAS 操作来支持更高的并发度，在 CAS 操作失败时使用内置锁 synchronized，并且 JDK8 在链表过长时也会转换为红黑树。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、存储结构
 ![](http://images.intflag.com/container07.png)
@@ -857,7 +857,7 @@ JDK 1.8 使用了 CAS 操作来支持更高的并发度，在 CAS 操作失败�
 - LinkedHashMap 继承自 HashMap，所以具有和 HashMap 一样的快速查找特性，在内部维护了一个双向链表，用来实现元素的插入顺序或者 LRU 顺序；
 - 它内部有一个变量 accessOrder，默认为 false，维护的是插入顺序，当 accessOrder 为 true 的时候维护 LRU 顺序，每次访问一个节点时，会将这个节点移到链表尾部，保证链表尾部是最近访问的节点，那链表首部就是最近最久未使用的节点。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、存储结构
 继承自 HashMap，因此具有和 HashMap 一样的快速查找特性。
@@ -990,7 +990,7 @@ public class LRUCache<K, V> extends LinkedHashMap {
     - 当调用 get() 方法时，会先从 eden 区获取，如果没有找到的话再到 longterm 获取，当从 longterm 获取到就把对象放入 eden 中，从而保证经常被访问的节点不容易被回收；
     - 当调用 put() 方法时，如果 eden 的大小超过了 size，那么就将 eden 中的所有对象都放入 longterm 中，利用虚拟机回收掉一部分不经常使用的对象。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、存储结构
 WeakHashMap 的 Entry 继承自 WeakReference，被 WeakReference 关联的对象在下一次垃圾回收时会被回收。
@@ -1060,7 +1060,7 @@ public final class ConcurrentCache<K, V> {
 - offer 入队、poll 出队、removeAt 删除指定位置元素方法的时间复杂度都是 O(logn)，remove 删除指定元素方法为 O(n)，peek 方法为 O(1)；
 - PriorityQueue 不是线程安全的。
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -1074,7 +1074,7 @@ public final class ConcurrentCache<K, V> {
 - PriorityBlockingQueue 实现原理和 PriorityQueue 类似，但它是线程安全的，因为它使用 ReentrantLock 和 Condition 来确保多线程环境下的同步问题，入队、出队、删除元素等方法都会在操作前先获取锁然后加锁，操作完毕后在 finally 中释放锁；
 - 它也会动态扩容，扩容方法叫做 tryGrow，扩容前会释放锁，允许在扩容的时候进行入队操作，大大提高了并发性能，但是它采用了 CAS 机制，保证扩容时只能有一个线程进行，避免出现多个线程同时扩容的问题。
 
-#### **源码详解**
+#### **代码详解**
 
 
 

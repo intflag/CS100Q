@@ -2,7 +2,7 @@
 ## 常用命令
 |功能|命令|
 |:----|:----|
-|查看机器配置|系统版本：cat /etc/redhat-release<br>CPU位数：uname -a<br>逻辑CPU个数：cat /proc/cpuinfo \| grep "processor" \| wc -l<br>物理CPU个数：cat /proc/cpuinfo \| grep "physical id" \| sort \| uniq \| wc -l<br>物理CPU中Core的个数：cat /proc/cpuinfo \| grep "cpu cores" \| wc -l<br>内存：free -h<br>硬盘：df -hT<br>默认语言：echo $LANG $LANGUAGE|
+|查看机器配置|系统版本：cat /etc/redhat-release<br>虚拟机 OR 物理机：dmesg \| grep -i virtual 或者 dmidecode -s system-product-name<br>CPU位数：uname -a<br>逻辑CPU个数：cat /proc/cpuinfo \| grep "processor" \| wc -l<br>物理CPU个数：cat /proc/cpuinfo \| grep "physical id" \| sort \| uniq \| wc -l<br>物理CPU中Core的个数：cat /proc/cpuinfo \| grep "cpu cores" \| wc -l<br>内存：free -h<br>硬盘：df -hT<br>默认语言：echo $LANG $LANGUAGE|
 |时间逆序查看|ls -lrt|
 |推送拉取文件|推送：scp /opt/soft/nginx-0.5.38.tar.gz root@10.10.10.10:/opt/soft/<br>拉取：scp root@10.10.10.10:/opt/soft/test.xml ./|
 |查看进程|ps -ef \| grep 程序名称|
@@ -21,11 +21,11 @@
 |软链接的创建和删除|创建：sudo ln -s /usr/local/node-v10.15.3-linux-x64/bin/node /usr/local/bin/<br>删除：rm –rf /usr/local/redis (最后不要加/，否则会删除实际文件)<br>更新：ln –snf  /opt/apps/redis-5.0.4 /usr/local/redis|
 |改变文件所有者|chown -R root:root app.jar（-R表示递归）|
 |查看系统所有用户|cat /etc/passwd|
+|查看路由|route -n|
 |网络抓包|控制台抓包：sudo tcpdump -i bond0 -n -nn host 192.168.1.1 and port 165<br>生成pcap文件：sudo tcpdump -i bond0 -v -w ./192.168.1.1trap2.pcap host 192.168.1.1 and port 165|
 |测试硬盘读取速度|hdparm -t /dev/sda1|
 |安装snmpwalk|yum install net-snmp* -y|
 |启动端口并写入数据|nc -lk 8888|
-
 
 ## 常用脚本
 ### 1、快速修改tomcat端口
@@ -114,6 +114,12 @@ nmap 目标主机IP
 # 扫描禁用 ping 命令的主机
 nmap -Pn 目标主机IP
 ```
+
+9、grep 命令正则匹配 IP 地址
+```bash
+cat file.log |grep -Eo '(([1-9]|1[0-9]|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.)(([0-9]{1,2}|1[1-9]{2}|2[0-4][0-9]|25[0-5])\.){2}([1-9]|[1-9][0-9]|1[1-9]{2}|2[0-5][0-9]|25[0-4])'
+```
+
 ## 常见问题
 ### 1、无法使用 root 进行 ssh 登录
 - 原因：禁止了 root 用户通过 ssh 登录系统的功能
@@ -144,4 +150,9 @@ rm -rf ~/.ssh/known_hosts
 ### 4、找不到 snmpwalk 命令
 ```bash
 sudo yum install net-snmp* -y
+```
+
+### 5、找不到 rz、sz 命令
+```bash
+yum -y install lrzsz
 ```

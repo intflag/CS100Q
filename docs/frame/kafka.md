@@ -34,4 +34,10 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
 
 # 修改topic的partition数量（只能增加不能减少）
 ./bin/kafka-topics.sh --zookeeper 127.0.0.1:2181 --alter --partitions 20 --topic test
+
+# 列出所有主题中的所有用户组
+./bin/kafka-consumer-groups.sh --bootstrap-server 127.0.0.1:9092 --list
+
+# 查看某个group的消费信息
+./bin/kafka-consumer-groups.sh --bootstrap-server 127.0.0.1:9092 --describe --group groupName
 ```

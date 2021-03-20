@@ -25,7 +25,7 @@
 - 阻塞状态：如果一个线程执行了睡眠或者挂起等方法，会进入阻塞状态，此时线程会让出 CPU，如果睡眠时间已到或者获得设备资源后可以从新回到就绪状态；
 - 死亡状态：一个运行的线程执行完毕或者出现了未知异常会导致线程死亡。
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -44,7 +44,7 @@
 - 实现 Callable 接口，然后实现 call 方法，使用的时候需要用 FutureTask 包装一下，其实 FutureTask 也间接实现了 Runnable 接口，但这种方式可以通过 FutureTask 的 get 方法获取线程的异步执行结果；
 - 一般情况下，选择实现接口的方式会好一些，因为 Java 是单继承，如果选择继承 Thread 类以后就不能再继承其他类，但可以实现多个接口，另外如果是实现接口的方式下获取当前线程对象，需要使用 `Thread.currentThread()`，如果是继承方式的话，直接使用 `this` 关键字就可以得到了。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1）继承 Thread 类
 继承 Thread 类，然后重写 run 方法。
@@ -174,7 +174,7 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
 - [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
 - [面试官：来！聊聊线程池的实现原理以及使用时的问题](https://juejin.im/post/5dd2d2205188254a0e15b991)
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -198,7 +198,7 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
 - ReentrantLock 是 <mark>&nbsp;java.util.concurrent&nbsp;</mark> 包下的锁，实现了 `Lock` 接口，只能锁代码块；
 - ReentrantLock 是基于 <mark>&nbsp;AQS（AbstractQuenedSynchronizer）抽象的队列式同步器&nbsp;</mark> 实现的，需要手动去释放锁，通常方法开始的时候加锁，然后在 `finally` 中释放锁。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1）synchronized
 **① 同步代码块**
@@ -447,7 +447,7 @@ synchronized 中的锁是非公平的，ReentrantLock 默认情况下也是非�
 
 - 可以在线程中调用另一个线程的 join 方法，当前线程会挂起，直到另一个线程执行结束。
 
-#### **源码详解**
+#### **代码详解**
 
 在线程中调用另一个线程的 join() 方法，会将当前线程挂起，直到目标线程结束。
 
@@ -545,7 +545,7 @@ wait 方法会让线程进入阻塞状态，并且会释放线程占有的锁，
 - 使用 wait 挂起线程以后，线程会释放锁，因为如果不释放锁，其他线程就不能进入对象的同步代码块或者同步方法中，也就不能执行 notify() 或者 notifyAll() 方法来唤醒挂起的线程，从而造成死锁；
 - wait() 是 Object 的方法，而 sleep() 是 Thread 的静态方法，wait() 会释放锁，sleep() 不会释放锁。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、简单使用
 ```java
@@ -651,7 +651,7 @@ Process finished with exit code 0
 - java.util.concurrent 类库中提供了 Condition 类来实现线程之间的协调，可以在 Condition 上调用 await() 方法使线程等待，其他线程上调用 signal() 或者 signalAll() 方法唤醒等待的线程。
 - 相比与 wait() 方法，await() 方法可以指定等待的条件，因此更加灵活。
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、简单使用
 ```java
@@ -784,7 +784,7 @@ Process finished with exit code 0
 ### 参考资料
 - [大白话聊聊Java并发面试问题之Java 8如何优化CAS性能？【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247484070&idx=1&sn=c1d49bce3c9da7fcc7e057d858e21d69&chksm=fba6eaa5ccd163b3a935303f10a54a38f15f3c8364c7c1d489f0b1aa1b2ef293a35c565d2fda&mpshare=1&scene=1&srcid=0517Jzf4pPxfShe3mewgFLDl&sharer_sharetime=1589726268906&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=042d77279f4726137744ab58f229534d4087388bec935765ec760d286f615f9ea1d6b3882cb6d1f37e76f5df4cab13ca69e46d865c0b9939ec0ed0952f9c9855f031fcd09e2b9d3c16edbe35c5593a4d&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AyOp4FTyqw0H66RJ7howCxc%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -799,7 +799,7 @@ Process finished with exit code 0
 ### 参考资料
 - [Java 并发高频面试题：聊聊你对 AQS 的理解？【石杉的架构笔记】](https://mp.weixin.qq.com/s/zdn54VeNSsabwDd3CBvSoA)
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -817,7 +817,7 @@ Process finished with exit code 0
 - [不懂什么是 Java 中的锁？看看这篇你就明白了！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486820&idx=1&sn=cdd3ca69c68383a38a48bfd74124f0af&chksm=fba6e567ccd16c71438fe62f40fee9f55746453e91bc12a2c2be47272de84aa1a20dc541c63d&mpshare=1&scene=1&srcid=0517yoHuUp41wrvwCzbB6oaU&sharer_sharetime=1589727926343&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=1f1e787ff7a3f9028b14959bba2dc365d99a3d18a1d04769c87784d8d51fe03f42da291c336e8e5a0e2e5f7cc7108cf40baebbee0813fa48ed9b4e2382e51fa2682f3ac4cddb6c4ff32dc79dfaf4e7b5&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=Ayjq6CBMGjJDbamv49c5fTA%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
 - [一文带你了解 Java 并发中的锁优化和线程池优化！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486831&idx=1&sn=69ca4c63d806f1d22579b3a3df52d3e7&chksm=fba6e56cccd16c7ada14fc23d052de0f2f02c4cc1560f65bdf2c2d473a8a1a0047b35738d911&mpshare=1&scene=1&srcid=0517vTFqkELMfZyIoN8Uk0Ky&sharer_sharetime=1589726717709&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=7696a76dfdc98da9b97c4eb2179ccc28bc842753067f804fa08ee938b7307bfdf685fc9c3901a2b2b9f260bf079c75b1f9bd8d1cbeb71dbf84157afc504b86b87f241940b348d50a0e84b2d1078e8b27&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=AytqvL0rdirbI8iwxyaOLzs%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
 
-#### **源码详解**
+#### **代码详解**
 
 
 
@@ -833,7 +833,7 @@ Process finished with exit code 0
 ### 参考资料
 - [聊聊并发（七）——Java 中的阻塞队列](https://www.infoq.cn/article/java-blocking-queue)
 
-#### **源码详解**
+#### **代码详解**
 
 ### 1、BlockingQueue
 java.util.concurrent.BlockingQueue 接口有以下阻塞队列的实现：

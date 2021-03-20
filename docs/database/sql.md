@@ -256,3 +256,8 @@ mysql> show variables  like '%innodb_buffer_pool_size%';
 1 row in set (0.00 sec)
 
 ```
+
+## 表空间
+```sql
+SELECT table_schema,TABLE_NAME , concat(data_free/1024/1024,"M") FROM `information_schema`.tables WHERE table_schema = 'db_name' and  ENGINE ='innodb'  ORDER BY data_free DESC;
+```
