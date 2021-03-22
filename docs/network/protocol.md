@@ -110,3 +110,19 @@ IP/掩码位：16.158.165.91/22
     - 设置特殊的 TTL，来追踪去往目的地时沿途经过的路由器
     - 设置不分片，从而确定路径的 MTU
 
+- 网关：通常是一个三层转发设备，所谓三层设备就是把 MAC 头和 IP 头都取下来，然后根据里面的内容，看看接下来把包往哪里转发的设备。
+
+- 静态路由：静态配置的若干条路由规则（网络目标、网络掩码、网关、接口、跃点数）
+
+- 转发网关（欧洲十国游）
+    - MAC 改变，IP 不变
+![](http://images.intflag.com/protocol100.jpg)
+
+- NAT 网关 （玄奘西行）
+    - MAC 改变，IP 也改变，由路由器做 NAT 转换
+
+- 动态路由算法
+    - 距离矢量路由（distance vector routing），基于 Bellman-Ford 算法
+        - BGP（Border Gateway Protocol）外网路由协议，简称 BGP 协议
+    - 链路状态路由（link state routing），基于 Dijkstra 算法
+        - IGP（Interior Gateway Protocol）内部网关协议，简称 IGP 协议
