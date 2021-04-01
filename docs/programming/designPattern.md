@@ -147,6 +147,71 @@ public class CglibDynamicProxy {
 ## 11、享元模式（结构型）
 ## 12、观察者模式（行为型）
 
+### a、原理
+- 观察者模式又被称为发布订阅模式；
+- 在对象之间定义一个或者多个依赖，当一个对象状态发生改变时，所有依赖的对象都会自动收到通知；
+
+### a、实现
+
+- 方式一：经典实现
+
+```java
+public interface Subject {
+    void registerObserver(Observer observer);
+    void removeObserver(Observer observer);
+    void notifyObservers(String message);
+}
+
+public interface Observer {
+    void update(String message);
+}
+
+public class ConcreteObserverOne implements Observer {
+    @Override
+    public void update(String message) {
+        System.out.println("ConcreteObserverOne update message: " + message);
+    }
+}
+
+public class ConcreteObserverTwo implements Observer{
+    @Override
+    public void update(String message) {
+        System.out.println("ConcreteObserverTwo message: " + message);
+    }
+}
+
+public class ConcreteSubject implements Subject{
+
+    private final List<Observer> observers = new ArrayList<>();
+
+    @Override
+    public void registerObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers(String message) {
+        for (Observer observer : observers) {
+            observer.update(message);
+        }
+    }
+
+    public static void main(String[] args) {
+        ConcreteSubject subject = new ConcreteSubject();
+        subject.registerObserver(new ConcreteObserverOne());
+        subject.registerObserver(new ConcreteObserverTwo());
+        subject.notifyObservers("user login");
+    }
+}
+```
+
+### a、应用场景
+
 ## 13、模板模式（行为型）
 ### a、原理
 
