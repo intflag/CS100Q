@@ -130,3 +130,103 @@ set session transaction isolation level 隔离级别
 -- 查询超过 60 秒的长事务
 select * from information_schema.innodb_trx where TIME_TO_SEC(timediff(now(),trx_started))>60
 ```
+
+### 进程及死锁
+```sql
+-- 按客户端 IP 分组，看哪个客户端的链接数最多
+select client_ip,count(client_ip) as client_num from (select substring_index(host,':' ,1) as client_ip from information_schema.processlist ) as connect_info group by client_ip order by client_ip,client_num desc;
+
+-- 查看正在执行的线程，并按 Time 倒排序，看看有没有执行时间特别长的线程
+select * from information_schema.processlist where Command != 'Sleep' order by Time desc;
+
+-- 找出所有执行时间超过 5 分钟的线程，拼凑出 kill 语句，方便后面查杀
+select concat('kill ', id, ';') from information_schema.processlist where Command != 'Sleep' and Time > 300 order by Time desc;
+```
+
+### 慢查询
+- 慢查询配置
+
+```sql
+-- 查询是否开启慢查询
+show variables  like '%slow_query_log%';
+
+-- 临时开启
+set global slow_query_log=1;
+
+-- 永久开启
+修改my.cnf文件，增加或修改参数slow_query_log 和slow_query_log_file后，然后重启MySQL服务器，如下所示
+slow_query_log =1
+slow_query_log_file=/tmp/mysql_slow.log
+
+-- 查看当前会话慢查询时间阈值，默认为 10 秒
+show variables like 'long_query_time%';
+
+-- 修改阈值
+set global long_query_time=4;
+
+-- 查看全局慢查询时间阈值，普通查询方式需要新开一个会话才能看到修改效果
+show global variables like 'long_query_time';
+
+-- 查询输出方式，默认为 FILE，表示输出到文件中
+show variables like '%log_output%';
+
+-- 修改输出方式，TABLE 表示会输出到表中，也可以使用 FILE,TABLE 逗号分隔的方式另种都配置
+set global log_output='TABLE';
+
+-- 查看未使用索引慢查询开启状态
+show variables like 'log_queries_not_using_indexes';
+
+-- 开启未使用索引慢查询记录功能
+set global log_queries_not_using_indexes=1;
+
+-- 查看管理语句慢查询开启记录
+show variables like 'log_slow_admin_statements';
+
+-- 慢查询记录数
+show global status like '%Slow_queries%';
+```
+
+- 慢查询分析 mysqldumpslow
+
+```bash
+mysqldumpslow --help
+
+c: 访问计数
+
+l: 锁定时间
+
+r: 返回记录
+
+t: 查询时间
+
+al:平均锁定时间
+
+ar:平均返回记录数
+
+at:平均查询时间
+```
+
+- 常用分析命令
+
+```bash
+得到返回记录集最多的10个SQL。
+
+mysqldumpslow -s r -t 10 /database/mysql/mysql06_slow.log
+
+得到访问次数最多的10个SQL
+
+mysqldumpslow -s c -t 10 /database/mysql/mysql06_slow.log
+
+得到按照时间排序的前10条里面含有左连接的查询语句。
+
+mysqldumpslow -s t -t 10 -g “left join” /database/mysql/mysql06_slow.log
+
+另外建议在使用这些命令时结合 | 和more 使用 ，否则有可能出现刷屏的情况。
+
+mysqldumpslow -s r -t 20 /mysqldata/mysql/mysql06-slow.log | more
+```
+
+### 表空间
+```sql
+SELECT table_schema,TABLE_NAME , concat(data_free/1024/1024,"M") FROM `information_schema`.tables WHERE table_schema = 'db_name' and  ENGINE ='innodb'  ORDER BY data_free DESC;
+```
