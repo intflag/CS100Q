@@ -35,19 +35,6 @@
 - 记录：记录前面的数字代表当前分组的记录条数；
 - 查询：利用二分法，先定位到槽，然后在分组内顺序搜索。
 
-## 索引
-
-### 1、B+Tree
-- 叶子节点用来存放数据，聚集索引（主键索引）存放整行记录，非聚集索引（二级索引）存放主键值；
-- 上层非叶子节点用来存放目录项，作为索引；
-- 所有节点按照索引键大小排序，构成一个双向链表，加速范围查找。
-
-- 主键索引
-![](http://images.intflag.com/mysql002.png)
-
-- 二级索引
-![](http://images.intflag.com/mysql003.png)
-
 ## SQL 执行流程
 
 ### 1、重要日志模块
@@ -110,6 +97,46 @@ insert into T(c) values(1);
 - undo log：回滚日志，记录操作的逆过程
 - read-view：每个事务在启动时创建
 
+## 索引
+
+### 1、B+Tree
+- 叶子节点用来存放数据，聚集索引（主键索引）存放整行记录，非聚集索引（二级索引）存放主键值；
+- 上层非叶子节点用来存放目录项，作为索引；
+- 所有节点按照索引键大小排序，构成一个双向链表，加速范围查找。
+
+- 主键索引
+![](http://images.intflag.com/mysql002.png)
+
+- 二级索引
+![](http://images.intflag.com/mysql003.png)
+
+### 2、覆盖索引
+- 如果查询条件使用的是普通索引（或是联合索引的最左原侧字段），查询结果是联合索引的字段或是主键，不用回表操作，直接返回结果；
+
+### 3、最左前缀
+- 最左前缀可以是联合索引的最左 N 个字段，也可以是字符串索引的最左 M 个字符；
+
+### 4、索引下推
+- 在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数；
+- like 'hello%’and age >10 检索，MySQL5.6版本之前，会对匹配的数据进行回表查询。5.6版本后，会先过滤掉age<10的数据，再进行回表查询，减少回表率，提升检索速度。
+
+## 锁
+
+### 全局锁
+- 整个数据库出于只读状态；
+- 全局锁的典型使用场景是，做全库逻辑备份，建议加 –single-transaction 参数，会开启一个事务，确保拿到一致性视图；
+
+### 表级锁
+- 表锁的语法是 lock tables … read/write
+- MDL（metadata lock 元数据锁）：主要用于隔离DML，和 DDL，防止表结构的修改
+    - 每执行一条DML、DDL语句时都会申请MDL锁，DML操作需要MDL读锁，DDL操作需要MDL写锁；
+    - MDL加锁过程是系统自动控制，无法直接干预，读读共享，读写互斥，写写互斥。
+
+![](http://images.intflag.com/mysql006.png)
+
+### 行级锁
+- 两阶段锁：锁的添加与释放分到两个阶段进行，之间不允许交叉加锁和释放锁；也就是在事务开始执行后为涉及到的行按照需要加锁，但执行完不会马上释放，而是在事务结束时再统一释放他们；
+
 ## SQL 优化
 ## 数据库优化
 ## 高可用
@@ -141,6 +168,15 @@ select * from information_schema.processlist where Command != 'Sleep' order by T
 
 -- 找出所有执行时间超过 5 分钟的线程，拼凑出 kill 语句，方便后面查杀
 select concat('kill ', id, ';') from information_schema.processlist where Command != 'Sleep' and Time > 300 order by Time desc;
+
+-- 对数据库加锁/释放锁，连接断开会自动释放锁
+Flush tables with read lock
+
+-- 对表加读锁
+lock tables T read;
+
+-- 释放锁
+unlock tables
 ```
 
 ### 慢查询
