@@ -118,7 +118,7 @@ insert into T(c) values(1);
 
 ### 4、索引下推
 - 在索引遍历过程中，对索引中包含的字段先做判断，直接过滤掉不满足条件的记录，减少回表次数；
-- like 'hello%’and age >10 检索，MySQL5.6版本之前，会对匹配的数据进行回表查询。5.6版本后，会先过滤掉age<10的数据，再进行回表查询，减少回表率，提升检索速度。
+- like 'hello%’ and age >10 检索，MySQL5.6版本之前，会对匹配的数据进行回表查询。5.6版本后，会先过滤掉age<10的数据，再进行回表查询，减少回表率，提升检索速度。
 
 ## 锁
 
@@ -135,7 +135,16 @@ insert into T(c) values(1);
 ![](http://images.intflag.com/mysql006.png)
 
 ### 行级锁
-- 两阶段锁：锁的添加与释放分到两个阶段进行，之间不允许交叉加锁和释放锁；也就是在事务开始执行后为涉及到的行按照需要加锁，但执行完不会马上释放，而是在事务结束时再统一释放他们；
+- 两阶段锁：在 InnoDB 事务中，行锁是在需要的时候才加上的，但并不是不需要了就立刻释放，而是要等到事务结束时才释放；
+
+### 死锁和死锁检测
+- 死锁：不同线程出现循环资源等待，涉及的线程都在等待别的线程释放资源时，就导致这几个线程进入无线等待状态，被称为死锁；
+
+![](http://images.intflag.com/mysql007.png)
+
+- 死锁超时与检测
+    - innodb_lock_wait_timeout：默认为 50s；
+    - innodb_deadlock_detect：自动死锁检测，默认为 on 开启状态。
 
 ## SQL 优化
 ## 数据库优化
@@ -177,6 +186,13 @@ lock tables T read;
 
 -- 释放锁
 unlock tables
+
+-- 死锁超时时间
+show variables like 'innodb_lock_wait_timeout'; 
+
+-- 死锁自动检测
+show variables like 'innodb_deadlock_detect';
+
 ```
 
 ### 慢查询
