@@ -1,4 +1,4 @@
-- Java
+- JAVA
 
     - [Java 基础](java/basics.md)
     - [Java 容器](java/container.md)
@@ -20,10 +20,8 @@
 
 - 数据库
 
-    - [SQL 优化](database/sql.md)
-    - [Redis](database/redis.md)
     - [MySQL](database/mysql.md)
-    - [Greenplum](database/gp.md)
+    - [Redis](database/redis.md)
     - [ClickHouse](database/clickhouse.md)
 
 - 框架
