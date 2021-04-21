@@ -113,6 +113,44 @@ FROM test_ck_table
 2 rows in set. Elapsed: 0.003 sec.
 ```
 
+### 2）MySQL 表引擎数据无缝对接
+
+```bash
+# 1、MySQL 准备测试表
+
+CREATE TABLE `t_ch_test` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(255) DEFAULT NULL COMMENT '名称',
+  `val` varchar(255) DEFAULT NULL COMMENT '值',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=gbk;
+
+insert into t_ch_test(name,val) values('a','1'),('b','2'),('c','3');
+
+# 2、ClickHouse 创建 MySQL 引擎表
+
+CREATE TABLE `t_ch_test` on cluster 集群名称 (
+  `id` Int64,
+  `name` String,
+  `val` String
+) ENGINE = MySQL('127.0.0.1:3306', '数据库名称', 't_ch_test', 'root', '123456');
+
+# 3、2、ClickHouse 测试
+insert into t_ch_test(name,val) values('d','4'),('e','5');
+select * from t_ch_test;
+
+┌─id─┬─name─┬─val─┐
+│  1 │ a    │ 1   │
+│  2 │ b    │ 2   │
+│  3 │ c    │ 3   │
+│  4 │ d    │ 4   │
+│  5 │ e    │ 5   │
+└────┴──────┴─────┘
+
+# 只会在 Clickhouse 上删除该表
+drop table t_ch_test;
+```
+
 ## 问题记录
 ### 1）启动报时区相关的错误
 报错：
