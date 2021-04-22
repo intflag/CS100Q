@@ -59,3 +59,10 @@ Exception in thread "main" java.lang.NoClassDefFoundError: org/apache/kafka/comm
 配置正确的 Broker 地址
 broken.server = host1:9092,host2:9092
 ```
+
+### 5）类型转换异常
+- 最后结果中不要包含 null
+
+### 6）Dataset<Row> 转 JavaRDD<T> 异常
+- 用 lombok 时不要加 @Accessors(chain = true) 注解
+- Dataset<Row> 中字段有 MySQL 中的 datetime 类型
