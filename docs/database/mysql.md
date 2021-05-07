@@ -168,6 +168,18 @@ insert into T(c) values(1);
 ## 分库分表
 ## 常用 SQL
 
+### 数据库连接数
+```sql
+-- 最大连接数
+show variables like 'max_connections';
+
+-- 当前连接数
+show global status like 'Max_used_connections';
+
+-- 修改最大连接数
+set global max_connections=1500;
+```
+
 ### 事务相关
 ```sql
 -- 查看事务隔离级别
