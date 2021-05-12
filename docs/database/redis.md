@@ -485,6 +485,45 @@ requirepass admin123
 ./src/redis-cli -a pwd keys "simple*" | xargs ./src/redis-cli -a pwd del
 ```
 
+- 响应延迟
+
+```bash
+./src/redis-cli --intrinsic-latency 120
+
+Max latency so far: 1 microseconds.
+Max latency so far: 8 microseconds.
+Max latency so far: 10 microseconds.
+Max latency so far: 12 microseconds.
+Max latency so far: 13 microseconds.
+Max latency so far: 16 microseconds.
+Max latency so far: 26 microseconds.
+Max latency so far: 41 microseconds.
+Max latency so far: 42 microseconds.
+Max latency so far: 1592 microseconds.
+
+2324349292 total runs (avg latency: 0.0516 microseconds / 51.63 nanoseconds per run).
+Worst run took 30836x longer than the average latency.
+```
+
+- swap 情况查询
+
+```bash
+ps -ef|grep redis 得到 pid
+cd /proc/36052/
+cat smaps | egrep '^(Swap|Size)'
+
+Size:                 24 kB
+Swap:                  0 kB
+Size:                 88 kB
+Swap:                  0 kB
+Size:                312 kB
+Swap:                  8 kB
+Size:            9014860 kB
+Swap:                520 kB
+Size:              16388 kB
+Swap:                  0 kB
+```
+
 ## 13、Redis 优化
 
 <!-- tabs:start -->
@@ -495,7 +534,7 @@ requirepass admin123
 
 ### 2、Redis 碎片整理
 
-- info memory：查询 Redis 的内存使用情况
+- info memory：查询 Redis 的内存使用情况 info memory
     - used_memory：是 Redis 中的数据占用的内存。
     - used_memory_rss：是 Redis 向操作系统申请的内存。
     - mem_fragmentation_ratio：就是内存碎片率，mem_fragmentation_ratio = used_memory_rss / used_memory
