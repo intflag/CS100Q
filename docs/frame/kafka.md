@@ -55,3 +55,22 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
 - 通常服务端处理消费的大致逻辑是：从文件读到内存，然后把消息通过网络发送到客户端；
 - 这个过程数据一般会做 2-3 次复制，从文件复制到 PageCache，如果命中缓存可以省略，从 PageCache 复制到应用程序内存中，最后复制到 Socket 缓存区；
 - Kafka 使用零拷贝技术可以把这个复制次数减少一次，DMA 控制器会把 PageCache 中的数据之间复制到 Socket，不需要 CPU 参与，速度更快。
+
+## Kafka 无消息丢失机制
+
+### 生产者无消息丢失
+- ack 机制：生产者每次发送消息后都有一个确认反馈机制，通过配置生产者的 acks 参数可以控制等级
+    - 1：默认值，表示 leader 副本接收到就认为发送成功；
+    - 0：生产者发送后直接返回，实际使用中不推荐；
+    - -1 或 all：表示 leader 副本接收成功，并且所有 follower 副本同步成功才认为消息发送成功；
+- 重试机制：设置 retries 重试次数为一个较大的值，当发送失败时生产者会进行重试，kafka 2.4 版本以后默认设置为Integer.MAX_VALUE；
+- 回调机制：永远使用带有回调方法的 send API，一旦消息提交失败可以有针对性的处理；
+
+### 消费者无消息丢失
+- 手动提交位移：将 enable.auto.commit 自动提交位移设置为 false，手动在消息消费完成后提交；
+
+### Broker 无消息丢失
+- unclean.leader.election.enable = false，它控制的是哪些 Broker 有资格竞选分区的 Leader，如果一个 Broker 落后原先的 Leader 太多，那么它一旦成为新的 Leader，必然会造成消息的丢失，所以一般都要将该参数设置成 false，即不允许这种情况的发生；
+- 设置 replication.factor >= 3，将副本多保存几份；
+- 设置 min.insync.replicas > 1，控制的是消息至少要被写入到多少个副本才算是“已提交”，和 acks=all 全部接收是有区别，acks=all 指的是可以正常工作的副本个数，如果 ISR 里只有一个副本，那么 acks=all 就为 1，而 Broker 这个参数起到了一个保底的措施；
+- 保证 replication.factor >= min.insync.replicas + 1，因为如果他们的值相等，那么只要有一个副本挂机整个分区就无法正常工作了；
