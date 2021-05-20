@@ -179,3 +179,9 @@ Exception: Cannot read all data. Bytes read: 90. Bytes expected: 122.: (at row 1
 ```
 查看代码写入字段个数、顺序、类型是否一致
 ```
+
+### 4）Table is in readonly mode
+- 问题原因：因为zookeeper压力太大，表处于“read only mode”模式，导致插入失败
+- 解决方案
+    - 在zookeeper中将dataLogDir存放目录应该与dataDir分开，可单独采用一套存储设备来存放ZK日志；
+    - 做好zookeeper集群和clickhouse集群的规划，可以多套zookeeper集群服务一套clickhouse集群。
