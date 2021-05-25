@@ -87,6 +87,24 @@ ID=`ps -ef | grep TestApplication | grep java | awk '{print $2}'`
 echo ${ID}
 kill -9 ${ID}
 nohup java -classpath './lib/*:./conf/' com.intflag.TestApplication >run.log 2>&1 &
+
+
+# 停止 进程&端口双重判断
+#!/bin/bash
+killPort=8080
+pidCmd=`ps -ef | grep TestApplication | grep java | awk '{print $2}'`
+pidArr=(${pidCmd})
+
+for i in "${pidArr[@]}"; do
+  pid=$i
+  port=`netstat -nltp|grep ${pid}|grep java|awk '{print $4}'|tr -cd "[0-9]"`
+  if [ $port -eq $killPort ]; then
+    kill -9 ${pid}
+    echo "pid=${pid} port=${port} kill success"
+  else
+    echo "pid=${pid} port=${port} port mismatch"
+  fi
+done
 ```
 
 ### 7、JAVA 配置环境变量
