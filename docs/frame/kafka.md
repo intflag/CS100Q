@@ -74,3 +74,19 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
 - 设置 replication.factor >= 3，将副本多保存几份；
 - 设置 min.insync.replicas > 1，控制的是消息至少要被写入到多少个副本才算是“已提交”，和 acks=all 全部接收是有区别，acks=all 指的是可以正常工作的副本个数，如果 ISR 里只有一个副本，那么 acks=all 就为 1，而 Broker 这个参数起到了一个保底的措施；
 - 保证 replication.factor >= min.insync.replicas + 1，因为如果他们的值相等，那么只要有一个副本挂机整个分区就无法正常工作了；
+
+## Kafka 副本机制
+
+### 副本设计思想
+- 每个分区都有一个 Leader 副本，其余的为 Follower 副本；
+- 只有 Leader 副本对外提供服务，所有消费者和生产者的读写请求只发往 Leader 副本所在的 Broker，Follower 副本只从领导者副本拉取消息；
+- 当Follower 副本挂了之后，Kafka 借助 ZooKeeper 提供的监控功能力，可以实时感知到，然后开始 Leader 选举，从 Follower 副本中选一个作为新的 Leader，老 Leader 副本重启回来后，只能作为 Follower 副本加入到集群中；
+
+### 不支持读写分离的原因
+- 会带来数据实时性和一致性问题；
+- 因为 Kafka 使用磁盘存储数据，Follwer 副本异步向 Leader 副本拉取消息，延时较高；
+- 如果消费者从多个 Follower 副本获取消息可能出现消息一会儿存在、一会儿不存在的现象；
+
+### ISR 副本集合
+- 位于 ISR 集合中的副本都是与 Leader 同步的副本，并且 Leader 副本一定位于 ISR 中；
+- 只有 Follower 副本落后 Leader 副本的时间不连续超过 replica.lag.time.max.ms 参数值，才认为是与 Leader 同步的，这个值默认为 10s；
