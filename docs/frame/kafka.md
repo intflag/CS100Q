@@ -89,4 +89,4 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
 
 ### ISR 副本集合
 - 位于 ISR 集合中的副本都是与 Leader 同步的副本，并且 Leader 副本一定位于 ISR 中；
-- 只有 Follower 副本落后 Leader 副本的时间不连续超过 replica.lag.time.max.ms 参数值，才认为是与 Leader 同步的，这个值默认为 10s；
+- 只有 Follower 副本落后 Leader 副本的时间不连续超过 replica.lag.time.max.ms 参数值，才认为是与 Leader 同步的，这个值默认为 10s；   
