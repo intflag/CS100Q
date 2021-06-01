@@ -23,6 +23,7 @@
     - [MySQL](database/mysql.md)
     - [Redis](database/redis.md)
     - [ClickHouse](database/clickhouse.md)
+    - [DataWareHouse](database/DataWareHouse.md)
 
 - 框架
 
