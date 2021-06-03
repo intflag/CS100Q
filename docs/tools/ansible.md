@@ -111,3 +111,35 @@ PLAY RECAP *********************************************************************
 192.168.0.1              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 192.168.0.2              : ok=3    changed=1    unreachable=0    failed=0    skipped=0    rescued=0    ignored=0   
 ```
+
+## Fact 变量
+### 开启缓存
+- vim /etc/ansible/ansible.cfg
+
+```bash
+gathering = smart
+#缓存时间，单位为秒
+fact_caching_timeout = 86400    
+fact_caching = jsonfile
+#指定ansible包含fact的json文件位置，如果目录不存在，会自动创建
+fact_caching_connection = /tmp/ansible_fact_cache
+```
+
+## synchronize 文件同步模块
+- ansible-sync.yml
+
+```yml
+- name: synchronize dir
+  hosts: test
+  tasks:
+    - name: synchronize dir
+      synchronize: 
+        src: /root/ansibleTest
+        dest: "/root/ansibleTest/{{inventory_hostname}}"
+        mode: pull
+      register: result
+
+    - name: print stdout
+      debug:
+        msg: '{{result}}'
+```
