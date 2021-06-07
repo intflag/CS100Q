@@ -59,7 +59,7 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
 ## Kafka 无消息丢失机制
 
 ### 生产者无消息丢失
-- ack 机制：生产者每次发送消息后都有一个确认反馈机制，通过配置生产者的 acks 参数可以控制等级
+- ACK 机制：生产者每次发送消息后都有一个确认反馈机制，通过配置生产者的 acks 参数可以控制等级
     - 1：默认值，表示 leader 副本接收到就认为发送成功；
     - 0：生产者发送后直接返回，实际使用中不推荐；
     - -1 或 all：表示 leader 副本接收成功，并且所有 follower 副本同步成功才认为消息发送成功；
@@ -102,7 +102,7 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
 ### 分区策略
 - 轮询策略：未指定 key 时使用该策略；
 - 随机策略；
-- Key-ordering：相同的 key 会进入同一个分区，指定 key 时使用该策略，通常用来实现分区有序的需求；
+- Key-Ordering：相同的 key 会进入同一个分区，指定 key 时使用该策略，通常用来实现分区有序的需求；
 - 自定义分区策略：需实现 org.apache.kafka.clients.producer.Partitioner 接口的 partition() 方法，同时配置生产者参数 partitioner.class 为自定义类；
 
 ## 消费者组机制
