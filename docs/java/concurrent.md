@@ -169,6 +169,14 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
     - <mark>&nbsp;threadFactory&nbsp;</mark>：线程池工厂，用来创建线程。通常在实际项目中，为了便于后期排查问题，在创建线程时需要为线程赋予一定的名称，通过线程池工厂，可以方便的为每一个创建的线程设置具有业务含义的名称。
     - <mark>&nbsp;handler&nbsp;</mark>：拒绝策略。当任务队列已满，线程数量达到 maximumPoolSize 后，线程池就不会再接收新的任务了，这个时候就需要使用拒绝策略来决定最终是怎么处理这个任务。默认情况下使用 AbortPolicy，表示无法处理新任务，直接抛出异常。在 ThreadPoolExecutor 类中定义了四个内部类，分别表示四种拒绝策略。我们也可以通过实现 RejectExecutionHandler 接口来实现自定义的拒绝策略。
     - <mark>&nbsp;AbortPolicy&nbsp;</mark>：不再接收新任务，直接抛出异常；<mark>&nbsp;CallerRunsPolicy&nbsp;</mark>：提交任务的线程自己处理。<mark>&nbsp;DiscardPolicy&nbsp;</mark>：不处理，直接丢弃；<mark>&nbsp;DiscardOldestPolicy&nbsp;</mark>：丢弃任务队列中排在最前面的任务，并执行当前任务。（排在队列最前面的任务并不一定是在队列中待的时间最长的任务，因为有可能是按照优先级排序的队列）
+- 举例：
+    - 某大厂成立了一个项目，有多个产品经理提出需求（多个生产者），一开始由项目经理安排组内开发人员负责（核心线程）;
+    - 没过多久，需求太多了做不过来了，项目经理就把需求记录在排期表上（阻塞队列），可以按照需求的先来后到记（ArrayBlockingQueue/LinkedBlockingQueue），也可以按照优先级记（PriorityBlockingQueue）；
+    - 又过了段时间，需求实在太多了，项目经理只好开始招人，但招的是外包，公司有规定，正式员工 + 外包员工不能超过一定人数（最大线程），不愧是成本管理大师；
+    - 产品经理们疯狂提需求，已经不能再招人了，项目经理只好想办法拒绝接需求；
+    - 1 直接拒绝（抛出RejectedExecutionException异常）2 让产品经理自己想办法（CallerRunsPolicy）3 把以前提的并且到现在还没做的需求砍掉（DiscardOldestPolicy）4 把新需求砍掉（DiscardPolicy）
+    - 最终，在项目经理严格的管理下需求慢慢都完成了，员工们也闲下来了，公司决定3个（keepAliveTime）月（timeUnit）后开始裁员，外包统统裁掉，只留正式员工，不愧是成本管理大师！
+
 
 ### 参考资料
 - [Java线程池实现原理及其在美团业务中的实践](https://tech.meituan.com/2020/04/02/java-pooling-pratice-in-meituan.html)
@@ -176,7 +184,55 @@ Thread ID: 1, Thread Name: main, Hello MyCallable Return
 
 #### **代码详解**
 
+### 1）ThreadPoolExecutor
+```java
+public static void main(String[] args) {
+    ThreadFactory threadFactory = new ThreadFactory() {
+        @Override
+        public Thread newThread(Runnable r) {
+            AtomicInteger atomicInteger = new AtomicInteger();
+            Thread thread = new Thread(r);
+            thread.setName("myPool-" + atomicInteger.getAndIncrement());
+            return thread;
+        }
+    };
+    int corePoolSize = 2;
+    int maximumPoolSize = 7;
+    int keepAliveTime = 60;
+    TimeUnit secondUnit = TimeUnit.SECONDS;
+    BlockingQueue<Runnable> blockingQueue = new ArrayBlockingQueue<>(8);
+    //抛出RejectedExecutionException异常
+    RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.AbortPolicy();
+    //由向线程池提交任务的线程来执行该任务
+    //RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.CallerRunsPolicy();
+    //抛弃最旧的任务（最先提交而没有得到执行的任务）
+    //RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.DiscardOldestPolicy();
+    //抛弃当前的任务
+    //RejectedExecutionHandler rejectedExecutionHandler = new ThreadPoolExecutor.DiscardPolicy();
+    ThreadPoolExecutor executor = new ThreadPoolExecutor(
+            corePoolSize,
+            maximumPoolSize,
+            keepAliveTime,
+            secondUnit,
+            blockingQueue,
+            rejectedExecutionHandler);
 
+    for (int i = 0; i < 15; i++) {
+        executor.submit(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    Thread.sleep(2000);
+                    System.out.println(Thread.currentThread().getName()+" run...");
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
+    System.out.println("submit end");
+}
+```
 
 <!-- tabs:end -->
 
