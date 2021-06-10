@@ -126,3 +126,62 @@ IP/掩码位：16.158.165.91/22
         - BGP（Border Gateway Protocol）外网路由协议，简称 BGP 协议
     - 链路状态路由（link state routing），基于 Dijkstra 算法
         - IGP（Interior Gateway Protocol）内部网关协议，简称 IGP 协议
+
+## 传输层
+### TCP 与 UDp
+- TCP 是面向连接的，UDP 是面向无连接的，所谓面向连接是为了在客户端和服务端维护连接，建立了一定的数据结构来维护双方的状态；
+- TCP 是面向字节流的，底层发送的是 IP 包，UDP 是基于数据报的；
+- TCP 可以进行拥塞控制，并且是有状态的，记录发了没有，发到哪里，收到没有，UDP 是无状态服务；
+
+### UDP 包格式
+- 源端口号（16位），目的端口号（16位）；
+- UDP 长度（16位）、UDP 校验和（16位）、数据；
+
+### UDP 应用场景
+- 内网质量好或者不需要建立连接，可以广播的场景，如 DHCP；
+- 流媒体协议、物联网协议、4G 网络协议；
+
+### TCP 包格式
+- 源端口号（16位），目的端口号（16位）；
+- 序号（32位），确认序号（32位）：解决乱序问题；
+- 状态位：SYN 发起连接，ACK 回复，RST 重新连接，FIN 结束连接；
+- 窗口大小（16位）、紧急指针（16位）：流量控制、拥塞控制；
+
+### TCP 三次握手
+请求 -> 应答 -> 应答之应答
+
+![](http://images.intflag.com/protocol200.jpg)
+
+### TCP 四次挥手
+
+![](http://images.intflag.com/protocol201.jpg)
+
+### TCP 状态机
+
+![](http://images.intflag.com/protocol202.jpg)
+
+
+### TCP 滑动窗口
+
+![](http://images.intflag.com/protocol203.jpg)
+
+### Socket
+- 需要指定 IPv4 或 IPv6；
+- 需要指定 TCP 或 UDP；
+
+#### 基于 TCP 协议的 Socket 程序函数调用过程
+
+![](http://images.intflag.com/protocol204.jpg)
+
+#### 基于 UDP 协议的 Socket 程序函数调用过程
+
+![](http://images.intflag.com/protocol205.jpg)
+
+## 应用层
+
+### HTTP
+### HTTPS
+### DNS
+### HttpDNS
+### CDN
+### VPN
