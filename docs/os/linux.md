@@ -185,6 +185,9 @@ yum -y install lrzsz
 ```bash
 # 远程拉取文件到本地
 rsync -av root@192.168.0.1:/data1/hadoop/hadoop/logs hadoopLogs
+
+# 使用端口 9222 并文件覆盖的形式同步，保持 inode（rsync 默认会创建新文件，inode 会改变）
+rsync -av -e'ssh -p 9222' --inplace root@192.168.0.1:/data1/hadoop/hadoop/logs hadoopLogs
 ```
 
 ### 8、SSH 免密登录
