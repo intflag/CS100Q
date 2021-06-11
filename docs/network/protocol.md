@@ -121,47 +121,47 @@ IP/掩码位：16.158.165.91/22
 - NAT 网关 （玄奘西行）
     - MAC 改变，IP 也改变，由路由器做 NAT 转换
 
-- 动态路由算法
+- 路由算法与动态路由协议
     - 距离矢量路由（distance vector routing），基于 Bellman-Ford 算法
         - BGP（Border Gateway Protocol）外网路由协议，简称 BGP 协议
     - 链路状态路由（link state routing），基于 Dijkstra 算法
-        - IGP（Interior Gateway Protocol）内部网关协议，简称 IGP 协议
+        - OSPF（Open Shortest Path First，开放式最短路径优先）又称 IGP（Interior Gateway Protocol）内部网关协议；
 
 ## 传输层
-### TCP 与 UDp
+### TCP 与 UDP
 - TCP 是面向连接的，UDP 是面向无连接的，所谓面向连接是为了在客户端和服务端维护连接，建立了一定的数据结构来维护双方的状态；
 - TCP 是面向字节流的，底层发送的是 IP 包，UDP 是基于数据报的；
 - TCP 可以进行拥塞控制，并且是有状态的，记录发了没有，发到哪里，收到没有，UDP 是无状态服务；
 
-### UDP 包格式
+#### UDP 包格式
 - 源端口号（16位），目的端口号（16位）；
 - UDP 长度（16位）、UDP 校验和（16位）、数据；
 
-### UDP 应用场景
+#### UDP 应用场景
 - 内网质量好或者不需要建立连接，可以广播的场景，如 DHCP；
 - 流媒体协议、物联网协议、4G 网络协议；
 
-### TCP 包格式
+#### TCP 包格式
 - 源端口号（16位），目的端口号（16位）；
 - 序号（32位），确认序号（32位）：解决乱序问题；
 - 状态位：SYN 发起连接，ACK 回复，RST 重新连接，FIN 结束连接；
 - 窗口大小（16位）、紧急指针（16位）：流量控制、拥塞控制；
 
-### TCP 三次握手
+#### TCP 三次握手
 请求 -> 应答 -> 应答之应答
 
 ![](http://images.intflag.com/protocol200.jpg)
 
-### TCP 四次挥手
+#### TCP 四次挥手
 
 ![](http://images.intflag.com/protocol201.jpg)
 
-### TCP 状态机
+#### TCP 状态机
 
 ![](http://images.intflag.com/protocol202.jpg)
 
 
-### TCP 滑动窗口
+#### TCP 滑动窗口
 
 ![](http://images.intflag.com/protocol203.jpg)
 
@@ -180,8 +180,30 @@ IP/掩码位：16.158.165.91/22
 ## 应用层
 
 ### HTTP
+#### HTTP 请求格式
+- 请求行：URL，Method（GET、POST、PUT、DELETE）、版本
+- 请求首部：键值对（Content-Type: application/json，Connection: keep-alive，Cookie）
+- 请求正文
+
+#### HTTP 版本
+- HTTP 1.0
+    - 无状态：可以用 cookie / session 做身份认证和状态记录；
+    - 无连接：无法复用连接，每次都需要建立 TCP 连接；队头阻塞，前一个请求响应下一个请求才能发送；
+- HTTP 1.1
+    - 长连接：新增 Connection 字段，可以设置 keep-alive 值保持连接不断开，默认是开启的；
+    - 管道化：基于长连接的基础，管道化可以不等第一个请求响应继续发送后面的请求，但响应的顺序还是按照请求的顺序返回，仍然无法解决队头阻塞的问题；
+    - 缓存处理：新增 Cache-control 字段，用来控制缓存，如果有缓存，直接取，不会再发请求，如果没有缓存，则发送请求；
+    - 断点传输：如果资源过大，将其分割为多个部分，分别上传/下载，如果遇到网络故障，可以从已经上传/下载好的地方继续请求，不用从头开始，提高效率；
+- HTTP 2.0
+    - 二进制分帧：HTTP 1.x 的解析是基于文本，HTTP 2之后将所有传输的信息分割为更小的消息和帧，并对它们采用二进制格式的编码，提高传输效率；
+    - 多路复用：在共享 TCP 链接的基础上同时发送请求和响应，基于二进制分帧，在同一域名下所有访问都是从同一个 TCP 连接中走，HTTP 消息被分解为独立的帧，乱序发送，服务端根据标识符和首部将消息重新组装起来；
+    - 头部压缩：对 HTTP 的头进行一定的压缩，将原来每次都要携带的大量 key value 在两端建立一个索引表，对相同的头只发送索引表中的索引；
+
 ### HTTPS
+#### HTTPS 认证过程
+![](http://images.intflag.com/protocol211.jpg)
+
 ### DNS
-### HttpDNS
-### CDN
-### VPN
+#### DNS 递归过程
+![](http://images.intflag.com/protocol212.jpg)
+
