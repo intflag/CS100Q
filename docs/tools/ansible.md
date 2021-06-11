@@ -121,6 +121,9 @@ ansible-doc -t callback -l
 # 查看插件详细信息
 ansible-doc -t callback timer
 ansible-doc -t module synchronize
+
+# 调试模式运行
+ansible-playbook -vvv xxx.yml
 ```
 
 ### 常用配置
