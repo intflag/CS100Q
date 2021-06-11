@@ -182,6 +182,9 @@ yum -y install lrzsz
 ```
 
 ### 7、rsync 同步文件
+- 原理：https://coolshell.cn/articles/7425.html
+- 操作：http://www.ruanyifeng.com/blog/2020/08/rsync.html
+
 ```bash
 # 远程拉取文件到本地
 rsync -av root@192.168.0.1:/data1/hadoop/hadoop/logs hadoopLogs
