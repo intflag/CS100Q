@@ -2,6 +2,68 @@
 > 笔记整理自极客时间王铮老师的[《设计模式之美》](https://time.geekbang.org/column/intro/250)课程。
 
 ## 1、单例模式（创建型）
+### a、饿汉式
+```java
+public class SingletonHunger {
+    private static final SingletonHunger INSTANCE = new SingletonHunger();
+
+    private SingletonHunger() {}
+
+    public static SingletonHunger getInstance() {
+        return INSTANCE;
+    }
+}
+```
+### b、懒汉式
+```java
+public class SingletonLazy {
+    private static SingletonLazy instance = null;
+    private SingletonLazy(){}
+
+    public static synchronized SingletonLazy  GetInstance(){
+        if (instance == null) {
+            instance = new SingletonLazy();
+        }
+        return instance;
+    }
+}
+```
+### c、懒汉式-双重检测
+```java
+public class SingletonDoubleChecking {
+
+    private static SingletonDoubleChecking instance = null;
+
+    private SingletonDoubleChecking(){}
+
+    public static SingletonDoubleChecking getInstance(){
+        if (instance == null) {
+            synchronized (SingletonDoubleChecking.class) {
+                if (instance == null) {
+                    instance = new SingletonDoubleChecking();
+                }
+            }
+        }
+        return instance;
+    }
+}
+```
+### d、懒汉式-静态内部类
+```java
+public class SingletonStaticInner {
+
+    private SingletonStaticInner() {}
+
+    private static class SingletonHolder {
+        private static final SingletonStaticInner INSTANCE = new SingletonStaticInner();
+    }
+
+    public static SingletonStaticInner getInstance() {
+        return SingletonHolder.INSTANCE;
+    }
+}
+```
+
 ## 2、工厂模式（创建型）
 ## 3、建造者模式（创建型）
 ## 4、原型模式（创建型）
