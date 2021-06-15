@@ -66,6 +66,68 @@ public class SingletonStaticInner {
 
 ## 2、工厂模式（创建型）
 ## 3、建造者模式（创建型）
+- 创建同一种类型的复杂对象，可以选择不同参数，定制化创建对象；
+
+```java
+public class ResourcePoolConfig {
+    private String poolName;
+    private int maxTotal;
+    private int maxIdle;
+    private int minIdle;
+
+    public ResourcePoolConfig(Builder builder) {
+        this.poolName = builder.poolName;
+        this.maxTotal = builder.maxTotal;
+        this.maxIdle = builder.maxIdle;
+        this.minIdle = builder.minIdle;
+    }
+
+    public static class Builder {
+        private String poolName = "taskPool";
+        private int maxTotal = 8;
+        private int maxIdle = 8;
+        private int minIdle = 8;
+
+        public ResourcePoolConfig build() {
+            // 校验逻辑放到这里来做，包括必填项校验、依赖关系校验、约束条件校验等
+            if (!(poolName != null && poolName.length() > 0)) {
+                throw new IllegalArgumentException("poolName can not be blank");
+            }
+            return new ResourcePoolConfig(this);
+        }
+
+        public Builder setPoolName(String poolName) {
+            this.poolName = poolName;
+            return this;
+        }
+
+        public Builder setMaxTotal(int maxTotal) {
+            this.maxTotal = maxTotal;
+            return this;
+        }
+
+        public Builder setMaxIdle(int maxIdle) {
+            this.maxIdle = maxIdle;
+            return this;
+        }
+
+        public Builder setMinIdle(int minIdle) {
+            this.minIdle = minIdle;
+            return this;
+        }
+    }
+
+    public static void main(String[] args) {
+        ResourcePoolConfig config = new Builder()
+                .setPoolName("")
+                .setMaxTotal(16)
+                .setMaxIdle(16)
+                .setMinIdle(8)
+                .build();
+    }
+}
+```
+
 ## 4、原型模式（创建型）
 ## 5、代理模式（结构型）
 ### a、代理模式的原理与实现
