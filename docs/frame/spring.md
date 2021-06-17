@@ -11,9 +11,10 @@
 - [浅析Spring中AOP的实现原理—动态代理](https://www.cnblogs.com/tuyang1129/p/12878549.html)
 - [spring 事务原理](https://xie.infoq.cn/article/52f38883e28821c9cf0a608ea)
 - [可能是最漂亮的Spring事务管理详解](https://juejin.cn/post/6844903608224333838)
+- [Spring 中经典的 9 种设计模式](https://zhuanlan.zhihu.com/p/114244039)
+- [SpringBoot 应用程序启动过程探秘](https://www.codesheep.cn/2018/09/04/springboot-startup-process/)
 
-## Spring 架构以及设计思想
-### Spring 架构
+## Spring 架构
 ![](http://images.intflag.com/spring000.jpg)
 
 - 核心容器
@@ -38,15 +39,15 @@
   - spring-webmvc 包含 spring 的 model-view-controller 和 REST web services 实现的 Web 应用程序；
   - spring-webmvc-portlet 模块提供了 MVC 模式的 portlet 实现，protlet 与 Servlet 的最大区别是请求的处理分为 action 和 render 阶段，在一个请求中，action 阶段只执行一次，但 render 阶段可能由于用户的浏览器操作而被执行多次。
 
-## Spring Bean
-### Bean 创建流程
+## Spring IOC
+### Spring Bean 创建流程
 ![](http://images.intflag.com/spring002.jpg)
 
 - createBeanInstance：实例化，其实也就是调用对象的构造方法实例化对象；
 - populateBean：填充属性，这一步主要是对 bean 的依赖属性进行注入(@Autowired)；
 - initializeBean：回调一些形如 initMethod、InitializingBean 等方法；
 
-### Bean 生命周期
+### Spring Bean 生命周期
 ![](http://images.intflag.com/spring005.jpg)
 
 #### 扩展点（影响多个 Bean）
@@ -71,7 +72,7 @@
   - InitializingBean
   - DisposableBean
 
-### 三级缓存
+### Spring 三级缓存
 ```java
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 	...
@@ -97,7 +98,39 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 - earlySingletonObjects：提前曝光的单例对象的 cache，存放原始的 bean 对象（尚未填充属性），用于解决循环依赖；
 - singletonFactories：单例对象工厂的 cache，存放 bean 工厂对象，用于解决循环依赖；
 
-### Bean 循环依赖问题
+```java
+protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+  // Quick check for existing instance without full singleton lock
+  Object singletonObject = this.singletonObjects.get(beanName);
+  if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+    singletonObject = this.earlySingletonObjects.get(beanName);
+    if (singletonObject == null && allowEarlyReference) {
+      synchronized (this.singletonObjects) {
+        // Consistent creation of early reference within full singleton lock
+        singletonObject = this.singletonObjects.get(beanName);
+        if (singletonObject == null) {
+          singletonObject = this.earlySingletonObjects.get(beanName);
+          if (singletonObject == null) {
+            ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
+            if (singletonFactory != null) {
+              singletonObject = singletonFactory.getObject();
+              this.earlySingletonObjects.put(beanName, singletonObject);
+              this.singletonFactories.remove(beanName);
+            }
+          }
+        }
+      }
+    }
+  }
+  return singletonObject;
+}
+```
+
+- 1）先从一级缓存 singletonObjects 中去获取，如果获取到就直接 return；
+- 2）如果获取不到或者对象正在创建中（isSingletonCurrentlyInCreation()），那就再从二级缓存 earlySingletonObjects 中获取，如果获取到就直接 return；
+- 3）如果还是获取不到，且允许 singletonFactories（allowEarlyReference=true）通过 getObject() 获取，就从三级缓存 singletonFactory.getObject() 获取，如果获取到了就从三级缓存 singletonFactories 中移除，并且放进二级缓存 earlySingletonObjects，其实也就是从三级缓存移动到了二级缓存；
+
+### Spring Bean 循环依赖问题
 ```java
 @Service
 public class A {
@@ -140,10 +173,6 @@ public class B {
 - 什么时候使用原型模式？
   - 有状态使用单例模式，无状态使用原型模式；
 
-## Spring 线程并发问题
-- 只有无状态的 Bean 才可以在多线程环境下共享，有状态的 Bean 会有线程安全问题；
-- ThreadLocal 会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突；
-
 ## Spring AOP
 ### 概念和作用
 - 面向切面编程，可以理解为程序的设计模式；
@@ -162,7 +191,7 @@ public class B {
 - 切面（Aspect）：切面只是一个概念，表示对什么方法（where）在何时（when 前置还是后置，或者环绕）执行什么样的横切逻辑（how）
 - 织入（Weaving）：织入就是在切点的引导下，将通知逻辑插入到方法调用上，使得我们的通知逻辑在方法调用时得以执行
   - 实现后置处理器 BeanPostProcessor 接口；
-  - 在 Bean 初始化完成后，即 Bean 执行完初始化方法（init-method）,Spring 通过切点对 Bean 类中的方法进行匹配,若匹配成功，则会为该 bean 生成代理对象，并将代理对象返回给容器;
+  - 在 Bean 初始化完成后，即 Bean 执行完初始化方法（init-method），Spring 通过切点对 Bean 类中的方法进行匹配，若匹配成功，则会为该 bean 生成代理对象，并将代理对象返回给容器;
 
 ### AOP 实现原理
 - Spring 默认使用 JDK 的动态代理实现 AOP，类如果实现了接口，Spring 就会使用这种方式实现动态代理；
@@ -181,15 +210,98 @@ public class B {
   - JpaTransactionManager：使用 jpa
   - HibernateTransactionManager：使用 hibernate
 
-### TransactionDefinition 事务属性定义
+### TransactionDefinition 事务属性
+事务属性：
+- 隔离级别
+- 传播行为
+- 任务超时
+- 回滚规则
+- 是否只读
+
+1）隔离级别
+
+|常量名称 |常量值|常量解释|
+|:----|:----:|:----|
+|ISOLATION_DEFAULT|-1|使用后端数据库默认的隔离级别，Mysql 默认为可重复读，Oracle 默认为读提交|
+|ISOLATION_READ_UNCOMMITTED|1|读未提交，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读|
+|ISOLATION_READ_COMMITTED|2|读提交，允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生|
+|ISOLATION_REPEATABLE_READ|4|可重复读，对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生|
+|ISOLATION_SERIALIZABLE|8|串行化，所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能|
+
+2）传播行为：
+
+|常量名称 |常量值|常量解释|
+|:----|:----:|:----|
+|PROPAGATION_REQUIRED|0|如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务|
+|PROPAGATION_SUPPORTS|1|如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行|
+|PROPAGATION_MANDATORY|2|如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常（mandatory：强制性）|
+|PROPAGATION_REQUIRES_NEW|3|创建一个新的事务，如果当前存在事务，则把当前事务挂起|
+|PROPAGATION_NOT_SUPPORTED|4|以非事务方式运行，如果当前存在事务，则把当前事务挂起|
+|PROPAGATION_NEVER|5|以非事务方式运行，如果当前存在事务，则抛出异常|
+|PROPAGATION_NESTED|6|如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于 PROPAGATION_REQUIRED|
+
+3）事务超时属性
+
+- 所谓事务超时，就是指一个事务所允许执行的最长时间，如果超过该时间限制但事务还没有完成，则自动回滚事务；
+- 在 TransactionDefinition 中以 TIMEOUT_DEFAULT（int 类型） 的值来表示超时时间，其单位是秒；
+
+4）事务只读属性
+
+- 事务的只读属性是指，对事务性资源进行只读操作或者是读写操作；
+- TransactionDefinition 中以 isReadOnly（boolean 类型）来表示该事务是否只读
 
 ### TransactionStatus 事务运行状态
+```java
+public interface TransactionStatus{
+    boolean isNewTransaction(); // 是否是新的事物
+    boolean hasSavepoint(); // 是否有恢复点
+    void setRollbackOnly();  // 设置为只回滚
+    boolean isRollbackOnly(); // 是否为只回滚
+    boolean isCompleted; // 是否已完成
+} 
+```
+### 事务实现原理
+- 通过 AOP 在方法执行前后增加数据库事务的操作;
 
+## Spring 线程并发
+- 只有无状态的 Bean 才可以在多线程环境下共享，有状态的 Bean 会有线程安全问题；
+- ThreadLocal 会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突；
 
-## Spring 中用到了哪些设计模式？
-核心概念，作用与优点，专业术语，应用场景
-spring的aop是怎么实现的
-## SpringMVC 一个请求的流程是什么？
+## Spring 设计模式
+|设计模式 |相关类|
+|:----|:----|
+|简单工厂|BeanFactory|
+|工厂方法|FactoryBean|
+|单例模式|DefaultSingletonBeanRegistry.getSingleton()|
+|适配器模式|SpringMVC 中的 HandlerAdatper|
+|装饰器模式|xxxWrapper 和 xxxDecorator|
+|代理模式|AOP 底层实现|
+|观察者模式|ApplicationListener|
+|策略模式|Resource 资源访问接口|
+|模板方法模式|JdbcTemplate|
+
+## SpringMVC 请求流程
+![](http://images.intflag.com/spring006.jpg)
+
+流程说明：
+
+- 1）用户的浏览器发出了一个请求，这个请求经过互联网到达了我们的服务器，Servlet 容器首先接待了这个请求，并将该请求委托给 DispatcherServlet 进行处理；
+- 2）接着 DispatcherServlet 将该请求传给了处理器映射组件 HandlerMapping，并获取到适合该请求的拦截器和处理器；
+- 3）在获取到处理器后，DispatcherServlet 还不能直接调用处理器的逻辑，需要进行对处理器进行适配；
+- 4）处理器适配成功后，DispatcherServlet 通过处理器适配器 HandlerAdapter 调用处理器的逻辑，并获取返回值 ModelAndView；
+- 5）之后，DispatcherServlet 需要根据 ModelAndView 解析视图，解析视图的工作由 ViewResolver 完成，若能解析成功，ViewResolver 会返回相应的视图对象 View；
+- 6）在获取到具体的 View 对象后，最后一步要做的事情就是由 View 渲染视图，并将渲染结果返回给用户。
+
+组件说明：
+
+|组件 |说明|
+|:----|:----|
+|DispatcherServlet|BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作tory|
+|HandlerMapping|内部维护了一些 <访问路径, 处理器> 映射，负责为请求找到合适的处理器|
+|HandlerAdapter|处理器的适配器，Spring 中的处理器的实现多变，比如用户处理器可以实现 Controller 接口，也可以用 @RequestMapping 注解将方法作为一个处理器等，这就导致 Spring 不知道怎么调用用户的处理器逻辑，所以这里需要一个处理器适配器，由处理器适配器去调用处理器的逻辑|
+|ViewResolver|视图解析器的用途不难理解，用于将视图名称解析为视图对象 View|
+|View|视图对象用于将模板渲染成 html 或其他类型的文件，比如 InternalResourceView 可将 jsp 渲染成 html|
+
 ## SpringBoot 启动加载过程?
 spring boot和spring的区别？spring boot如何实现自动扫描注入？
 ## SpringBoot 加载配置文件原理?
