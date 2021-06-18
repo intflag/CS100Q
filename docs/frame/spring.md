@@ -12,7 +12,9 @@
 - [spring 事务原理](https://xie.infoq.cn/article/52f38883e28821c9cf0a608ea)
 - [可能是最漂亮的Spring事务管理详解](https://juejin.cn/post/6844903608224333838)
 - [Spring 中经典的 9 种设计模式](https://zhuanlan.zhihu.com/p/114244039)
+- [SpringBoot自动装配原理分析，手写starter组件](https://www.jianshu.com/p/914df825dc76)
 - [SpringBoot 应用程序启动过程探秘](https://www.codesheep.cn/2018/09/04/springboot-startup-process/)
+- [淘宝一面：“说一下 Spring Boot 自动装配原理呗？](https://www.cnblogs.com/javaguide/p/springboot-auto-config.html)
 
 ## Spring 架构
 ![](http://images.intflag.com/spring000.jpg)
@@ -296,19 +298,51 @@ public interface TransactionStatus{
 
 |组件 |说明|
 |:----|:----|
-|DispatcherServlet|BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作tory|
+|DispatcherServlet|BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作|
 |HandlerMapping|内部维护了一些 <访问路径, 处理器> 映射，负责为请求找到合适的处理器|
 |HandlerAdapter|处理器的适配器，Spring 中的处理器的实现多变，比如用户处理器可以实现 Controller 接口，也可以用 @RequestMapping 注解将方法作为一个处理器等，这就导致 Spring 不知道怎么调用用户的处理器逻辑，所以这里需要一个处理器适配器，由处理器适配器去调用处理器的逻辑|
 |ViewResolver|视图解析器的用途不难理解，用于将视图名称解析为视图对象 View|
 |View|视图对象用于将模板渲染成 html 或其他类型的文件，比如 InternalResourceView 可将 jsp 渲染成 html|
 
-## SpringBoot 启动加载过程?
-spring boot和spring的区别？spring boot如何实现自动扫描注入？
-## SpringBoot 加载配置文件原理?
-## SpringBoot 的自动装配如何实现?
-- https://www.codesheep.cn/2018/09/04/springboot-startup-process/
+## SpringBoot
+### 自动装配原理
+![](http://images.intflag.com/spring007.jpg)
+#### @SpringBootConfiguration
+- 来源于 @Configuration；
+- 将当前类标注为配置类，并将当前类里以 @Bean 注解标记的方法的实例注入到 Srping 容器中，实例名即为方法名；
 
-## SpringBoot 优化内部的 Tomcat 怎么做?
-## SpringCloud 的组件做一下介绍
-## SpringCloud 的服务发现与注册的实现
-## spring cloud configration  bus 的 原理
+#### @ComponentScan
+- 用于定义 Spring 的扫描路径；
+- 如果不配置扫描路径 basePackages 参数，那么 Spring 就会默认扫描当前类所在的包及其子包中的所有标注了 @Component，@Service，@Controller 等注解的类；
+
+#### @EnableAutoConfiguration
+- @AutoConfigurationPackage：读取到我们在最外层的 @SpringBootApplication 注解中配置的扫描路径（没有配置则默认当前包及其子包），然后把扫描路径下面的类都加到数组中返回；
+- @Import(AutoConfigurationImportSelector.class)
+  - 间接实现了 ImportSelector 类的 selectImports() 方法；
+  - 扫描所有 jar 包下的 META-INF/spring.factories 文件，利用反射自动将需要的类加载到容器中；
+
+#### SPI 机制
+- SPI，Service Provider Interface。即：接口服务的提供者；
+- 应该面向接口（抽象）编程，而不是面向具体的实现来编程，这样一旦我们需要切换到当前接口的其他实现就无需修改代码；
+- 如：数据库驱动 DriverManager  类，数据库驱动的 jar 包下面的 META-INF/services/ 下有一个文件 java.sql.Driver，里面记录了当前需要加载的驱动；
+
+### 启动流程
+- 对 SpringApplication 类进行实例化，然后初始化；
+  - 项目应用类型；
+  - 监听器；
+  - 初始化器；
+  - 启动类集合；
+  - 类加载器；
+
+![](http://images.intflag.com/spring008.jpg)
+![](http://images.intflag.com/spring009.jpg)
+
+- 执行 run 方法；
+
+![](http://images.intflag.com/spring010.jpg)
+
+### 内置 Tomcat 优化
+- server.tomcat.threads.max 最大工作线程数：默认为 200，不是越大越好，通常为 核数的 200 - 250 倍；
+- server.tomcat.threads.min-spare 最小工作线程数：默认10，可以适当增大一些，以便应对突然增长的访问量；
+- server.tomcat.max-connections 最大连接数：默认为 8192；
+- server.tomcat.accept-count 等待队列长度，默认100，队列也做缓冲池用，但也不能无限长，不但消耗内存，而且出队入队也消耗CPU；
