@@ -97,7 +97,7 @@ pidArr=(${pidCmd})
 
 for i in "${pidArr[@]}"; do
   pid=$i
-  port=`netstat -nltp|grep ${pid}|grep java|awk '{print $4}'|tr -cd "[0-9]"`
+  port=`netstat -nltp|grep ${pid}|grep java|awk 'NR==1{print $4}'|tr -cd "[0-9]"`
   if [ $port -eq $killPort ]; then
     kill -9 ${pid}
     echo "pid=${pid} port=${port} kill success"
