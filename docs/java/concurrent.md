@@ -868,6 +868,52 @@ Process finished with exit code 0
 
 #### **参考回答**
 
+### 对象头
+- 00 代表轻量级锁
+- 01 代表无锁（或偏向锁）
+- 10 代表重量级锁
+- 11 则跟垃圾回收算法的标记有关
+
+### 重量级锁
+- JVM 最基础的锁，会阻塞加锁失败的线程，并且在目标锁被释放的时候，唤醒这些线程；
+- 这些操作将涉及系统调用，需要从操作系统的用户态切换至内核态，其开销非常大；
+
+### 自旋锁、自适应自旋
+- 为了尽量避免昂贵的线程阻塞、唤醒操作，会在线程进入阻塞状态之前，以及被唤醒后竞争不到锁的情况下，进入自旋状态，在处理器上空跑并且轮询锁是否被释放；
+- 如果这个时候锁正好被释放，那么当前线程就不需要进入阻塞状态，直接获得这把锁；
+- 自适应自旋就是说，可以根据以往自旋等待时是否能够获得锁，来动态调整自旋的时间（循环次数）；
+- 处于阻塞状态的线程，并没有办法立刻竞争被释放的锁，然而，处于自旋状态的线程，则很有可能优先获得这把锁，所以 Synchronized 不是公平的；
+
+### 轻量级锁
+- 当进行加锁操作时，Java 虚拟机会判断是否已经是重量级锁;
+- 如果不是，它会在当前线程的当前栈桢中划出一块空间，作为该锁的锁记录，并且将锁对象的标记字段复制到该锁记录中;
+- 然后，Java 虚拟机会尝试用 CAS 操作替换锁对象的标记字段;
+
+### 偏向锁
+- 偏向锁的思想是偏向于让第一个获取锁对象的线程，这个线程在之后获取该锁就不再需要进行同步操作，甚至连 CAS 操作也不再需要；
+- 当锁对象第一次被线程获得的时候，进入偏向状态，标记为 1 01。同时使用 CAS 操作将线程 ID 记录到 Mark Word 中，如果 CAS 操作成功，这个线程以后每次进入这个锁相关的同步块就不需要再进行任何同步操作；
+- 当有另外一个线程去尝试获取这个锁对象时，偏向状态就宣告结束，此时撤销偏向（Revoke Bias）后恢复到未锁定状态或者轻量级锁状态；
+
+### 锁消除
+- 锁消除是指对于被检测出不可能存在竞争的共享数据的锁进行消除，使用逃逸分析方法；
+
+```java
+public static String concatString(String s1, String s2, String s3) {
+    StringBuffer sb = new StringBuffer();
+    sb.append(s1);
+    sb.append(s2);
+    sb.append(s3);
+    return sb.toString();
+}
+```
+
+- append() 方法中都有一个同步块，但是他的动态作用域被限制在方法内部，sb 的所有引用永远不会逃逸到方法外，其他线程无法访问到它，因此可以进行消除；
+
+### 锁粗化
+- 如果一系列的连续操作都对同一个对象反复加锁和解锁，频繁的加锁操作就会导致性能损耗；
+- 上面的示例代码中连续的 append() 方法就属于这类情况，如果虚拟机探测到由这样的一串零碎的操作都对同一个对象加锁，将会把加锁的范围扩展（粗化）到整个操作序列的外部；
+- 对于上面的示例代码就是扩展到第一个 append() 操作之前直至最后一个 append() 操作之后，这样只需要加锁一次就可以了。
+
 ### 参考资料
 - [不可不说的Java“锁”事](https://tech.meituan.com/2018/11/15/java-lock.html)
 - [不懂什么是 Java 中的锁？看看这篇你就明白了！【石杉的架构笔记】](https://mp.weixin.qq.com/s?__biz=MzU0OTk3ODQ3Ng==&mid=2247486820&idx=1&sn=cdd3ca69c68383a38a48bfd74124f0af&chksm=fba6e567ccd16c71438fe62f40fee9f55746453e91bc12a2c2be47272de84aa1a20dc541c63d&mpshare=1&scene=1&srcid=0517yoHuUp41wrvwCzbB6oaU&sharer_sharetime=1589727926343&sharer_shareid=2565447dd960ce5d1eaca147e7b93e39&key=1f1e787ff7a3f9028b14959bba2dc365d99a3d18a1d04769c87784d8d51fe03f42da291c336e8e5a0e2e5f7cc7108cf40baebbee0813fa48ed9b4e2382e51fa2682f3ac4cddb6c4ff32dc79dfaf4e7b5&ascene=1&uin=ODMxODEyNzEx&devicetype=Windows+10+x64&version=62090070&lang=zh_CN&exportkey=Ayjq6CBMGjJDbamv49c5fTA%3D&pass_ticket=udrU14MLSMHdMByTIzdg1n8%2Fx8pZeL9E%2FWhuE%2BcOCfUYXnDgXqXtqGo47o2QxUTB)
@@ -876,11 +922,90 @@ Process finished with exit code 0
 #### **代码详解**
 
 
+<!-- tabs:end -->
+
+## 10、JUC
+?> **面试题：** CountDownLatch 和 CyclicBarrier 有什么区别？
+<!-- tabs:start -->
+
+#### **参考回答**
+
+### 1）CountDownLatch
+- 用来控制一个或者多个线程等待多个线程；
+- 维护了一个计数器 cnt，每次调用 countDown() 方法会让计数器的值减 1，减到 0 的时候，那些因为调用 await() 方法而在等待的线程就会被唤醒；
+
+### 2）CyclicBarrier
+- 用来控制多个线程互相等待，只有当多个线程都到达时，这些线程才会继续执行；
+- 和 CountdownLatch 相似，都是通过维护计数器来实现的；
+- 线程执行 await() 方法之后计数器会减 1，并进行等待，直到计数器为 0，所有调用 await() 方法而在等待的线程才能继续执行；
+- CyclicBarrier 和 CountdownLatch 的一个区别是，CyclicBarrier 的计数器通过调用 reset() 方法可以循环使用，所以它才叫做循环屏障；
+
+#### **代码详解**
+
+### 1）CountDownLatch
+```java
+public static void main(String[] args) throws InterruptedException {
+    int totalThread = 5;
+    CountDownLatch countDownLatch = new CountDownLatch(totalThread);
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    for (int i = 0; i < totalThread; i++) {
+        executorService.execute(()->{
+            System.out.println("exec...");
+            countDownLatch.countDown();
+        });
+    }
+    countDownLatch.await();
+
+    System.out.println("end");
+}
+```
+```
+exec...
+exec...
+exec...
+exec...
+exec...
+end
+```
+
+### 2）CyclicBarrier
+```java
+public static void main(String[] args) {
+    int totalThread = 5;
+    CyclicBarrier cyclicBarrier = new CyclicBarrier(totalThread);
+    ExecutorService executorService = Executors.newCachedThreadPool();
+    for (int i = 0; i < totalThread; i++) {
+        executorService.execute(() -> {
+            try {
+                System.out.println("exec start...");
+                cyclicBarrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
+            System.out.println("exec end...");
+        });
+    }
+    System.out.println("main end...");
+}
+```
+```
+main end...
+exec start...
+exec start...
+exec start...
+exec start...
+exec start...
+exec end...
+exec end...
+exec end...
+exec end...
+exec end...
+```
 
 <!-- tabs:end -->
 
 
-## 10、阻塞队列
+## 11、阻塞队列
 ?> **面试题：** 什么是阻塞队列，Java 中有哪些阻塞队列？
 <!-- tabs:start -->
 
