@@ -298,11 +298,11 @@ public interface TransactionStatus{
 
 |组件 |说明|
 |:----|:----|
-|DispatcherServlet|BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作|
-|HandlerMapping|内部维护了一些 <访问路径, 处理器> 映射，负责为请求找到合适的处理器|
-|HandlerAdapter|处理器的适配器，Spring 中的处理器的实现多变，比如用户处理器可以实现 Controller 接口，也可以用 @RequestMapping 注解将方法作为一个处理器等，这就导致 Spring 不知道怎么调用用户的处理器逻辑，所以这里需要一个处理器适配器，由处理器适配器去调用处理器的逻辑|
-|ViewResolver|视图解析器的用途不难理解，用于将视图名称解析为视图对象 View|
-|View|视图对象用于将模板渲染成 html 或其他类型的文件，比如 InternalResourceView 可将 jsp 渲染成 html|
+|DispatcherServlet|前端控制器，BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作|
+|HandlerMapping|处理器映射器，内部维护了一些 <访问路径, 处理器> 映射，负责为请求找到合适的处理器|
+|HandlerAdapter|处理器适配器，Spring 中的处理器的实现多变，比如用户处理器可以实现 Controller 接口，也可以用 @RequestMapping 注解将方法作为一个处理器等，这就导致 Spring 不知道怎么调用用户的处理器逻辑，所以这里需要一个处理器适配器，由处理器适配器去调用处理器的逻辑|
+|ViewResolver|视图解析器，用于将视图名称解析为视图对象 View|
+|View|视图对象，用于将模板渲染成 html 或其他类型的文件，比如 InternalResourceView 可将 jsp 渲染成 html|
 
 ## SpringBoot
 ### 自动装配原理
