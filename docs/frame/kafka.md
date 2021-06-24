@@ -118,3 +118,12 @@ bin/kafka-run-class.sh kafka.tools.GetOffsetShell --broker-list 127.0.0.1:9092 -
     - 订阅主题数发生变更；
     - 订阅主题的分区数发生变更，Kafka 目前只支持增加一个主题的分区数，当主题分区数发生变更时，订阅该主题的所有消费者组会触发 Rebalance；
 - Rebalance 过程中，所有消费者实例都会停止消费，等待 Rebalance 完成；
+
+## 延时消息
+- 延时 Topic：接收延时消息
+- 延时服务：消费延时消息并进行保存，定期检查消息是否满足延时条件，满足则发往真实 Topic；
+- 临时存储：用来存储中间消息，可以只存 offset 相关信息，降低存储成本；
+- 真实 Topic：接收达到延时条件的消息，然后业务消费者程序进行处理；
+
+### 参考资料
+- [简易实现kafka延迟消息](https://segmentfault.com/a/1190000022417868)

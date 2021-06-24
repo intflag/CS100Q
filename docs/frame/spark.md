@@ -1,4 +1,53 @@
 # Spark
+### 参考资料
+- [Spark高频面试题](https://mp.weixin.qq.com/s/0Iu9kRluKSogCf2p8HYQpg)
+
+## 架构 & 特点
+
+## 部署方式
+
+## 提交作业命令及参数
+
+spark-submit --class com.xxx.class \
+--master yarn \
+--queue QUEUE \
+--num-executors 10 \
+--executor-memory 4G \
+--executor-cores 1 \
+--driver-memory 4G \
+--conf spark.speculation=false \
+--conf spark.default.parallelism=120 \
+--conf spark.rpc.message.maxSize=1024 \
+--conf spark.storage.memoryFraction=0.5 \
+--conf spark.shuffle.memoryFraction=0.3 \
+--conf spark.executor.memoryOverhead=2g \
+--jars xxx.jar args
+
+## 提交作业的流程
+
+## RDD
+
+## 宽依赖、窄依赖
+
+## 常用算子
+### transformation
+### action 
+
+## reduceByKey与groupByKey
+
+## Repartition 和 Coalesce
+
+## 缓存（cache 和 persist）与 checkpoint
+
+## 广播变量
+
+## 数据库连接问题
+
+## 调优
+### 参数调优
+### 开发调优
+
+
 ## 常见问题
 ### 1）超过限制
 - 错误信息
