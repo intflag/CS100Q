@@ -55,6 +55,12 @@
 - 常规的 key-value 缓存，key 是字符串，value 可以是字符串也可以是数字；
 - 常用命令：set、get、mget、incr、decr。
 
+#### Redis String 的特点
+- Redis实现的SDS支持扩容；
+- 包含长度len，获取长度复杂度O(1)；
+- 空间预分配；
+- 惰性空间释放；
+
 ### 2）Hash
 - 保存哈希表，适合存储对象；
 - 常用命令：hset、hget、hgetall。
