@@ -26,6 +26,7 @@
 |PyCharm|||
 |SwitchHosts|https://github.com/oldj/SwitchHosts|Host配置|
 |iStat Menus|https://www.macwk.com/soft/istat-menus||
+|EZip|https://ezip.awehunt.com/|只查看不解压|
 ||||
 
 ### Mac 系统快捷键
