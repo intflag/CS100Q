@@ -26,6 +26,7 @@
 |测试硬盘读取速度|hdparm -t /dev/sda1|
 |安装snmpwalk|yum install net-snmp* -y|
 |启动端口并写入数据|nc -lk 8888|
+|查看使用端口的程序|lsof -i:8090|
 
 ## 常用脚本
 ### 1、快速修改tomcat端口
