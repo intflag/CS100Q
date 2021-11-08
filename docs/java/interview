@@ -24,7 +24,7 @@ finalize 方法名，该方法可以在垃圾回收之前做某些操作，但�
 String StringBuffer StringBuilder
 String用了final进行修饰，所以是不可变类，不可以被继承，并且是线程安全的
 StringBuffer 也是线程安全的，内部用 synchronized 进行同步
-StringBuilder 是线程不安全的，通常在大量字符串拼接的时候使用
+StringBuilder 是线程不安全的，通常在方法内部进行大量字符串拼接的时候使用
 
 反射
 发射是在程序运行状态中，对任意一个类都能获取它的属性和方法，同时能调用它的属性和方法
@@ -115,7 +115,7 @@ synchronized
 是JVM实现的，可以锁代码块、普通方法、静态方法、类，同步代码块和同步方法作用范围是同一个对象，而同步静态方法和同步类作用范围是当前类
 底层是两个字节码实现的，因为是 JVM 实现的，所以看不了源码，但是可以用 javac 编译一个类，然后用 javap 查看类的字节码，会发现两个指令，monitorenter 和 monitorexit
 具体思想是，每个类都有一个monitor 监视器，加锁会调用 monitorenter 尝试获取这个对象监视器，获取到就 +1，释放锁的话就 -1 重入会再 +1
-但是用在方法上的话字节码中没有那两个指令，会有一个叫做 ACC_SYNCHRONIZED 的标记，这个标记会放在常量池中，原理是一样的
+但是用在方法上的话字节码中没有那两个指令，而是有一个叫做 ACC_SYNCHRONIZED 的标记，这个标记会放在常量池中，原理是一样的
 synchronized 获取不到锁会一直阻塞，不可以被中断，但是会自动释放锁
 
 ReentrantLock 是 JUC 包提供的，只能对代码块加锁
@@ -164,3 +164,11 @@ wait 方法一般会和 notify 以及 notifyAll 组合使用，但是必须在�
 await() signal() signalAll()
 JUC 包中提供了 Condition 类来实现线程之间的协调
 
+Java 虚拟机
+
+JVM 内存模型
+https://time.geekbang.org/column/article/10772
+https://www.cnblogs.com/qianguyihao/p/4748392.html
+https://www.cnblogs.com/chenyangyao/p/5269622.html
+https://juejin.cn/post/6844904079978659848
+https://zhuanlan.zhihu.com/p/29881777
