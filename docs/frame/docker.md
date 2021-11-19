@@ -1,6 +1,9 @@
 # Docker
+
 ## 基本使用
+
 ### 1）离线部署
+
 - 下载安装包，如：docker-17.03.2-ce.tgz，下载地址：https://download.docker.com/linux/static/stable/x86_64/
 - 准备 docker.service 系统配置文件
 
@@ -43,6 +46,7 @@ WantedBy=multi-user.target
 - 准备安装脚本和卸载脚本
 
 安装脚本 install.sh
+
 ```bash
 #!/bin/sh
 echo '解压tar包...'
@@ -71,6 +75,7 @@ docker -v
 ```
 
 卸载脚本 uninstall.sh
+
 ```bash
 #!/bin/sh
 
@@ -94,6 +99,7 @@ echo '卸载成功...'
 -rwxrwxr-x 1 deployer deployer      502 Aug 28 13:44 install.sh
 -rwxrwxr-x 1 deployer deployer      218 Aug 28 13:44 uninstall.sh
 ```
+
 - 安装卸载命令
 
 ```bash
@@ -108,7 +114,9 @@ sudo sh uninstall.sh
 ```
 
 ## 离线安装 Nginx
+
 ### 1）导出 Nginx 镜像
+
 - 查看镜像 ID
 
 ```bash
@@ -117,6 +125,7 @@ sudo docker images
 REPOSITORY          TAG                 IMAGE ID            CREATED             SIZE
 nginx               latest              6678c7c2e56c        5 months ago        127MB
 ```
+
 - 导出镜像
 
 ```bash
@@ -124,6 +133,7 @@ sudo docker save 6678c7c2e56c -o /home/intflag/backup/nginx.tar
 ```
 
 ### 2）导入 Nginx 镜像
+
 - 导入
 
 ```bash
@@ -154,6 +164,7 @@ nginx                                 latest              6678c7c2e56c        5 
 ```
 
 ### 4）启动 Nginx
+
 ```bash
 sudo docker run --name nginx -d -p 8090:80 nginx
 
@@ -166,12 +177,14 @@ d7dcb79f447b        nginx                            "nginx -g 'daemon ..."   22
 ## 部署 Nginx
 
 ### 1）建立目录映射
+
 ```bash
 # 外部主机中建立目录
 sudo mkdir -p ./nginx/www ./nginx/logs ./nginx/conf 
 ```
 
 ### 2）拷贝容器 Nginx 的配置文件
+
 ```bash
 sudo docker cp d7c2dfc6cd87:/etc/nginx/nginx.conf /data1/nginx/conf/
 ```
@@ -206,13 +219,14 @@ curl 172.17.38.1:10012
 Hello My Nginx!!!
 ```
 
-
 ### 参考资料
+
 - [Docker离线安装Nginx镜像](https://zhouyanwei.cn/2019/08/13/2019-8-13-DockerNginx/)
 
 ## 搭建 ES + Kibana 集群
 
 ### 1）创建 docker 映射目录并授权
+
 ```bash
 # es
 esPath=/data1/hadoop/rssoft/zncyw/elasticsearch-7.3.0 && \
@@ -232,6 +246,7 @@ mkdir -p $kibanaPath/config && \
 ```
 
 ### 2）创建 ES 和 kibana 配置文件
+
 ```bash
 #elasticsearch.yml
 vi $esPath/elasticsearch.yml
@@ -247,6 +262,7 @@ elasticsearch.hosts: [ "http://es-node1:9200", "http://es-node2:9200", "http://e
 ```
 
 ### 3）创建 docker-compose.yml
+
 ```bash
 vi docker-compose.yaml
 
@@ -350,6 +366,7 @@ networks:
 ```
 
 ### 4）启动并验证
+
 ```bash
 docker-compose -f docker-compose.yml up -d
 
@@ -434,3 +451,104 @@ sudo docker restart kibana73
 ```
 
 - 访问 kibana 地址进行验证
+
+## Jenkins使用
+
+### 1）Docker安装并启动Jenkins
+
+```bash
+# 安装
+docker pull jenkins/jenkins
+
+# 创建Jenkins挂载目录并授权权限
+cd /
+mkdir app
+cd app
+mkdir jenkins
+chmod 777 jenkins
+
+# 创建并启动Jenkins容器
+-d 后台运行镜像
+-p 10240:8080 将镜像的8080端口映射到服务器的10240端口。
+-p 10241:50000 将镜像的50000端口映射到服务器的10241端口
+-v /app/jenkins:/var/jenkins_home /var/jenkins_home目录为容器jenkins工作目录，我们将硬盘上的一个目录挂载到这个位置，方便后续更新镜像后继续使用原来的工作目录。这里我们设置的就是上面我们创建的 /app/jenkins目录
+-v /etc/localtime:/etc/localtime让容器使用和服务器同样的时间设置。
+--name myjenkins 给容器起一个别名
+
+docker run -d \
+-p 10240:8080 \
+-p 10241:50000 \
+-v /app/jenkins:/var/jenkins_home \
+-v /etc/localtime:/etc/localtime \
+--name myjenkins jenkins/jenkins
+
+# 查看启动日志
+docker logs myjenkins
+
+# 配置镜像加速
+cd /app/jenkins/
+修改 vi  hudson.model.UpdateCenter.xml里的内容，将 https://updates.jenkins.io/update-center.json 修改为清华大学官方镜像：https://mirrors.tuna.tsinghua.edu.cn/jenkins/updates/update-center.json
+
+```
+
+### 2）配置 Jenkins
+
+* 访问 Jenkins，IP:10240
+* 按照提示输入密码
+* 安装 Jenkins 社区推荐插件
+* 设置管理员账号
+
+### 3）使用 Jenkins
+
+* 创建项目
+* 安装插件
+  * [Git Parameter](https://plugins.jenkins.io/git-parameter)
+
+## GitLab使用
+
+### 1）安装 GitLab
+
+```bash
+# 拉取最新稳定版镜像
+docker pull gitlab/gitlab-ce
+
+# 目的创建所需目录
+cd /app
+mkdir -p gitlab/config gitlab/logs gitlab/data
+chmod 777 gitlab/*
+
+# 启动
+docker run -d \
+-p 10243:443 \
+-p 10244:80 \
+-p 10242:22 \
+-v /app/gitlab/config:/etc/gitlab \
+-v /app/gitlab/logs:/var/log/gitlab \
+-v /app/gitlab/data:/var/opt/gitlab \
+--restart always \
+--name gitlab gitlab/gitlab-ce
+
+# 查看启动日志
+docker logs gitlab
+```
+
+### 2）配置 GitLab
+
+* vim /app/gitlab/config/gitlab.rb
+
+```
+# 配置http协议所使用的访问地址
+external_url 'http://101.201.49.58'
+
+# 配置ssh协议所使用的访问地址和端口
+gitlab_rails['gitlab_ssh_host'] = '101.201.49.58'
+# 此端口是run时22端口映射的10242端口
+gitlab_rails['gitlab_shell_ssh_port'] = 10242
+```
+
+* 进入容器内部重置 GitLab
+
+```
+docker exec -it gitlab /bin/bash  进去gitlab容器的命令
+gitlab-ctl reconfigure  重置gitlab客户端的命令
+```

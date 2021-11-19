@@ -1,7 +1,9 @@
 # Spring
+
 ### 参考资料
+
 - [田小波的技术博客-Spring 系列文章](http://www.tianxiaobo.com/categories/java-framework/spring/)
-- [一文告诉你Spring是如何利用"三级缓存"巧妙解决Bean的循环依赖问题的](https://cloud.tencent.com/developer/article/1497692)
+- [一文告诉你Spring是如何利用&#34;三级缓存&#34;巧妙解决Bean的循环依赖问题的](https://cloud.tencent.com/developer/article/1497692)
 - [请别再问Spring Bean的生命周期了](https://www.jianshu.com/p/1dec08d290c1)
 - [Spring Bean的生命周期（非常详细）](https://www.cnblogs.com/zrtqsk/p/3735273.html)
 - [Spring Bean 作用域](https://www.w3cschool.cn/wkspring/nukv1ice.html)
@@ -17,6 +19,7 @@
 - [淘宝一面：“说一下 Spring Boot 自动装配原理呗？](https://www.cnblogs.com/javaguide/p/springboot-auto-config.html)
 
 ## Spring 架构
+
 ![](http://images.intflag.com/spring000.jpg)
 
 - 核心容器
@@ -42,7 +45,9 @@
   - spring-webmvc-portlet 模块提供了 MVC 模式的 portlet 实现，protlet 与 Servlet 的最大区别是请求的处理分为 action 和 render 阶段，在一个请求中，action 阶段只执行一次，但 render 阶段可能由于用户的浏览器操作而被执行多次。
 
 ## Spring IOC
+
 ### Spring Bean 创建流程
+
 ![](http://images.intflag.com/spring002.jpg)
 
 - createBeanInstance：实例化，其实也就是调用对象的构造方法实例化对象；
@@ -50,9 +55,11 @@
 - initializeBean：回调一些形如 initMethod、InitializingBean 等方法；
 
 ### Spring Bean 生命周期
+
 ![](http://images.intflag.com/spring005.jpg)
 
 #### 扩展点（影响多个 Bean）
+
 - InstantiationAwareBeanPostProcessor 实例化 Bean 后处理器
   - postProcessBeforeInstantiation：Bean 实例化前执行；
   - postProcessAfterInstantiation：Bean 实例后、属性赋值前执行；
@@ -61,6 +68,7 @@
   - postProcessAfterInitialization：Bean 初始化前执行；
 
 #### 扩展点（影响单个 Bean）
+
 - Aware
   - Aware Group1
     - BeanNameAware
@@ -75,6 +83,7 @@
   - DisposableBean
 
 ### Spring 三级缓存
+
 ```java
 public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements SingletonBeanRegistry {
 	...
@@ -83,7 +92,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	private final Map<String, Object> earlySingletonObjects = new HashMap<>(16); // 二级缓存
 	private final Map<String, ObjectFactory<?>> singletonFactories = new HashMap<>(16); // 三级缓存
 	...
-	
+
 	/** Names of beans that are currently in creation. */
 	// 这个缓存也十分重要：它表示bean创建过程中都会在里面呆着~
 	// 它在Bean开始创建时放值，创建完成时会将其移出~
@@ -133,6 +142,7 @@ protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 - 3）如果还是获取不到，且允许 singletonFactories（allowEarlyReference=true）通过 getObject() 获取，就从三级缓存 singletonFactory.getObject() 获取，如果获取到了就从三级缓存 singletonFactories 中移除，并且放进二级缓存 earlySingletonObjects，其实也就是从三级缓存移动到了二级缓存；
 
 ### Spring Bean 循环依赖问题
+
 ```java
 @Service
 public class A {
@@ -146,10 +156,13 @@ public class B {
     private A a;
 }
 ```
+
 #### 简单理解版本
+
 ![](http://images.intflag.com/spring001.jpg)
 
 #### 源码分析版本
+
 ![](http://images.intflag.com/spring003.jpg)
 
 - 1）使用 context.getBean(A.class)，旨在获取容器内的单例 A (若 A 不存在，就会走 A 这个 Bean 的创建流程)，显然初次获取 A 是不存在的，因此走 A 的创建之路；
@@ -164,24 +177,29 @@ public class B {
 - 10）到此，B 持有的已经是初始化完成的 A，A 持有的也是初始化完成的 B，完美；
 
 ### Spring Bean 的作用域
+
 - 通过bean 定义中的scope属性来定义bean的作用阈。
 - Spring 框架支持以下五种 bean 的作用域：
-    - singleton : 单例类型，在创建容器时就同时自动创建了一个 Bean 的对象，每次获取到的对象都是同一个对象，是 Spring 中的默认配置；
-    - prototype：原型类型，它在我们创建容器的时候并没有实例化，而是当我们调用 getBean 获取 Bean 的时候才会去创建一个对象，而且我们每次获取到的对象都不是同一个对象；
-    - request：每次 HTTP 请求都会创建一个新的 Bean，该作用域仅适用于 WebApplicationContext环境；
-    - session：同一个 HTTP Session 共享一个 Bean，不同 Session 使用不同的 Bean，仅适用于 WebApplicationContext 环境；
-    - global-session：在一个全局的 HTTP Session 中，一个 Bean 定义对应一个实例。该作用域仅在基于 Web 的 Spring ApplicationContext 情形下有效；
 
+  - singleton : 单例类型，在创建容器时就同时自动创建了一个 Bean 的对象，每次获取到的对象都是同一个对象，是 Spring 中的默认配置；
+  - prototype：原型类型，它在我们创建容器的时候并没有实例化，而是当我们调用 getBean 获取 Bean 的时候才会去创建一个对象，而且我们每次获取到的对象都不是同一个对象；
+  - request：每次 HTTP 请求都会创建一个新的 Bean，该作用域仅适用于 WebApplicationContext环境；
+  - session：同一个 HTTP Session 共享一个 Bean，不同 Session 使用不同的 Bean，仅适用于 WebApplicationContext 环境；
+  - global-session：在一个全局的 HTTP Session 中，一个 Bean 定义对应一个实例。该作用域仅在基于 Web 的 Spring ApplicationContext 情形下有效；
 - 什么时候使用原型模式？
+
   - 有状态使用单例模式，无状态使用原型模式；
 
 ## Spring AOP
+
 ### 概念和作用
+
 - 面向切面编程，可以理解为程序的设计模式；
 - 将通用的功能从业务逻辑中抽离出来，使代码解耦，提高代码的灵活性和扩展性；
 - 日志记录，性能统计，安全控制，事务处理，异常处理等扩展。
 
 ### AOP 术语
+
 - 连接点（Joinpoint）：用于执行拦截器链中的下一个拦截器逻辑，通常情况一个方法调用就是一个连接点；
 - 切点（Pointcut）：表示如何选择连接点（在哪里调用），使用 AspectJ 表达式，如：execution(* *.find*(..))；
 - 通知（Advice）：表示在何时调用
@@ -196,12 +214,54 @@ public class B {
   - 在 Bean 初始化完成后，即 Bean 执行完初始化方法（init-method），Spring 通过切点对 Bean 类中的方法进行匹配，若匹配成功，则会为该 bean 生成代理对象，并将代理对象返回给容器;
 
 ### AOP 实现原理
+
 - Spring 默认使用 JDK 的动态代理实现 AOP，类如果实现了接口，Spring 就会使用这种方式实现动态代理；
 - 若需要代理的类没有实现接口，此时 JDK 的动态代理将没有办法使用，于是 Spring 会使用 CGLib 的动态代理来生成代理对象；
 - [JDK 动态代理、CGLib 动态代理参考这里](programming/designPattern?id=_5、代理模式（结构型）)
 
+### AOP 应用
+
+- 在Spring项目中，AOP 共有 Filter、Interceptor、ControllerAdvice、Aspect 这几种；
+- 当 http 请求进来以后，会按照 Filter -> Interceptor -> ControllerAdvice -> Aspect -> Controller 的顺序进行调用，返回结果或异常则会按照相反的顺序进行调用；
+
+![](http://images.intflag.com/spring-aop01.png)
+
+#### Filter
+- Filter 位于包 javax.servlet 中，与 Spring 框架无关，是 JavaEE 中属于 Servlet 规范的一个组件；
+- 它可以在 HTTP 请求到达 Servlet 之前，被一个或多个 Filter 处理。这个组件是所有过滤组件中最外层的，从粒度来说是最大的；
+- Filter 不能直接拿到对应方法的详细信息；
+- 使用场景
+  - 日志记录：记录请求信息的日志，以便进行信息监控、信息统计、计算PV（Page View）等；
+  - 通用行为：读取 cookie 或 header 得到用户信息，并将其放至上下文中，以供后续方法使用；
+  - XSSFilter：过滤低俗文字、危险字符等；
+
+#### Interceptor
+- Interceptor 依赖于 SpringMVC 框架，基于反射实现的；
+- Interceptor 可以直接拿到对应方法的详细信息，但不能直接拿到入参；
+- 使用场景
+  - 日志记录；
+  - 权限检查；
+  - 性能监控；
+
+#### Aspect
+- 可以直接拿到方法的入参和返回值，但拿不到请求和响应对象；
+- 使用场景
+  - 日志记录
+  - 权限控制
+  - 异常处理
+
+#### ControllerAdvice
+- 是一个增强的 Controller，在Spring 3.2中，新增了@ControllerAdvice、@RestControllerAdvice 注解，可以用于定义@ExceptionHandler、@InitBinder、@ModelAttribute，并应用到所有@RequestMapping、@PostMapping， @GetMapping注解中；
+- 使用场景
+  - 全局异常处理：通过 @ExceptionHandler 注解标注，捕获 Controller 中抛出的不同类型的异常并对其加以处理，达到全局异常处理的目的；
+  - 全局数据绑定：通过 @InitBinder 注解标注，对请求中注册自定义参数进行解析，从而达到自定义请求参数格式的目的；
+  - 全局数据预处理：通过 @ModelAttribute 注解标注，在执行目标 Controller 方法之前执行该方法，达到数据预处理的目的。
+
+
 ## Spring 事务
+
 ### PlatformTransactionManager 事务管理器
+
 - 事务管理器接口本身只有三个方法：
   - getTransaction：获取当前激活的事务或者创建一个事务；
   - commit：提交当前事务；
@@ -213,7 +273,9 @@ public class B {
   - HibernateTransactionManager：使用 hibernate
 
 ### TransactionDefinition 事务属性
+
 事务属性：
+
 - 隔离级别
 - 传播行为
 - 任务超时
@@ -222,25 +284,25 @@ public class B {
 
 1）隔离级别
 
-|常量名称 |常量值|常量解释|
-|:----|:----:|:----|
-|ISOLATION_DEFAULT|-1|使用后端数据库默认的隔离级别，Mysql 默认为可重复读，Oracle 默认为读提交|
-|ISOLATION_READ_UNCOMMITTED|1|读未提交，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读|
-|ISOLATION_READ_COMMITTED|2|读提交，允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生|
-|ISOLATION_REPEATABLE_READ|4|可重复读，对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生|
-|ISOLATION_SERIALIZABLE|8|串行化，所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能|
+| 常量名称                   | 常量值 | 常量解释                                                                                                                                       |
+| :------------------------- | :----: | :--------------------------------------------------------------------------------------------------------------------------------------------- |
+| ISOLATION_DEFAULT          |   -1   | 使用后端数据库默认的隔离级别，Mysql 默认为可重复读，Oracle 默认为读提交                                                                        |
+| ISOLATION_READ_UNCOMMITTED |   1   | 读未提交，允许读取尚未提交的数据变更，可能会导致脏读、幻读或不可重复读                                                                         |
+| ISOLATION_READ_COMMITTED   |   2   | 读提交，允许读取并发事务已经提交的数据，可以阻止脏读，但是幻读或不可重复读仍有可能发生                                                         |
+| ISOLATION_REPEATABLE_READ  |   4   | 可重复读，对同一字段的多次读取结果都是一致的，除非数据是被本身事务自己所修改，可以阻止脏读和不可重复读，但幻读仍有可能发生                     |
+| ISOLATION_SERIALIZABLE     |   8   | 串行化，所有的事务依次逐个执行，这样事务之间就完全不可能产生干扰，也就是说，该级别可以防止脏读、不可重复读以及幻读。但是这将严重影响程序的性能 |
 
 2）传播行为：
 
-|常量名称 |常量值|常量解释|
-|:----|:----:|:----|
-|PROPAGATION_REQUIRED|0|如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务|
-|PROPAGATION_SUPPORTS|1|如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行|
-|PROPAGATION_MANDATORY|2|如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常（mandatory：强制性）|
-|PROPAGATION_REQUIRES_NEW|3|创建一个新的事务，如果当前存在事务，则把当前事务挂起|
-|PROPAGATION_NOT_SUPPORTED|4|以非事务方式运行，如果当前存在事务，则把当前事务挂起|
-|PROPAGATION_NEVER|5|以非事务方式运行，如果当前存在事务，则抛出异常|
-|PROPAGATION_NESTED|6|如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于 PROPAGATION_REQUIRED|
+| 常量名称                  | 常量值 | 常量解释                                                                                                            |
+| :------------------------ | :----: | :------------------------------------------------------------------------------------------------------------------ |
+| PROPAGATION_REQUIRED      |   0   | 如果当前存在事务，则加入该事务；如果当前没有事务，则创建一个新的事务                                                |
+| PROPAGATION_SUPPORTS      |   1   | 如果当前存在事务，则加入该事务；如果当前没有事务，则以非事务的方式继续运行                                          |
+| PROPAGATION_MANDATORY     |   2   | 如果当前存在事务，则加入该事务；如果当前没有事务，则抛出异常（mandatory：强制性）                                   |
+| PROPAGATION_REQUIRES_NEW  |   3   | 创建一个新的事务，如果当前存在事务，则把当前事务挂起                                                                |
+| PROPAGATION_NOT_SUPPORTED |   4   | 以非事务方式运行，如果当前存在事务，则把当前事务挂起                                                                |
+| PROPAGATION_NEVER         |   5   | 以非事务方式运行，如果当前存在事务，则抛出异常                                                                      |
+| PROPAGATION_NESTED        |   6   | 如果当前存在事务，则创建一个事务作为当前事务的嵌套事务来运行；如果当前没有事务，则该取值等价于 PROPAGATION_REQUIRED |
 
 3）事务超时属性
 
@@ -253,6 +315,7 @@ public class B {
 - TransactionDefinition 中以 isReadOnly（boolean 类型）来表示该事务是否只读
 
 ### TransactionStatus 事务运行状态
+
 ```java
 public interface TransactionStatus{
     boolean isNewTransaction(); // 是否是新的事物
@@ -262,27 +325,32 @@ public interface TransactionStatus{
     boolean isCompleted; // 是否已完成
 } 
 ```
+
 ### 事务实现原理
+
 - 通过 AOP 在方法执行前后增加数据库事务的操作;
 
 ## Spring 线程并发
+
 - 只有无状态的 Bean 才可以在多线程环境下共享，有状态的 Bean 会有线程安全问题；
 - ThreadLocal 会为每一个线程提供一个独立的变量副本，从而隔离了多个线程对数据的访问冲突；
 
 ## Spring 设计模式
-|设计模式 |相关类|
-|:----|:----|
-|简单工厂|BeanFactory|
-|工厂方法|FactoryBean|
-|单例模式|DefaultSingletonBeanRegistry.getSingleton()|
-|适配器模式|SpringMVC 中的 HandlerAdatper|
-|装饰器模式|xxxWrapper 和 xxxDecorator|
-|代理模式|AOP 底层实现|
-|观察者模式|ApplicationListener|
-|策略模式|Resource 资源访问接口|
-|模板方法模式|JdbcTemplate|
+
+| 设计模式     | 相关类                                      |
+| :----------- | :------------------------------------------ |
+| 简单工厂     | BeanFactory                                 |
+| 工厂方法     | FactoryBean                                 |
+| 单例模式     | DefaultSingletonBeanRegistry.getSingleton() |
+| 适配器模式   | SpringMVC 中的 HandlerAdatper               |
+| 装饰器模式   | xxxWrapper 和 xxxDecorator                  |
+| 代理模式     | AOP 底层实现                                |
+| 观察者模式   | ApplicationListener                         |
+| 策略模式     | Resource 资源访问接口                       |
+| 模板方法模式 | JdbcTemplate                                |
 
 ## SpringMVC 请求流程
+
 ![](http://images.intflag.com/spring006.jpg)
 
 流程说明：
@@ -296,37 +364,45 @@ public interface TransactionStatus{
 
 组件说明：
 
-|组件 |说明|
-|:----|:----|
-|DispatcherServlet|前端控制器，BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作|
-|HandlerMapping|处理器映射器，内部维护了一些 <访问路径, 处理器> 映射，负责为请求找到合适的处理器|
-|HandlerAdapter|处理器适配器，Spring 中的处理器的实现多变，比如用户处理器可以实现 Controller 接口，也可以用 @RequestMapping 注解将方法作为一个处理器等，这就导致 Spring 不知道怎么调用用户的处理器逻辑，所以这里需要一个处理器适配器，由处理器适配器去调用处理器的逻辑|
-|ViewResolver|视图解析器，用于将视图名称解析为视图对象 View|
-|View|视图对象，用于将模板渲染成 html 或其他类型的文件，比如 InternalResourceView 可将 jsp 渲染成 html|
+| 组件              | 说明                                                                                                                                                                                                                                                   |
+| :---------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| DispatcherServlet | 前端控制器，BeanFacSpring MVC 的核心组件，是请求的入口，负责协调各个组件工作                                                                                                                                                                           |
+| HandlerMapping    | 处理器映射器，内部维护了一些 <访问路径, 处理器> 映射，负责为请求找到合适的处理器                                                                                                                                                                       |
+| HandlerAdapter    | 处理器适配器，Spring 中的处理器的实现多变，比如用户处理器可以实现 Controller 接口，也可以用 @RequestMapping 注解将方法作为一个处理器等，这就导致 Spring 不知道怎么调用用户的处理器逻辑，所以这里需要一个处理器适配器，由处理器适配器去调用处理器的逻辑 |
+| ViewResolver      | 视图解析器，用于将视图名称解析为视图对象 View                                                                                                                                                                                                          |
+| View              | 视图对象，用于将模板渲染成 html 或其他类型的文件，比如 InternalResourceView 可将 jsp 渲染成 html                                                                                                                                                       |
 
 ## SpringBoot
+
 ### 自动装配原理
+
 ![](http://images.intflag.com/spring007.jpg)
+
 #### @SpringBootConfiguration
+
 - 来源于 @Configuration；
 - 将当前类标注为配置类，并将当前类里以 @Bean 注解标记的方法的实例注入到 Srping 容器中，实例名即为方法名；
 
 #### @ComponentScan
+
 - 用于定义 Spring 的扫描路径；
 - 如果不配置扫描路径 basePackages 参数，那么 Spring 就会默认扫描当前类所在的包及其子包中的所有标注了 @Component，@Service，@Controller 等注解的类；
 
 #### @EnableAutoConfiguration
+
 - @AutoConfigurationPackage：读取到我们在最外层的 @SpringBootApplication 注解中配置的扫描路径（没有配置则默认当前包及其子包），然后把扫描路径下面的类都加到数组中返回；
 - @Import(AutoConfigurationImportSelector.class)
   - 间接实现了 ImportSelector 类的 selectImports() 方法；
   - 扫描所有 jar 包下的 META-INF/spring.factories 文件，利用反射自动将需要的类加载到容器中；
 
 #### SPI 机制
+
 - SPI，Service Provider Interface。即：接口服务的提供者；
 - 应该面向接口（抽象）编程，而不是面向具体的实现来编程，这样一旦我们需要切换到当前接口的其他实现就无需修改代码；
 - 如：数据库驱动 DriverManager  类，数据库驱动的 jar 包下面的 META-INF/services/ 下有一个文件 java.sql.Driver，里面记录了当前需要加载的驱动；
 
 ### 启动流程
+
 - 对 SpringApplication 类进行实例化，然后初始化；
   - 项目应用类型；
   - 监听器；
@@ -342,6 +418,7 @@ public interface TransactionStatus{
 ![](http://images.intflag.com/spring010.jpg)
 
 ### 内置 Tomcat 优化
+
 - server.tomcat.threads.max 最大工作线程数：默认为 200，不是越大越好，通常为 核数的 200 - 250 倍；
 - server.tomcat.threads.min-spare 最小工作线程数：默认10，可以适当增大一些，以便应对突然增长的访问量；
 - server.tomcat.max-connections 最大连接数：默认为 8192；
