@@ -46,6 +46,7 @@
     - [Linux 使用笔记](os/linux.md)
     - [Deepin 使用笔记](os/deepin.md)
     - [Windows 使用笔记](os/windows.md)
+    - [Mac 使用笔记](os/mac.md)
 
 - 常用工具
 

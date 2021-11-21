@@ -503,6 +503,27 @@ cd /app/jenkins/
 * 创建项目
 * 安装插件
   * [Git Parameter](https://plugins.jenkins.io/git-parameter)
+  * [Maven Integration plugin](https://plugins.jenkins.io/maven-plugin)
+* 安装 JDK 和 Maven
+  * wget https://repo.huaweicloud.com/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz
+  * wget https://dlcdn.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz
+  * 复制到安装 Jenkins 时的本地映射目录中，或者直接在那个目录执行 wget
+  * 进入 Jenkins 容器内部配置 Java 和 Maven 的环境变量
+
+    ```
+    # java环境变量
+    export JAVA_HOME=/var/jenkins_home/java/jdk1.8.0_202
+    export JRE_HOME=$JAVA_HOME/jre
+    export PATH=$JAVA_HOME/bin:$PATH
+    export CLASSPATH=./:JAVA_HOME/lib:$JRE_HOME/lib
+    # maven环境变量
+    export M2_HOME=/var/jenkins_home/java/apache-maven-3.8.3
+    export PATH=$PATH:$JAVA_HOME/bin:$M2_HOME/bin
+    ```
+
+* dfs
+
+
 
 ## GitLab使用
 
