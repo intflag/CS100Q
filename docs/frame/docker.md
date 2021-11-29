@@ -502,9 +502,11 @@ cd /app/jenkins/
 
 * 创建项目
 * 安装插件
+
   * [Git Parameter](https://plugins.jenkins.io/git-parameter)
   * [Maven Integration plugin](https://plugins.jenkins.io/maven-plugin)
 * 安装 JDK 和 Maven
+
   * wget https://repo.huaweicloud.com/java/jdk/8u202-b08/jdk-8u202-linux-x64.tar.gz
   * wget https://dlcdn.apache.org/maven/maven-3/3.8.3/binaries/apache-maven-3.8.3-bin.tar.gz
   * 复制到安装 Jenkins 时的本地映射目录中，或者直接在那个目录执行 wget
@@ -520,10 +522,17 @@ cd /app/jenkins/
     export M2_HOME=/var/jenkins_home/java/apache-maven-3.8.3
     export PATH=$PATH:$JAVA_HOME/bin:$M2_HOME/bin
     ```
+  * 如果没有 vi 命令需安装
 
-* dfs
+    ```
+    apt-get update
+    apt-get install vim
+    ```
+* Docker 中的 Jenkins 需要安装 rsync
 
-
+  ```bash
+  apt-get install rsync
+  ```
 
 ## GitLab使用
 
@@ -572,4 +581,14 @@ gitlab_rails['gitlab_shell_ssh_port'] = 10242
 ```
 docker exec -it gitlab /bin/bash  进去gitlab容器的命令
 gitlab-ctl reconfigure  重置gitlab客户端的命令
+```
+
+## MySQL
+
+### 1）安装
+
+```
+# Mac M1 拉取要指定平台
+docker pull --platform linux/amd64  mysql:5.6
+docker run -itd --name mysql-local -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 10de32843f91
 ```

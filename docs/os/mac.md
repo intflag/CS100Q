@@ -30,7 +30,20 @@
 | SwitchHosts                                           | https://github.com/oldj/SwitchHosts                             | Host配置     |
 | iStat Menus                                           | https://www.macwk.com/soft/istat-menus                          |              |
 | EZip                                                  | https://ezip.awehunt.com/                                       | 只查看不解压 |
-|                                                       |                                                                 |              |
+| Bartender4                                            |                                                                 | 状态栏工具   |
+| Apifox                                                |                                                                 |              |
+| Patina                                                |                                                                 | 画图         |
+| 网易邮箱大师                                          |                                                                 |              |
+| 网易有道词典                                          |                                                                 |              |
+| Listen1                                               |                                                                 | 听歌         |
+| RDM                                                   |                                                                 | Redis        |
+| Robo 3T                                               |                                                                 | MongoDB      |
+| 赤友NTFS助手                                          |                                                                 |              |
+| Clipy                                                 |                                                                 |              |
+| XMind                                                 |                                                                 |              |
+| 腾讯柠檬清理                                          |                                                                 |              |
+| Snipaste                                              |                                                                 |              |
+| Docker                                                |                                                                 |              |
 
 ### Mac 系统快捷键
 
