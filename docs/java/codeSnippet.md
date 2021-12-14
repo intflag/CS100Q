@@ -1,6 +1,9 @@
 # Java Code Snippet
+
 ## JSON
+
 ### 1）排除 JSON 中多余的字段
+
 ```java
 obj转json
 @param object
@@ -30,6 +33,7 @@ return t;
 ```
 
 ### 2）jackson 数组格式 json 字符串转换成 List
+
 ```java
 //类主要是
 import org.codehaus.jackson.type.TypeReference;
@@ -42,13 +46,16 @@ List<MltWaitLendReco> lendReco = mapper.readValue(listStr,new TypeReference<List
 System.out.println(lendReco.get(0).getId());
 ```
 
-
 ## Java 8 Stream
+
 ### 1）List 过滤
+
 ```java
 List<Student> collect = valueList.stream().filter(stu -> "tom".equals(stu.getName())).collect(Collectors.toList());
 ```
+
 ### 2）List 转 Map
+
 ```java
 public static Map<Object, Object> getStudentObjectMap(List<Student> list) {
     Map<Object, Object> map = list.stream().collect(Collectors.toMap(Student::getStuId, student -> student));
@@ -58,7 +65,29 @@ public static Map<Object, Object> getStudentObjectMap(List<Student> list) {
     return map;
 }
 ```
+
+### 3) 开窗
+
+```
+User u1 = new User(1, "zhangsan", 18);
+User u2 = new User(1, "lisi", 17);
+User u3 = new User(1, "wagnwu", 15);
+User u4 = new User(1, "zhanliu", 19);
+List<User> list = new ArrayList<>();
+list.add(u1);
+list.add(u2);
+list.add(u3);
+list.add(u4);
+//先根据 id 分组，然后取每组中 age 最大的
+Map<Integer, User> userMap = list.stream().collect(Collectors.toMap(
+        User::getId,
+        Function.identity(),
+        (o1, o2) -> o1.getAge() > o2.getAge() ? o1 : o2));
+System.out.println(userMap);
+```
+
 ## Java 8 LocalDateTime
+
 ```java
 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmm");
 String time = LocalDateTime.now().format(formatter);
