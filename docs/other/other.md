@@ -10,7 +10,7 @@
 * [ ] 分库分表
 * [ ] controllerAdvice
 * [X] Jenkins 自动构建自动发布
-* [ ] GitLab
+* [ ]~~GitLab~~
 * [ ] 微服务网关
 * [ ] 统一日志收集
 * [ ] CAT、Skywalking
