@@ -125,6 +125,7 @@ done
 ```
 
 ### 7、JAVA 配置环境变量
+JDK 镜像下载地址：https://repo.huaweicloud.com/java/jdk/
 
 ```bash
 编辑：
@@ -237,4 +238,26 @@ ssh-keygen -t rsa
 # 然后敲（三个回车），就会生成两个文件id_rsa（私钥）、id_rsa.pub（公钥）
 
 ssh-copy-id 目标机器主机名或IP地址
+```
+
+### 9、防火墙 & 端口
+
+```bash
+# 查看防火墙状态
+systemctl status firewalld
+
+# 开启防火墙
+systemctl start firewalld
+
+# 关闭防火墙
+systemctl stop firewalld
+
+# 查看端口是否开放
+firewall-cmd --query-port=8080/tcp
+
+# 添加指定需要开放的端口
+firewall-cmd --add-port=8080/tcp --permanent
+
+# 重载入添加的端口
+firewall-cmd --reload
 ```

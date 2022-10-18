@@ -592,3 +592,16 @@ gitlab-ctl reconfigure  重置gitlab客户端的命令
 docker pull --platform linux/amd64  mysql:5.6
 docker run -itd --name mysql-local -p 3306:3306 -e MYSQL_ROOT_PASSWORD=123456 10de32843f91
 ```
+
+## Kibana
+```
+# Mac M1 拉取要指定平台
+docker pull --platform linux/amd64  kibana:7.6.2
+docker run -itd \
+--name kibana \
+-p 5601:5601 \
+-e ELASTICSEARCH_HOSTS=http://ES地址:9200 \
+-e ELASTICSEARCH_USERNAME=用户名 \
+-e ELASTICSEARCH_PASSWORD=密码 \
+f70986bc5191
+```
