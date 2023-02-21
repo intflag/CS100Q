@@ -123,3 +123,30 @@ networksetup -setdnsservers Wi-Fi 172.25.248.124 8.8.8.8
 # 获取 DNS
 networksetup -getdnsservers Wi-Fi
 ```
+
+### Parallels Desktop 命令行操作
+```
+prlctl create：创建一个新的虚拟机。
+prlctl start：启动一个虚拟机。
+prlctl stop：停止一个运行的虚拟机。
+prlctl suspend：暂停一个运行的虚拟机。
+prlctl resume：恢复一个暂停的虚拟机。
+prlctl list：列出所有可用的虚拟机。
+prlctl delete：删除一个虚拟机。
+prlctl snapshot-list：列出一个虚拟机的所有快照。
+prlctl snapshot-create：创建一个虚拟机的快照。
+prlctl snapshot-delete：删除一个虚拟机的快照。
+prlctl snapshot-switch：将虚拟机恢复到一个指定的快照。
+prlctl set：设置虚拟机的参数，例如内存大小、CPU数目等。
+prlctl exec：在虚拟机中执行一个命令。
+prlsrvctl start：启动Parallels服务。
+prlsrvctl stop：停止Parallels服务。
+
+例如：
+prlctl start "Ubuntu Linux" && prlctl start "K8S Master" && prlctl start "K8S Worker01"
+prlctl stop "Ubuntu Linux" && prlctl stop "K8S Master" && prlctl stop "K8S Worker01"
+prlctl restart "Ubuntu Linux" && prlctl restart "K8S Master" && prlctl restart "K8S Worker01"
+
+prlctl suspend "Ubuntu Linux" && prlctl suspend "K8S Master" && prlctl suspend "K8S Worker01"
+prlctl resume "Ubuntu Linux" && prlctl resume "K8S Master" && prlctl resume "K8S Worker01"
+```
